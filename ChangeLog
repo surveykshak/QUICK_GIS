@@ -1,3 +1,1633 @@
+Jürgen E. Fischer <jef@norbit.de>	2026-04-03
+
+    translation update for 4.0.1 from transifex
+
+Harrissou Sant-anna <delazj@gmail.com>	2026-03-07
+
+    Remove reference to algorithm specificity in output name
+
+    (cherry picked from commit 6eac587c85980c212cdac13ab7845edc5465ba44)
+
+Julien Cabieces <julien.cabieces@oslandia.com>	2026-03-31
+
+    fix(DBManager): don't set role if there is none
+
+    fix #65358
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-31
+
+    Fix warnings when running test
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-31
+
+    Fix insertion of links when text ends with a quote
+
+    Fixes #65571
+
+qgis-bot <qgis-bot@users.noreply.github.com>	2026-04-01
+
+    auto sipify 🍺
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-31
+
+    Don't show meaningless clear button for metalness/roughness
+
+    (cherry picked from commit ddd6453d2dde819548ae4c77e7cc9e66b9381acd)
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-30
+
+    Clamp metalness/roughness to 0-1 range
+
+    (cherry picked from commit 71f05495b9f7f1cdd873b9409f351cb9fe9723a8)
+
+Merge: a9c5c7740e3 3e4dd5274fd
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-31
+
+    Merge pull request #65624 from qgis/backport-65605-to-release-4_0
+
+    [Backport release-4_0] [dxf] Ensure exports using Meters at Scale units work
+
+qgis-bot <qgis-bot@users.noreply.github.com>	2026-03-31
+
+    auto sipify 🍺
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-31
+
+    Update sipify-bot.yml
+
+    backport changes from master
+
+Mathieu Pellerin <nirvn.asia@gmail.com>	2026-03-28
+
+    [qml][api] Make QgsVectorLayer's selectByRect and invertSelectionInRectangle invokable
+
+Mathieu Pellerin <nirvn.asia@gmail.com>	2026-03-26
+
+    [qml] Make QgsVectorLayer's uniqueValues, minimumValue, and maximumValue functions invokable
+
+Mathieu Pellerin <nirvn.asia@gmail.com>	2026-03-26
+
+    [qml] Make QgsMapLayer's extent and wgs84Extent invokable
+
+Mathieu Pellerin <nirvn.asia@gmail.com>	2026-03-26
+
+    [qml] Remove QgsVectorLayer functions that cannot be called from QML (non-const reference does not work)
+
+Merge: e080831c83e c062973a02c
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-31
+
+    Merge pull request #65618 from qgis/backport-65606-to-release-4_0
+
+    [Backport release-4_0] [wms] Only draw cached openstreetmap.org tiles when rendering canvas preview jobs
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-27
+
+    Migrate remaining QgsIdentifyResultsDialog settings to QgsSettingsEntry
+
+    Migrate the following settings from old QgsSettings to new API:
+    - Map/identifyMode -> QgsMapToolIdentify::settingIdentifyMode
+      (QgsSettingsEntryEnumFlag under sTreeMap, used across gui and app)
+    - Map/hideDerivedAttributes -> settingHideDerivedAttributes
+      (QgsSettingsEntryBool under sTreeIdentify)
+    - Windows/Identify/columnWidth -> settingColumnWidth
+      (QgsSettingsEntryInteger under sTreeWindowState)
+    - Windows/Identify/columnWidthTable -> settingColumnWidthTable
+      (QgsSettingsEntryInteger under sTreeWindowState)
+
+    Add copyValueFromKey migration in both QgsSettingsRegistryGui
+    (for identifyMode) and QgsSettingsRegistryApp (for the rest).
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-27
+
+    Migrate QgsRendererMeshPropertiesWidget tab setting to QgsSettingsEntry
+
+    Migrate /Windows/RendererMeshProperties/tab from old QgsSettings to
+    QgsSettingsEntryInteger in QgsRendererMeshPropertiesWidget.
+
+    Uses existing sTreeWindowState node under sTreeGui.
+    Add copyValueFromKey migration in QgsSettingsRegistryGui.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-27
+
+    Migrate QgsColorTextWidget text format setting to QgsSettingsEntry
+
+    Migrate ColorWidgets/textWidgetFormat from old QgsSettings to
+    QgsSettingsEntryEnumFlag<ColorTextFormat> in QgsColorTextWidget.
+
+    Add sTreeColorWidgets node to QgsSettingsTree.
+    Add copyValueFromKey migration in QgsSettingsRegistryGui.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-27
+
+    Migrate QgsGradientColorRampDialog settings to QgsSettingsEntry
+
+    Migrate GradientEditor/plotHue, GradientEditor/plotLightness,
+    GradientEditor/plotSaturation, GradientEditor/plotAlpha from old
+    QgsSettings to QgsSettingsEntryBool in QgsGradientColorRampDialog.
+
+    Add sTreeGradientEditor node to QgsSettingsTree.
+    Add copyValueFromKey migration in QgsSettingsRegistryGui.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-27
+
+    Add sTreeHistogram and sTreeIdentify root nodes and move settings
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-27
+
+    Migrate app/askToDeleteFeatures to QgsSettingsEntry API
+
+    Migrate the ask-to-delete-features setting from raw QgsSettings
+    (with QgsSettings::App section) to QgisApp::settingsAskToDeleteFeatures
+    using the QgsSettingsEntry API.
+
+    Old key: app/askToDeleteFeatures
+    New key: app/ask-to-delete-features
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-26
+
+    Migrate qgis/walForSqlite3 to QgsSettingsEntry API
+
+    Migrate the WAL for SQLite3 setting from raw QgsSettings to
+    QgsOgrProviderUtils::settingsWalForSqlite3 using the QgsSettingsEntry API.
+    Update C++ tests and Python test to use the new API.
+
+    Old key: qgis/walForSqlite3
+    New key: qgis/wal-for-sqlite3
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-26
+
+    Migrate Map/identifyAutoFeatureForm to QgsSettingsEntry API
+
+    Migrate the identifyAutoFeatureForm setting from raw QgsSettings to
+    QgsIdentifyResultsDialog::settingIdentifyAutoFeatureForm using the
+    QgsSettingsEntry API. Both key variants (with and without leading /)
+    were used in the original code, so both migrations are included.
+
+    Old keys: Map/identifyAutoFeatureForm, /Map/identifyAutoFeatureForm
+    New key: map/identify-auto-feature-form
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-26
+
+    Migrate HistogramWidget/showMean and showStdev to QgsSettingsEntry API
+
+    Migrate the histogram widget show-mean and show-stdev settings from
+    raw QgsSettings to QgsHistogramWidget::settingsHistogramShowMean and
+    QgsHistogramWidget::settingsHistogramShowStdev using the QgsSettingsEntry API.
+
+    Old keys: HistogramWidget/showMean, HistogramWidget/showStdev
+    New keys: gui/histogram-show-mean, gui/histogram-show-stdev
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-26
+
+    Fix leftover QgsSettings usage for Map/logCanvasRefreshEvent
+
+    Use the existing QgsMapRendererJob::settingsLogCanvasRefreshEvent
+    instead of raw QgsSettings in QgsHillshadeRenderer.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-17
+
+    Migrate qgis/nullValue to QgsSettingsEntry API
+
+    Migrate the null representation setting from raw QSettings to
+    QgsApplication::settingsNullRepresentation using the type-safe
+    QgsSettingsEntry API.
+
+    New key: qgis/null-value (QgsSettingsEntryString)
+    Old key: qgis/nullValue
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-17
+
+    Migrate Map/identifyExpand to QgsSettingsEntry API
+
+    Migrate the identifyExpand setting from raw QSettings to
+    QgsIdentifyResultsDialog::settingIdentifyExpand using the type-safe
+    QgsSettingsEntry API.
+
+    New key: map/identify-expand (QgsSettingsEntryBool)
+    Old key: Map/identifyExpand
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-17
+
+    Migrate qgis/custom_coordinate_crs to QgsSettingsEntry API
+
+    Migrate the custom coordinate CRS setting from raw QSettings to
+    QgsMapCanvas::settingsCustomCoordinateCrs using the type-safe
+    QgsSettingsEntry API.
+
+    New key: map/custom-coordinate-crs (QgsSettingsEntryString)
+    Old key: qgis/custom_coordinate_crs
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-17
+
+    Migrate /Cad/CommonAngle to QgsSettingsEntry API
+
+    Migrate the Cad CommonAngle setting from raw QSettings to
+    QgsAdvancedDigitizingDockWidget::settingsCadCommonAngle using the
+    type-safe QgsSettingsEntry API.
+
+    New key: digitizing/cad/common-angle (QgsSettingsEntryDouble)
+    Old key: /Cad/CommonAngle
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-30
+
+    [dxf] Ensure exports using Meters at Scale units work
+
+Mathieu Pellerin <nirvn.asia@gmail.com>	2026-03-30
+
+    [wms] Only draw cached openstreetmap.org tiles when rendering canvas preview jobs
+
+Merge: 653eb9a7ce1 478ce76b8d8
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-29
+
+    Merge pull request #65582 from qgis/backport-65518-to-release-4_0
+
+    [Backport release-4_0] [mssql] Fix not using geometry_columns to retrieve tables
+
+Merge: 7434b33dc74 ab87792e95d
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-29
+
+    Merge pull request #65583 from qgis/backport-65533-to-release-4_0
+
+    [Backport release-4_0] [ui] Fix raster layer and vector tile layer properties dialog opening source hyperlink _in the browser area_ instead of the file manager
+
+Merge: e7830d5ef92 d8dbf9f5d38
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-29
+
+    Merge pull request #65597 from qgis/backport-65593-to-release-4_0
+
+    [Backport release-4_0] [auth] Fix missing authentication methods when making static QGIS builds
+
+Mathieu Pellerin <nirvn.asia@gmail.com>	2026-03-28
+
+    [auth] Fix missing authentication methods when making static QGIS builds
+
+Mathieu Pellerin <nirvn.asia@gmail.com>	2026-03-22
+
+    Hide the welcome page when loading projects to avoid a crash in the runtime profiler
+
+Mathieu Pellerin <nirvn.asia@gmail.com>	2026-03-20
+
+    Fix crash when double clicking on welcome page recent projects / template projects items
+
+Jean Felder <jean.felder@oslandia.com>	2026-03-20
+
+    qgssfcgalengine: Fix double usage for primitive transform computation
+
+    SFCGAL C API relies on double data. However, when
+    `sfcgal_geometry_transform` was first designed during the development
+    period of version 2.3, it expected float data. This was then changed
+    to double before the release of version 2.3 to ensure consistency
+    with the rest of the API.
+
+    Fix QGIS integration to ensure QGIS 4 can be built with SFCGAL 2.3.
+
+Jean Felder <jean.felder@oslandia.com>	2026-03-13
+
+    qgssfcgalgeometry: Fix typo in transform method
+
+Jean Felder <jean.felder@oslandia.com>	2026-03-17
+
+    qgssfcgalgeometry: Fix angle conversion in setPrimitiveRotation
+
+    `QgsSfcgalGeometry::setPrimitiveRotation` is called by
+    `QgsSfcgalGeometry::rotate3D` which uses angles defined in
+    radians. However, `QQuaternion::fromAxisAndAngle` expects angle
+    defined in degrees. This means that the angle value needs to be
+    converted in radians in `QgsSfcgalGeometry::setPrimitiveRotation`.
+
+    This was not detected by unit tests, because
+    `QgsSfcgalGeometry::rotate3D` was wrongly called with angles defined
+    in degrees.
+
+Mathieu Pellerin <nirvn.asia@gmail.com>	2026-03-24
+
+    [ui] Fix raster layer and vector tile layer properties dialog opening source hyperlink _in the browser area_ instead of the file manager
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-23
+
+    [mssql] Fix not using geometry_columns to retrieve tables
+
+    ...for database connections with the geometryColumnsOnly flag set
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-25
+
+    Fix crash in export geometry info algorithm when no project available
+
+    And add safeguards for project access to other algorithms
+
+Stefanos Natsis <uclaros@gmail.com>	2026-03-23
+
+    Pass QgsPointCloudNodeId by value
+
+Stefanos Natsis <uclaros@gmail.com>	2026-03-23
+
+    Use better qHash implementations for point cloud related classes:
+    QgsPointCloudNodeId, QgsPointCloudCacheKey, QgsPointCloudRequest
+
+Merge: 0059798c39c 959f0516e29
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-25
+
+    Merge pull request #65555 from qgis/backport-65526-to-release-4_0
+
+    [Backport release-4_0] Processing GDAL: fix outputting to a temporary layer
+
+Even Rouault <even.rouault@spatialys.com>	2026-03-23
+
+    Processing GDAL: fix outputting to a temporary layer
+
+    Fixes #65502
+    Uses QgsProcessingAlgorithm::parameterAsOutputRasterFormat() that
+    received a fix in https://github.com/qgis/QGIS/pull/64465 to avoid
+    creating 2 files.
+
+Merge: a662af45c38 c2183153e10
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-25
+
+    Merge pull request #65541 from qgis/backport-65529-to-release-4_0
+
+    [Backport release-4_0] Fix missing area in floater when digitizing circles
+
+Merge: 89195fc6ac6 4872a0c35e8
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-25
+
+    Merge pull request #65544 from qgis/backport-65537-to-release-4_0
+
+    [Backport release-4_0] [dual view][ui] Fix feature list preview button size issue when using preview expressions
+
+Mathieu Pellerin <nirvn.asia@gmail.com>	2026-03-24
+
+    [dual view][ui] Fix feature list preview button size issue when using preview expressions
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-24
+
+    Update tests
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-24
+
+    Ensure that transientGeometryChanged geometry type matches QgsMapToolCapture capture type
+
+    Fixes missing area in floater when digitizing circles
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-24
+
+    Fix memory leak in QgsCircle::toCircularString from Python
+
+    This method is a factory, but wasn't annotated accordingly. Switch
+    to just returning unique_ptr instead to fix that + add memory
+    safety.
+
+Merge: 6699b17d5c2 16a3a37c76b
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-24
+
+    Merge pull request #65536 from qgis/backport-65497-to-release-4_0
+
+    [Backport release-4_0] fix: Measure dialog repositioning on canvas click with Qt6
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-24
+
+    Apply suggestion from @nyalldawson
+
+Amalvir <amalvir@amalvir.(none)>	2026-03-23
+
+    fix: Move QTBUG-139291 workaround to QgsWidgetStateHelper
+
+    Instead of working around the spurious QShowEvent in each
+    caller, skip geometry restore in QgsWidgetStateHelper when
+    the widget has already been shown once. Reset the flag on
+    Hide/Close so the next real show still restores geometry.
+
+    This reverts the per-dialog workaround in QgsMeasureTool and
+    fixes the issue globally for all dialogs using
+    enableAutoGeometryRestore.
+
+    Fixes #62919
+
+Amalvir <amalvir@amalvir.(none)>	2026-03-20
+
+    fix: Measure dialog repositioning on canvas click with Qt6
+
+    - Calling show() in Qt6 on an already visible Qt::Tool window triggers QEvent::Show, which causes QgsWidgetStateHelper to restore the saved geometry on every canvas click.
+    - Add a check: call show() only if dialog is hidden, otherwise use raise() to bring it to front without triggering geometry restoration
+    - Add conditional compilation for Qt versions 6.7.0 through 6.9.2 to work around QTBUG-139291
+
+    Fixes #62919
+
+Alessandro Pasotti <elpaso@itopen.it>	2026-03-17
+
+    Update tests
+
+Alessandro Pasotti <elpaso@itopen.it>	2026-03-15
+
+    Update src/server/services/wfs3/qgswfs3handlers.cpp
+
+    Co-authored-by: Even Rouault <even.rouault@spatialys.com>
+
+Alessandro Pasotti <elpaso@itopen.it>	2026-03-13
+
+    Atomic capabilities and URL fix
+
+Alessandro Pasotti <elpaso@itopen.it>	2026-03-13
+
+    Also accept OPTIONS in CGI
+
+Alessandro Pasotti <elpaso@itopen.it>	2026-03-13
+
+    [server][oapif] Implement OPTIONS for CRUD
+
+    Fix #65294
+
+    TODO: tests
+
+Merge: a43466d89c3 60799f36475
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-22
+
+    Merge pull request #65506 from qgis/backport-65491-to-release-4_0
+
+    [Backport release-4_0] Fix loss of data defined marker/line symbol layer size changes
+
+Merge: cff9b3472a7 214387bd886
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-21
+
+    Merge pull request #65504 from qgis/backport-65490-to-release-4_0
+
+    [Backport release-4_0] Fix labels disappear when using cartographic placement, small symbols
+
+Merge: ce4e0482d46 cdf8efcb8f0
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-21
+
+    Merge pull request #65507 from qgis/backport-65489-to-release-4_0
+
+    [Backport release-4_0] Fix @geometry and $geometry different results for geometry generator
+
+Merge: cf8c4908fbb c1e4d84f666
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-21
+
+    Merge pull request #65508 from qgis/backport-65484-to-release-4_0
+
+    [Backport release-4_0] qgsbox3d: fix toString method for the empty case
+
+Jean Felder <jean.felder@oslandia.com>	2026-03-19
+
+    qgsbox3d: Fix toString in empty case
+
+    `QgsBox3d::toString()` was introduced in
+    06a09f83f31ae39e23ff860c4502eb425a14f14b to reproduce `QgsRectangle`
+    behavior. However, QgsRectangle::toString() behavior was changed
+    shortly after to fix `isEmpty()`.
+    `QgsRectangle::toString()` now returns a full string when it is empty.
+
+    This change changes `QgsBox3d::toString()` behavior to match the
+    `QgsRectangle` one.
+
+    See: https://github.com/qgis/QGIS/pull/54646
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-20
+
+    Fix @geometry and $geometry different results for geometry generator
+
+    Ensure that @geometry always uses identical logic for
+    retrieving geometry from the expression context as the
+    older $geometry function.
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-20
+
+    Fix loss of data defined marker/line symbol layer size changes
+
+    This pattern of events can lead to old data defined expressions
+    resurrecting themselves:
+
+    1. Create a marker symbol
+    2. Go to the first (only) symbol layer's settings, set an expression
+      for data-defined size
+    3. do some other stuff, then go back to changing that symbol's settings
+    4. Go to the first (only) symbol layer's settings, CHANGE the data
+      defined size expression.
+    5. Make some other change in the widget (eg change the fixed size value)
+    6. Click somewhere else to dismiss the symbol layer widget, eg go back
+      up to the top-level symbol settings
+
+    The changes to the data defined size expression are lost, and the
+    old version keeps resurrecting itself.
+
+    Hack around this by disabling the strange logic which explicitly
+    restores the old value when a symbol only has a single layer.
+
+    This strange logic was introduced in https://github.com/qgis/QGIS/pull/2167,
+    and is intended to auto-scale any child symbol layer data-defined
+    size expressions to match changes in the overall marker symbol's
+    size. The logic is rather broken though (eg, resulting in the
+    silent loss of expression changes described above). It's also
+    questionable if this logic is desirable in the first place.
+
+    But it's also 11 year old logic, so I'm reluctant to just rip it
+    out. Instead, disable it when a symbol only has a SINGLE layer,
+    so at least the impact of the bug is removed in a case where
+    the original logic makes no sense anyway.
+
+    (Note that there's remaining issues with the 11 yo fix, because
+    I can also get expression change loss when editing data
+    defined scale expressions on multi-layer symbols)
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-20
+
+    Fix labels disappear when using cartographic placement, small symbols
+
+    ...or null symbol renderer, and label is set to use the symbol
+    bounds for offset
+
+Merge: 053f31432e3 44192fc8559
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-20
+
+    Merge pull request #65495 from qgis/backport-65474-to-release-4_0
+
+    [Backport release-4_0] Follow up recent cache Vary response handling
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-19
+
+    Follow up recent cache Vary response handling
+
+    Instead of completely skipping the cache for a new request
+    where the previously cached response was for a non-matching
+    Vary attribute, now we force evict the old reply from the
+    cache.
+
+    The previous behavior meant that only the FIRST value for
+    the varied attribute would ever be cached. Now we always
+    cache the MOST RECENTLY requested value for the varied
+    attribute.
+
+Stefanos Natsis <uclaros@gmail.com>	2026-03-18
+
+    Tighten scope of locked mutex
+
+Merge: 913c9123263 601de32b7ae
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-18
+
+    Merge pull request #65458 from qgis/backport-65444-to-release-4_0
+
+    [Backport release-4_0] Move pyproject.toml to METADATA
+
+Matthias Kuhn <matthias@opengis.ch>	2026-03-17
+
+    Move pyproject.toml to METADATA
+
+Merge: 08be2802f63 c12f68bb2b3
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-18
+
+    Merge pull request #65446 from qgis/backport-65429-to-release-4_0
+
+    [Backport release-4_0] Migrate more settings
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-17
+
+    Update src/core/browser/qgsdirectoryitem.h
+
+    Co-authored-by: Mathieu Pellerin <nirvn.asia@gmail.com>
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-16
+
+    simplify
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-16
+
+    Move attribute form column count settings to dedicated sTreeAttributeForm
+
+    Create a new sTreeAttributeForm tree node for attribute form related
+    settings instead of using the generic sTreeGui. Shorten key names
+    accordingly:
+    - gui/attribute-form-default-tab-column-count -> attribute-form/default-tab-column-count
+    - gui/attribute-form-default-group-column-count -> attribute-form/default-group-column-count
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-16
+
+    Migrate monitorDirectoriesInBrowser to QgsSettingsEntry API
+
+    Migrate the monitorDirectoriesInBrowser setting from raw QSettings
+    to QgsDirectoryItem::settingsMonitorDirectoriesInBrowser using the
+    type-safe QgsSettingsEntry API.
+
+    New key: qgis/monitor-directories-in-browser (QgsSettingsEntryBool)
+    Old key: /qgis/monitorDirectoriesInBrowser
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-16
+
+    Migrate featureListHighlightFeature to QgsDualView::settingsFeatureListHighlightFeature
+
+    Migrate the featureListHighlightFeature setting from raw QSettings
+    to QgsDualView::settingsFeatureListHighlightFeature using the
+    type-safe QgsSettingsEntry API.
+
+    New key: attribute-table/feature-list-highlight-feature (QgsSettingsEntryBool)
+    Old key: /featureListHighlightFeature
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-16
+
+    Migrate attributeForm default column counts to QgsSettingsEntry
+
+    Migrate defaultTabColumnCount and defaultGroupColumnCount from raw
+    QgsSettings (qgis/attributeForm/defaultTabColumnCount and
+    qgis/attributeForm/defaultGroupColumnCount) to type-safe
+    QgsSettingsEntryInteger on QgsAddAttributeFormContainerDialog
+    (gui/attribute-form-default-tab-column-count and
+    gui/attribute-form-default-group-column-count).
+
+    Replaces 5 raw QgsSettings read/write sites all in qgsaddtaborgroup.cpp.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-16
+
+    Migrate showLegendClassifiers to QgsSettingsRegistryCore::settingsLayerTreeShowLegendClassifiers
+
+    Migrate the show legend classifiers setting from raw QgsSettings
+    (qgis/showLegendClassifiers) to a type-safe QgsSettingsEntryBool
+    on QgsSettingsRegistryCore (layer-tree/show-legend-classifiers).
+
+    Replaces 3 raw QgsSettings read/write sites in core layer legend
+    and app options dialog.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-16
+
+    Migrate LayoutDesigner/defaultNorthArrow to QgsLayout::settingsLayoutDefaultNorthArrow
+
+    Migrate the default north arrow SVG path setting from raw QgsSettings
+    (gui/LayoutDesigner/defaultNorthArrow) to a type-safe QgsSettingsEntryString
+    on QgsLayout (layout/default-north-arrow).
+
+    Replaces 2 raw QgsSettings read sites in gui layout utils and layout
+    validity checks. Also adds the new key to qgis_global_settings.ini.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-16
+
+    Migrate LayoutDesigner/defaultFont to QgsLayout::settingsLayoutDefaultFont
+
+    Migrate the default layout font family setting from raw QgsSettings
+    (gui/LayoutDesigner/defaultFont) to a type-safe QgsSettingsEntryString
+    on QgsLayout (layout/default-font).
+
+    Replaces 8 raw QgsSettings read/write sites across core layout items
+    (scalebar, label, map grid), gui layout utils, and app options dialog.
+
+Merge: 5ac762128f8 ff7df7b956b
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-17
+
+    Merge pull request #65435 from rouault/backport_pr_65385
+
+    [Backport 4.0] CI: fix failures on OGC API features tests
+
+Merge: 76f4b80a8e5 cefa3308139
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-17
+
+    Merge pull request #65443 from qgis/backport-65395-to-release-4_0
+
+    [Backport release-4_0] Simplify terrain elevation offset handling
+
+Merge: 2ca0c98c2dd 80e9d41486b
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-17
+
+    Merge pull request #65438 from qgis/backport-65397-to-release-4_0
+
+    [Backport release-4_0] [map renderer] Fix background color fill when composing image for non-default image format
+
+Merge: 01d10bfe2a4 a3c607a1003
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-17
+
+    Merge pull request #65439 from 3nids/backport-65309-to-release-4_0
+
+    Backport 65309 to release 4 0
+
+Even Rouault <even.rouault@spatialys.com>	2026-03-13
+
+    CI: fix failures on OGC API features tests
+
+    Since we bumped the version number to 4.0, OGC API Features nominal
+    endpoint is /ogcapi, while pyogctest requests on /wfs3 by default.
+    This is made configurable with https://github.com/rouault/pyogctest/commit/738dd6a9acb81eb746145d5e74dd05016eab4b19
+    While requests on /wfs3 are still accepted, the links returned use /ogcapi,
+    which confusing the OGC API Features CITE tests
+
+Stefanos Natsis <uclaros@gmail.com>	2026-03-14
+
+    Simplify terrain elevation offset handling
+
+    Removed previous terrain elevation offset check before setting new offset.
+
+Merge: 74aa5a6b22b 35ec37ba92e
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-17
+
+    Merge pull request #65433 from qgis/backport-65430-to-release-4_0
+
+    [Backport release-4_0] qgsmatrix: Fix reserve size in dataList method
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-16
+
+    missing include + fix since
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-10
+
+    Fix settingsProxyType default to empty string for backward compat
+
+    The old code used settings.value("proxy/proxyType", "") which defaulted
+    to an empty string. With empty string, the code falls through to the
+    explicit proxy branch. With "DefaultProxy" as default, it matched the
+    system proxy branch and never set GDAL_HTTP_PROXY, breaking tests that
+    don't explicitly set a proxy type.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-10
+
+    MetaSearch: use QgsSettingsTree API for proxy settings access
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-10
+
+    Migrate all proxy and network settings to QgsSettingsEntry API
+
+    Migrate proxy host, port, user, password, type, excluded URLs,
+    no-proxy URLs, auth config, and user agent settings from raw
+    QgsSettings to type-safe QgsSettingsEntry static members on
+    QgsNetworkAccessManager.
+
+    Add backward-compatible copyValueFromKey migration for all settings.
+    Update all callers in qgsoptions, qgisapp, tests, and MetaSearch plugin.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-10
+
+    Fix browser/favourites migration: remove copyValueFromKey with identical key
+
+    The old QgsSettings key 'browser/favourites' is identical to the new
+    QgsSettingsEntry key path (browser/ + favourites), so copyValueFromKey
+    would read the value then delete it, wiping the setting on first run
+    after upgrade.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-10
+
+    Migrate Raster/defaultZoomedIn/OutResampling to QgsSettingsEntryString
+
+    Adds QgsRasterLayer::settingsRasterDefaultZoomedInResampling and
+    settingsRasterDefaultZoomedOutResampling (QgsSettingsEntryString) under
+    QgsSettingsTree::sTreeRaster, completing the migration of raster
+    default settings alongside the existing settingsRasterDefaultOversampling
+    and settingsRasterDefaultEarlyResampling.
+
+    Replaces raw QgsSettings usage in:
+    - QgsRasterLayer pipe setup (zoomed in/out resampling reads)
+    - QgsRasterRenderingOptionsWidget (read and write)
+
+    Backward compatibility ensured via copyValueFromKey in
+    QgsSettingsRegistryCore constructor.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-10
+
+    Migrate Map/searchRadiusMM to QgsSettingsEntryDouble
+
+    Adds QgsMapTool::settingSearchRadiusMM (QgsSettingsEntryDouble) under
+    QgsSettingsTree::sTreeMap with default Qgis::DEFAULT_SEARCH_RADIUS_MM.
+
+    Replaces raw QgsSettings usage in:
+    - QgsMapTool::searchRadiusMM()
+    - QgsOptions constructor (read) and apply() (write)
+
+    Backward compatibility ensured via copyValueFromKey in
+    QgsSettingsRegistryGui constructor.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-10
+
+    Migrate codeEditor/fontfamily and codeEditor/fontsize to QgsSettingsEntry
+
+    Adds QgsCodeEditor::settingFontFamily (QgsSettingsEntryString) and
+    QgsCodeEditor::settingFontSize (QgsSettingsEntryInteger) under the
+    existing sTreeCodeEditor tree node (gui/code-editor).
+
+    Replaces raw QgsSettings usage in:
+    - QgsCodeEditor::getMonospaceFont()
+    - QgsCodeEditorOptionsWidget (font read/write/remove)
+    - test_qgscodeeditor.py (uses QgsSettingsTree.node() pattern)
+
+    Backward compatibility ensured via copyValueFromKey in
+    QgsSettingsRegistryGui constructor.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-10
+
+    Migrate proxy/proxyEnabled to QgsSettingsEntryBool
+
+    Add settingsProxyEnabled to QgsNetworkAccessManager and sTreeProxy to
+    QgsSettingsTree. Replace all raw QgsSettings usage for proxy enabled
+    check in network manager, GDAL utils, app, and options dialog.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-10
+
+    Migrate browser/favourites to QgsSettingsEntryStringList
+
+    Add settingsFavoriteDirs to QgsFavoritesItem with a new sTreeBrowser
+    tree node. Replace all raw QgsSettings read/write in favorites item
+    with the type-safe API.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-10
+
+    Migrate gui/maxEntriesRelationWidget to QgsSettingsEntryInteger
+
+    Add settingsMaxEntriesRelationWidget to QgsFeatureFilterModel as its
+    affiliated class. Replace all raw QgsSettings usage in relation reference
+    widgets with the new type-safe API.
+
+Mathieu Pellerin <nirvn.asia@gmail.com>	2026-03-15
+
+    [map renderer] Fix background color fill when composing image for non-default image format
+
+Stefanos Natsis <uclaros@gmail.com>	2026-03-15
+
+    Update destination path for directory copy test
+
+Stefanos Natsis <uclaros@gmail.com>	2026-03-15
+
+    Change mkdir to mkpath for directory creation
+
+qgis-bot <bot@qgis.org>	2026-03-16
+
+    auto sipify 🍺
+
+Merge: 7b921f845a3 dfa2dc57129
+Even Rouault <even.rouault@spatialys.com>	2026-03-16
+
+    Merge pull request #65411 from qgis/backport-65349-to-release-4_0
+
+    [Backport release-4_0] [server] Fix OGCAPI template paths wfs3->oapif
+
+Jean Felder <jean.felder@oslandia.com>	2026-03-16
+
+    qgsmatrix: Fix reserve size in dataList method
+
+Merge: 62ebc6e1174 23693ab19e7
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-16
+
+    Merge pull request #65425 from qgis/backport-65376-to-release-4_0
+
+    [Backport release-4_0] [GUI] Fix distance frame in labelling placement properties (Fix #65357)
+
+Merge: 691db7268a2 c61fac4339e
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-16
+
+    Merge pull request #65420 from qgis/backport-65416-to-release-4_0
+
+    [Backport release-4_0] Add additional QML module dependencies to the debian packages
+
+qgis-bot <bot@qgis.org>	2026-03-16
+
+    auto sipify 🍺
+
+Merge: f74f6b7591e bd1536348c8
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-16
+
+    Merge pull request #65304 from qgis/backport-65278-to-release-4_0
+
+    [Backport release-4_0] Migrate some settings to new API
+
+Andrea Giudiceandrea <andreaerdna@libero.it>	2026-03-12
+
+    [GUI] Fix distance frame enabling in labelling placement properties
+
+Merge: a8546fccc53 f74f6b7591e
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-16
+
+    Merge branch 'release-4_0' into backport-65278-to-release-4_0
+
+Mathieu Pellerin <nirvn.asia@gmail.com>	2026-03-16
+
+    Add additional QML module dependencies to the debian packages
+
+Merge: ddff5aca2c5 70d924753a6
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-15
+
+    Merge pull request #65403 from qgis/backport-65355-to-release-4_0
+
+    [Backport release-4_0] [processing] Add renderer usage detail when using the rasterize map and create XYZ tiles algorithms
+
+Alessandro Pasotti <elpaso@itopen.it>	2026-03-11
+
+    [server] Fix OGCAPI template paths wfs3->oapif
+
+    After the default api URL root path change the
+    template path needs to be hardcoded (this doesn't
+    reduce the class functionality because it's only
+    done for the existing private classes and it is
+    an implementation detail).
+
+    Followup #63086
+
+Merge: 23cd32e4ac9 af3d50498c3
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-15
+
+    Merge pull request #65401 from qgis/backport-65285-to-release-4_0
+
+    [Backport release-4_0] Fix 3D CRS becoming stale
+
+Tudor Bărăscu <tudor.barascu@qtibia.ro>	2026-03-13
+
+    add reverse tag to flip coordinates
+
+Merge: 43312be252e 41982cde8ee
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-15
+
+    Merge pull request #65383 from qgis/backport-65316-to-release-4_0
+
+    [Backport release-4_0] qgsrulebasedchunkloader: Fix check in onTerrainElevationOffsetChanged
+
+Mathieu Pellerin <nirvn.asia@gmail.com>	2026-03-12
+
+    [processing] Add renderer usage detail when using the rasterize map and create XYZ tiles algorithms
+
+qgis-bot <bot@qgis.org>	2026-03-15
+
+    auto sipify 🍺
+
+Merge: 0858a5b304e dd99328d8ff
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-15
+
+    Merge pull request #65370 from qgis/backport-65326-to-release-4_0
+
+    [Backport release-4_0] Don't copy plugins, compiled python files when migrating to 4.0
+
+viperminiq <viperminiq@gmail.com>	2026-03-09
+
+    reset vertical crs
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-12
+
+    Add debug error message when all settings are about to be wiped
+
+    (cherry picked from commit ba5c8ed4c890e917ad2a5baf0f55262d444b0ecf)
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-11
+
+    Speed up gui settings migration by holding the ini flush till we've migrated all settings
+
+    (cherry picked from commit cc295ecf5b397f5d0eed80955c0c4b2d16ef6548)
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-11
+
+    Fix user settings are completely wiped on migration
+
+    Fixes QgsSettingsEntryColor::copyValueFromKeys deletes all settings
+    when the removeSettingAtKey option is true, and no alphaKey is
+    specified.
+
+    This is because the QSettings::remove API is absolutely ridiculous
+    and WIPES THE ENTIRE QSettings store if the requested key is an
+    empty string.
+
+    (cherry picked from commit 1a77f1758a08cf4df79be1f10daa7fcbbcbfc1de)
+
+Merge: 5101af5ed94 41c8b2d2ee9
+Even Rouault <even.rouault@spatialys.com>	2026-03-14
+
+    Merge pull request #65391 from qgis/backport-65381-to-release-4_0
+
+    [Backport release-4_0] install qgsvectorlayerplotdatagatherer.h not .cpp
+
+Merge: dd51064fe03 b0d638e8328
+Even Rouault <even.rouault@spatialys.com>	2026-03-14
+
+    Merge pull request #65389 from qgis/backport-65367-to-release-4_0
+
+    [Backport release-4_0] Fix handling of raster OpenFileGDB layer paths on windows
+
+Jürgen E. Fischer <jef@norbit.de>	2026-03-13
+
+    install qgsvectorlayerplotdatagatherer.h not .cpp
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-13
+
+    Fix handling of raster OpenFileGDB layer paths on windows
+
+    Fixes #65345
+
+Jean Felder <jean.felder@oslandia.com>	2026-03-10
+
+    qgsrulebasedchunkloader: Fix check in onTerrainElevationOffsetChanged
+
+    Offset is along the Z axis.
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-11
+
+    Drop debug message level
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-11
+
+    Don't copy any plugins during migration of user profile to 4.0
+
+    require users to reinstall those, so that we don't copy broken,
+    non-updated 3.x plugins
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-11
+
+    Don't copy compiled python files when migrating to 4.0
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-11
+
+    Add exclusion patterns to QgsFileUtils.copyDirectory
+
+Merge: 6705552af6d cd5951318bd
+Julien Cabieces <julien.cabieces@oslandia.com>	2026-03-12
+
+    Merge pull request #65338 from qgis/backport-65321-to-release-4_0
+
+    [Backport release-4_0] Fix SIP_CONCAT_PARTS on Debian trixie
+
+Merge: 50376f7e6d3 fd2bbdc5591
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-11
+
+    Merge pull request #65320 from qgis/backport-64983-to-release-4_0
+
+    [Backport release-4_0] [GeoPdfExport] Use layer order for group layer children
+
+Julien Cabieces <julien.cabieces@oslandia.com>	2026-03-10
+
+    fix(Build): Fix SIP concat parts on Debian trixie
+
+Merge: 7e79703da1f 612da766a0f
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-11
+
+    Merge pull request #65328 from qgis/backport-65300-to-release-4_0
+
+    [Backport release-4_0] [mssql] Also update layer_styles table when moving, renaming tables
+
+Merge: 08293487fbe 1b1e933ec7b
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-11
+
+    Merge pull request #65303 from qgis/backport-65298-to-release-4_0
+
+    [Backport release-4_0] use inverse color on splash screen (fixes #65295)
+
+Merge: 6a83d989416 11d32355e9e
+David Signer <david@opengis.ch>	2026-03-11
+
+    Merge pull request #65314 from qgis/backport-65308-to-release-4_0
+
+    [Backport release-4_0] Fix: Avoid the scientific notation (exponential form) for large values
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-10
+
+    [mssql] Also update layer_styles table when moving, renaming tables
+
+Julien Cabieces <julien.cabieces@oslandia.com>	2026-02-18
+
+    fix(GeoPdfExport): Use layer order for group layer children
+
+    Sort group layer children according to layer order in export details.
+
+    Fix #63475
+
+David Signer <david@opengis.ch>	2026-03-10
+
+    Avoid the scientific notation (exponential form) for large values in the createExpression function. This finally fixes #64682 and fixes #65284
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-10
+
+    Fix settingsMeasurePlanimetric migration: wrong old key + collision
+
+    The old code stored 'measure/planimetric' with QgsSettings::Core section,
+    which maps to actual QSettings key 'core/measure/planimetric'. The migration
+    was looking for 'measure/planimetric' (without core/ prefix), which:
+    1. Would never find the old data, so the migration was a no-op
+    2. Has the same path as the new QgsSettingsEntry key (measure/ + planimetric),
+       so copyValueFromKey with removeOldKey=true would delete the user's setting
+       on every app restart (same bug as browser/favourites)
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    clear -> remove
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Fix test_qgsmeasureutils: use QgsSettings API instead of inaccessible C++ static
+
+    QgsSettingsRegistryCore.settingsMeasureKeepBaseUnit is not exposed to
+    Python (guarded by #ifndef SIP_RUN), so the test must use QgsSettings
+    with the new settings tree key path 'measure/keep-base-unit'.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    add missing includes
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Migrate qgis/segmentationToleranceType to QgsSettingsEntryEnumFlag
+
+    Migrate to QgsSettingsEntryEnumFlag<QgsAbstractGeometry::SegmentationToleranceType>
+    in QgsSettingsRegistryGui. Also update the companion segmentationTolerance
+    read/write in qgsvectorrenderingoptions.cpp to use the already-migrated
+    QgsSettingsEntryDouble API.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Add missing qgssettingsentryimpl.h includes
+
+    Fixes incomplete type error when accessing QgsSettingsEntryBool::value()
+    through the forward declaration in qgssettingsregistrycore.h.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Migrate qgis/default_selection_color to QgsSettingsEntryColor
+
+    Migrates the default selection color setting from separate
+    R/G/B/A QSettings keys to a single QgsSettingsEntryColor in
+    QgsSettingsRegistryCore.
+
+    Uses copyValueFromKeys() with alpha key to migrate from the old
+    separate color component keys.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Migrate qgis/default_measure_color to QgsSettingsEntryColor
+
+    Migrates the default measure tool color setting from separate
+    R/G/B QSettings keys to a single QgsSettingsEntryColor in
+    QgsSettingsRegistryGui.
+
+    Also fixes inconsistent defaults: qgsmaptoolmeasurebearing.cpp and
+    qgsmaptoolmeasureangle.cpp used (180,180,180) while all other files
+    used (222,155,67). The unified default is now (222,155,67).
+
+    Uses copyValueFromKeys() to migrate from the old separate color
+    component keys.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Migrate qgis/default_canvas_color to QgsSettingsEntryColor
+
+    Migrates the default canvas background color setting from separate
+    R/G/B QSettings keys to a single QgsSettingsEntryColor in
+    QgsSettingsRegistryCore.
+
+    Uses copyValueFromKeys() to migrate from the old separate color
+    component keys (red, green, blue).
+
+    Includes migration from both key format variants.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Migrate qgis/measure/displayunits to QgsSettingsEntryString
+
+    Migrates the measure display units setting from raw QSettings
+    access to QgsSettingsEntryString in QgsSettingsRegistryCore.
+
+    Uses QgsSettingsEntryString since the value is an encoded unit
+    string from QgsUnitTypes::encodeUnit(), which is incompatible
+    with QgsSettingsEntryEnumFlag's QMetaEnum-based storage.
+
+    Includes migration from old key format.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Migrate qgis/symbolsListGroupsIndex to QgsSettingsEntryInteger
+
+    Migrates the symbols list groups index setting from raw QSettings
+    access to QgsSettingsEntryInteger in QgsSettingsRegistryCore.
+
+    Includes migration from old key format.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Migrate qgis/segmentationTolerance to QgsSettingsEntryDouble
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Migrate qgis/scanItemsFastScanUris to QgsSettingsEntryStringList
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Migrate qgis/scanZipInBrowser2 to QgsSettingsEntryString
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Migrate qgis/magnifier_factor_default to QgsSettingsEntryDouble
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Migrate qgis/map_update_interval to QgsSettingsEntryInteger
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Migrate qgis/openSublayersInGroup to QgsSettingsEntryBool
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Migrate qgis/formatLayerName to QgsSettingsEntryBool
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Migrate qgis/native_color_dialogs to QgsSettingsEntryBool
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Migrate qgis/enable_anti_aliasing to QgsSettingsEntryBool
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Migrate qgis/messageTimeout to QgsSettingsEntryInteger
+
+    Migrates the qgis/messageTimeout setting to use the QgsSettingsEntry API
+    via QgsSettingsRegistryGui::settingsMessageTimeout (default: 5 seconds).
+
+    All usages in gui (message bar, auth widgets) and app have been updated.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Migrate qgis/measure/decimalplaces to QgsSettingsEntryInteger
+
+    Migrates the qgis/measure/decimalplaces setting to use the QgsSettingsEntry API
+    via QgsSettingsRegistryCore::settingsMeasureDecimalPlaces. This provides a type-safe
+    way to access the setting that controls the number of decimal places displayed
+    in measurement tools.
+
+    The setting is migrated in version 4.2 with backward compatibility maintained
+    through copyValueFromKey().
+
+    All usages in core, gui, app, and tests have been updated to use the new API.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Migrate qgis/measure/keepbaseunit to QgsSettingsEntryBool
+
+    Migrates the qgis/measure/keepbaseunit setting to use the QgsSettingsEntry API
+    via QgsSettingsRegistryCore::settingsMeasureKeepBaseUnit. This provides a type-safe
+    way to access the setting that controls whether measurements should keep the base
+    unit or be converted to the project's unit system.
+
+    The setting is migrated in version 4.2 with backward compatibility maintained
+    through copyValueFromKey().
+
+    All usages in core, gui, app, and tests have been updated to use the new API.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-09
+
+    Migrate qgis/new_layers_visible to QgsSettingsEntryBool
+
+    - Add settingsNewLayersVisible to QgsSettingsRegistryGui
+    - Use qgis/new-layers-visible key in settings tree
+    - Default value is true
+    - Replace value() calls with settingsNewLayersVisible->value()
+    - Replace setValue() call with settingsNewLayersVisible->setValue()
+    - Update qgisapp.cpp (2 usages)
+    - Update qgsapplayerhandling.cpp (1 usage)
+    - Update qgsrenderingoptions.cpp (2 usages)
+    - Migration code added for backward compatibility
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-06
+
+    Migrate qgis/layerTreeInsertionMethod to QgsSettingsEntryEnumFlag
+
+    - Add settingsLayerTreeInsertionMethod to QgsSettingsRegistryCore
+    - Use layer-tree/insertion-method key in settings tree
+    - Default value is Qgis::LayerTreeInsertionMethod::AboveInsertionPoint
+    - Replace enumValue() calls with settingsLayerTreeInsertionMethod->value()
+    - Replace setEnumValue() call with settingsLayerTreeInsertionMethod->setValue()
+    - Update qgisapp.cpp (3 usages)
+    - Update qgsapplayerhandling.cpp (1 usage)
+    - Update qgsoptions.cpp (1 usage)
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-05
+
+    Migrate qgis/zoom_factor and qgis/reverse_wheel_zoom settings
+
+    Two zoom-related settings migrated to QgsSettingsRegistryGui:
+    - qgis/zoom_factor -> settingsZoomFactor (qgis/zoom-factor)
+    - qgis/reverse_wheel_zoom -> settingsReverseWheelZoom (qgis/reverse-wheel-zoom)
+
+    Updated 9 files across GUI and App modules:
+    - elevation profile canvas
+    - map canvas and overview canvas
+    - layout view and layout tools
+    - model graphics view
+    - qgisapp main window
+    - 3D map tool
+    - options dialog
+
+    Migration code added to preserve existing values.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-05
+
+    Migrate Raster/histogram/* settings to QgsSettingsEntryBool
+
+    Four histogram settings migrated:
+    - showMarkers
+    - zoomToMinMax
+    - updateStyleToMinMax
+    - drawLines
+
+    All are now in QgsSettingsRegistryGui under the raster/histogram tree node.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-05
+
+    Migrate measure/planimetric setting to QgsSettingsEntryBool
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-05
+
+    Migrate /Cad/Floater setting to QgsSettingsEntryBool
+
+    The /Cad/Floater setting is now available as
+    QgsSettingsRegistryGui::settingsCadFloaterActive in the
+    digitizing/cad tree node.
+
+    Migration code has been added to preserve existing values.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-05
+
+    Add tree nodes for histogram and CAD settings
+
+qgis-bot <58983587+qgis-bot@users.noreply.github.com>	2026-03-10
+
+    fix wrong folder created in sipify (#65302)
+
+    and cleanup
+
+    Co-authored-by: Denis Rouzaud <denis.rouzaud@gmail.com>
+
+Jürgen E. Fischer <jef@norbit.de>	2026-03-09
+
+    use inverse color on splash screen (fixes #65295)
+
+Jean Felder <jean.felder@oslandia.com>	2026-03-05
+
+    qgs3dsceneexporter: Fix orientation of exported points
+
+    When an instanced geometry is created, it is rotated to follow the Z
+    up convention. This rotation needs to be also applied during export to
+    have proper orientation.
+
+Jean Felder <jean.felder@oslandia.com>	2026-03-06
+
+    testqgs3dexporter: Fix indentation
+
+qgis-bot <bot@qgis.org>	2026-03-10
+
+    auto sipify 🍺
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-08
+
+    Run pre-commit clang-format on remaining files
+
+Loïc Bartoletti <loic.bartoletti@oslandia.com>	2026-03-06
+
+    fix(nurbs): ensure that NurbsDegreeWidget only appear digitizin nurbscurve
+
+Anita Graser <anitagraser@gmx.at>	2026-03-09
+
+    Add files via upload
+
+qgis-bot <bot@qgis.org>	2026-03-09
+
+    auto sipify 🍺
+
+Merge: 27102cb7ab0 8c5d4ffde08
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-09
+
+    Merge pull request #65273 from qgis/backport-65181-to-release-4_0
+
+    [Backport release-4_0] Correctly respect "Vary" attributes when retrieving from cache
+
+Merge: c441e96f295 7164e3814fb
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-09
+
+    Merge pull request #65280 from qgis/backport-65276-to-release-4_0
+
+    [Backport release-4_0] [app] Fix crash when right-clicking on a recent project in the app Projects menu
+
+Mathieu Pellerin <nirvn.asia@gmail.com>	2026-03-09
+
+    [app] Fix crash when right-clicking on a recent project in the app Projects menu
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-06
+
+    Correctly respect "Vary" attributes when retrieving from cache
+
+    Since Qt's network cache is entirely built around URL matches
+    alone, add some downstream logic so that we correctly handle
+    responses with a "Vary" attribute and ensure that we do
+    not retrieve non-matching cached responses when the corresponding
+    header value differs.
+
+    Refs qgis#63009
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-04
+
+    Don't allow multiple requests to attempt to write to same network cache resource
+
+    Because QNetworkDiskCache filenames are built ENTIRELY off the request
+    URL alone, we potentially may hit situations where multiple requests
+    to the same url (eg from different threads) are attempting to save
+    their responses to the same network cache file.
+
+    Put a guard in place so that only the first ongoing request to
+    that URL is permitted to save the result in the cache.
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-04
+
+    Add failing tests for response Vary attribute
+
+    When the initial response contains a Vary: Authorization attribute,
+    we should only use the cached response for matching Authorization
+    headers.
+
+    Refs #63009
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-03
+
+    Add tests for QgsNetworkAccessManager cache control
+
+    Refs #63009
+
+qgis-bot <58983587+qgis-bot@users.noreply.github.com>	2026-03-08
+
+    Fix "python command not found" in pre-commit (#65272)
+
+    Co-authored-by: Harrissou Sant-anna <delazj@gmail.com>
+
+qgis-bot <bot@qgis.org>	2026-03-08
+
+    auto sipify 🍺
+
+Merge: 282ab91c2e1 928b70828bd
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-08
+
+    Merge pull request #65262 from qgis/backport-65215-to-release-4_0
+
+    [Backport release-4_0] Fix nothing happens when zooming to very small line feature extent
+
+Merge: ae817010a9f 2e065e0a8d1
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-08
+
+    Merge pull request #65264 from qgis/backport-65082-to-release-4_0
+
+    [Backport release-4_0] Update Norrköping codesprint and user group India
+
+qgis-bot <bot@qgis.org>	2026-03-08
+
+    auto sipify 🍺
+
+Merge: 2beb446a1dc d52bb8163b0
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-08
+
+    Merge pull request #65263 from qgis/backport-65246-to-release-4_0
+
+    [Backport release-4_0] When migrating QGIS 3 profiles, don't copy contents of symlinks
+
+Etienne Trimaille <etienne.trimaille@gmail.com>	2026-02-25
+
+    Update Norrköping codesprint and user group India
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-07
+
+    When migrating QGIS 3 profiles, don't copy contents of symlinks
+
+    So eg if a user profile contains a symlink to a plugin directory,
+    don't make a full copy of that symlinked directory into the
+    QGIS 4 user profile. Instead just skip it and let the user manually
+    migrate that part of their profile.
+
+    Fixes issues when migrating (NON STANDARD) profile setups, especially
+    for plugin development environments.
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-07
+
+    Add option to skip symlinks in QgsFileUtils::copyDirectory
+
+Merge: ac575b2f185 d1796cb55cb
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-08
+
+    Merge pull request #65257 from qgis/backport-65223-to-release-4_0
+
+    [Backport release-4_0] [browser] Optimise db connections when moving tables to schema
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-07
+
+    Improve docs
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-06
+
+    Fix nothing happens when zooming to very small line feature extent
+
+    If zooming to very small feature extent would fail, treat the same as
+    zooming to a point feature's extent and recenter the map instead.
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-06
+
+    Clear some clang-tidy warnings, rename variables for clarity
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-06
+
+    Move QgsMapSettings extent validation logic to utility function
+
+    And add tests
+
+qgis-bot <bot@qgis.org>	2026-03-08
+
+    auto sipify 🍺
+
+Mathieu Pellerin <nirvn.asia@gmail.com>	2026-03-07
+
+    [processing][pdal] Throw exception where needed when Qt is build within the process feature
+
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-06
+
+    fix ui files
+
+Alexander Bruy <alexander.bruy@gmail.com>	2026-02-24
+
+    disable label suffix widgets when axis is categorical
+
+Alexander Bruy <alexander.bruy@gmail.com>	2026-03-06
+
+    expose X axis label suffix for layout chart items (fix #63465)
+
+Nyall Dawson <nyall.dawson@gmail.com>	2026-03-06
+
+    [browser] Optimise db connections when moving tables to schema
+
+    Avoid needless creation of multiple connections
+
+github-actions[bot] <github-actions[bot]@users.noreply.github.com>	2026-03-07
+
+    auto-fix pre-commit issues
+
+Germán Carrillo <gcarrillo@linuxmail.org>	2026-02-16
+
+    [tests] Test that registering a custom profile source adds a custom node to the elevation layer tree, and that unregistering the custom profile source removes the custom node from the layer tree
+
+Germán Carrillo <gcarrillo@linuxmail.org>	2026-01-30
+
+    [fix] Elevation profile layer tree: make sure a custom node is removed when unregistering the corresponding custom profile source, even if it was moved inside a group.
+
+Germán Carrillo <gcarrillo@linuxmail.org>	2026-01-28
+
+    [fix] Make sure custom profiles are added as custom nodes when initializing the Elevation layer tree
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-06
+
+    fix qgseditorwidgetregistry.sip
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-06
+
+    clang-format
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-06
+
+    Fix sipify multiline handling for qgssettingseditorwidgetwrapperimpl
+
+    Move inline constructor implementations from header to cpp file to prevent
+    sipify.py from including implementation code in .sip.in files.
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-06
+
+    fix natereferencesystemmodel.sip.in
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-05
+
+    fix querybuilder
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-05
+
+    fix dijkstra dox
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-05
+
+    run clang-format on providers
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-05
+
+    run clang-format on app
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-05
+
+    run clang-format on analysis
+
+Denis Rouzaud <denis.rouzaud@gmail.com>	2026-03-05
+
+    run clang-format on gui
+
+qgis-bot <bot@qgis.org>	2026-03-07
+
+    auto sipify 🍺
+
+Jean Felder <jean.felder@oslandia.com>	2026-03-06
+
+    refactor: Use clang-format on missing src/3d files
+
+    follow-up of ec2cd479d61dccdd4def450d6f9f34c40a21d15d
+
+viperminiq <viperminiq@gmail.com>	2026-03-06
+
+    use context manager
+
+viperminiq <viperminiq@gmail.com>	2026-03-04
+
+    close namedtemporaryfile after name extraction
+
+Jürgen E. Fischer <jef@norbit.de>	2026-03-06
+
+    Release of 4.0 (Norrköping)
+
+Jürgen E. Fischer <jef@norbit.de>	2026-03-06
+
+    changelog and news update for 4.0
+
 Jürgen E. Fischer <jef@norbit.de>	2026-03-06
 
     translation update for 4.0.0 from transifex
