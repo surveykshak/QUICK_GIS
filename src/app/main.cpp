@@ -122,7 +122,7 @@ typedef SInt32 SRefCon;
  */
 void version()
 {
-  const QString msg = u"QGIS %1 '%2' (%3)\n"_s.arg( VERSION ).arg( RELEASE_NAME ).arg( QGSVERSION );
+  const QString msg = u"QUICKGIS %1 '%2' (%3)\n"_s.arg( VERSION ).arg( RELEASE_NAME ).arg( QGSVERSION );
   std::cout << msg.toStdString();
 }
 
@@ -134,7 +134,7 @@ void usage( const QString &appName )
   QStringList msg;
 
   msg
-    << u"QGIS is a user friendly Open Source Geographic Information System.\n"_s
+    << u"QUICKGIS is a user friendly Open Source Geographic Information System.\n"_s
     << u"Usage: "_s
     << appName
     << u" [OPTION] [FILE]\n"_s
@@ -363,7 +363,7 @@ static void dumpBacktrace( unsigned int depth )
 #ifdef QGIS_CRASH
 void qgisCrash( int signal )
 {
-  fprintf( stderr, "QGIS died on signal %d", signal );
+  fprintf( stderr, "QUICKGIS died on signal %d", signal );
 
   QgsCrashHandler::handle( 0 );
 
