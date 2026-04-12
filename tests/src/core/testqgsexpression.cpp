@@ -335,7 +335,7 @@ class TestQgsExpression : public QObject
       QVariant out = expression.evaluate( &context );
       QgsGeometry outGeom = out.value<QgsGeometry>();
       QgsGeometry geom( new QgsPoint( 2500, 2500, 800 ) );
-      QCOMPARE( geom.isExactlyEqual( outGeom ), true );
+      QCOMPARE( geom.equals( outGeom ), true );
 
       context.appendScope( QgsExpressionContextUtils::meshExpressionScope( QgsMesh::Face ) );
       context.lastScope()->setVariable( u"_mesh_face_index"_s, 2 );
@@ -2288,13 +2288,6 @@ class TestQgsExpression : public QObject
       QTest::newRow( "concat" ) << "concat('a', 'b', 'c', 'd')" << false << QVariant( "abcd" );
       QTest::newRow( "concat function single" ) << "concat('a')" << false << QVariant( "a" );
       QTest::newRow( "concat function with NULL" ) << "concat(NULL,'a','b')" << false << QVariant( "ab" );
-      QTest::newRow( "concat_ws no args" ) << "concat_ws()" << true << QVariant();
-      QTest::newRow( "concat_ws one arg" ) << "concat_ws(' ')" << true << QVariant();
-      QTest::newRow( "concat_ws comma" ) << "concat_ws(',', 'b', NULL, 'd')" << false << QVariant( "b,d" );
-      QTest::newRow( "concat_ws comma multichar" ) << "concat_ws(', ', 'b', NULL, 'd', 'efg', NULL, 'hij')" << false << QVariant( "b, d, efg, hij" );
-      QTest::newRow( "concat_ws all NULL" ) << "concat_ws(',', NULL, NULL, NULL)" << false << QVariant( "" );
-      QTest::newRow( "concat_ws function single" ) << "concat_ws(',', 'a')" << false << QVariant( "a" );
-      QTest::newRow( "concat_ws function with NULL" ) << "concat_ws(NULL,'a','b')" << false << QVariant( "ab" );
       QTest::newRow( "array_to_string" ) << "array_to_string(array(1,2,3),',')" << false << QVariant( "1,2,3" );
       QTest::newRow( "array_to_string with custom empty value" ) << "array_to_string(array(1,'',3),',','*')" << false << QVariant( "1,*,3" );
       QTest::newRow( "array_to_string fail passing non-array" ) << "array_to_string('non-array',',')" << true << QVariant();
@@ -4769,7 +4762,7 @@ class TestQgsExpression : public QObject
 
       QCOMPARE( out.userType() == qMetaTypeId<QgsGeometry>(), true );
       QgsGeometry outGeom = out.value<QgsGeometry>();
-      QCOMPARE( geom.isExactlyEqual( outGeom ), true );
+      QCOMPARE( geom.equals( outGeom ), true );
     }
 
     void eval_geometry_access_transform_data()
@@ -4831,7 +4824,7 @@ class TestQgsExpression : public QObject
       QCOMPARE( exp.hasEvalError(), evalError );
       QCOMPARE( out.userType() == qMetaTypeId<QgsGeometry>(), true );
       QgsGeometry outGeom = out.value<QgsGeometry>();
-      QCOMPARE( geom.isExactlyEqual( outGeom ), true );
+      QCOMPARE( geom.equals( outGeom ), true );
     }
 
     void eval_spatial_operator_data()
@@ -4857,26 +4850,6 @@ class TestQgsExpression : public QObject
       QTest::newRow( "No Equals multipoint" ) << "equals( $geometry, geomFromWKT('MULTIPOINT( ( 0 0 ) )') )" << QgsGeometry::fromPointXY( point ) << false << QVariant( 0 );
       QTest::newRow( "No Equals line" ) << "equals( $geometry, geomFromWKT('LINESTRING( 10 10, 0 0 )') )" << QgsGeometry::fromPolylineXY( line ) << false << QVariant( 0 );
       QTest::newRow( "Equals line" ) << "equals( $geometry, geomFromWKT('LINESTRING( 0 0, 10 10 )') )" << QgsGeometry::fromPolylineXY( line ) << false << QVariant( 1 );
-      QTest::newRow( "Topological equals line bad backend" )
-        << "topologically_equals( $geometry, geomFromWKT('LINESTRING( 0 0, 10 10 )'), backend:='QGIS' )"
-        << QgsGeometry::fromPolylineXY( line )
-        << true
-        << QVariant( 0 );
-      QTest::newRow( "Topological equals line" )
-        << "topologically_equals( $geometry, geomFromWKT('MULTILINESTRING(( 0 0, 10 10 ))'), backend:='GEOS' )"
-        << QgsGeometry::fromPolylineXY( line )
-        << false
-        << QVariant( 1 );
-      QTest::newRow( "Fuzzy equals line QGIS backend" )
-        << "fuzzy_equals( $geometry, geomFromWKT('LINESTRING( 0 0, 10.5 10.5 )'), epsilon:=1, backend:='QGIS' )"
-        << QgsGeometry::fromPolylineXY( line )
-        << false
-        << QVariant( 1 );
-      QTest::newRow( "Fuzzy equals line GEOS backend" )
-        << "fuzzy_equals( $geometry, geomFromWKT('LINESTRING( 0 0, 10.5 10.5 )'), epsilon:=1, backend:='GEOS' )"
-        << QgsGeometry::fromPolylineXY( line )
-        << false
-        << QVariant( 1 );
       QTest::newRow( "No Equals polygon" ) << "equals( $geometry, geomFromWKT('POLYGON(( 0 0, 10 0, 10 10, 0 0 ))') )" << QgsGeometry::fromPolygonXY( polygon ) << false << QVariant( 0 );
       QTest::newRow( "Equals polygon" ) << "equals( $geometry, geomFromWKT('POLYGON(( 0 0, 10 10, 10 0, 0 0 ))') )" << QgsGeometry::fromPolygonXY( polygon ) << false << QVariant( 1 );
 
@@ -4908,15 +4881,11 @@ class TestQgsExpression : public QObject
       f.setGeometry( geom );
 
       QgsExpression exp( string );
-      if ( exp.hasParserError() )
-        qDebug() << "Parser error:" << exp.parserErrorString();
       QCOMPARE( exp.hasParserError(), false );
       QCOMPARE( exp.needsGeometry(), true );
 
       QgsExpressionContext context = QgsExpressionContextUtils::createFeatureBasedContext( f, QgsFields() );
       QVariant out = exp.evaluate( &context );
-      if ( exp.hasEvalError() && exp.hasEvalError() != evalError )
-        qDebug() << "Eval error:" << exp.evalErrorString();
       QCOMPARE( exp.hasEvalError(), evalError );
       QCOMPARE( out.toInt(), result.toInt() );
     }

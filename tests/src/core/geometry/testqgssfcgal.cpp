@@ -38,7 +38,6 @@ using namespace Qt::StringLiterals;
 #include "qgsgeometry.h"
 #include "qgstriangulatedsurface.h"
 #include "qgslinestring.h"
-#include "qgsmatrix4x4.h"
 #include "qgspolygon.h"
 #include "qgsgeometryengine.h"
 #include "qgscircle.h"
@@ -97,8 +96,6 @@ class TestQgsSfcgal : public QgsTest
     void simplify();
     void approximateMedialAxis();
     void primitiveCube();
-    void toSolid();
-    void toPolyhedralSurface();
 
   private:
     //! Must be called before each render test
@@ -113,12 +110,12 @@ class TestQgsSfcgal : public QgsTest
 
     std::unique_ptr<QgsSfcgalGeometry> openWktFile( const QString &wktFile );
 
-    inline bool qFuzzyCompare2( double f1, double f2, double epsilon = 0.000001 ) { return std::abs( f1 - f2 ) < epsilon; }
+    inline bool qFuzzyCompare2( float f1, float f2, float epsilon = 0.000001 ) { return std::abs( f1 - f2 ) < epsilon; }
 
-    inline bool qFuzzyCompare2( const QgsMatrix4x4 &m1, const QgsMatrix4x4 &m2, float epsilon = 0.000001 )
+    inline bool qFuzzyCompare2( const QMatrix4x4 &m1, const QMatrix4x4 &m2, float epsilon = 0.000001 )
     {
-      const double *d1 = m1.constData();
-      const double *d2 = m2.constData();
+      const float *d1 = m1.data();
+      const float *d2 = m2.data();
       return qFuzzyCompare2( d1[0 * 4 + 0], d2[0 * 4 + 0], epsilon )
              && qFuzzyCompare2( d1[0 * 4 + 1], d2[0 * 4 + 1], epsilon )
              && qFuzzyCompare2( d1[0 * 4 + 2], d2[0 * 4 + 2], epsilon )
@@ -748,7 +745,8 @@ void TestQgsSfcgal::intersection()
   QVERIFY2( intersectionGeom, "intersectionGeom is NULL. " );
   QCOMPARE( intersectionGeom->wkbType(), Qgis::WkbType::Polygon );
 
-  const QgsPolygon *intersectionPoly = qgsgeometry_cast<const QgsPolygon *>( intersectionGeom->asQgisGeometry().release() );
+  std::unique_ptr<QgsAbstractGeometry> qgsIntersection = intersectionGeom->asQgisGeometry();
+  const QgsPolygon *intersectionPoly = qgsgeometry_cast<const QgsPolygon *>( qgsIntersection.get() );
   QVERIFY( intersectionPoly );                               // check that the union created a feature
   QVERIFY( intersectionPoly->exteriorRing()->length() > 0 ); // check that the union created a feature
   QCOMPARE( intersectionPoly->exteriorRing()->asWkt(), u"LineString (40 80, 40 40, 80 40, 80 80, 40 80)"_s );
@@ -790,7 +788,8 @@ void TestQgsSfcgal::intersection3d()
       ")"_s
     );
 
-    const QgsMultiCurve *interCurve = qgsgeometry_cast<const QgsMultiCurve *>( scInterGeom->asQgisGeometry().release() );
+    std::unique_ptr<QgsAbstractGeometry> qgsIntersection = scInterGeom->asQgisGeometry();
+    const QgsMultiCurve *interCurve = qgsgeometry_cast<const QgsMultiCurve *>( qgsIntersection.get() );
     QCOMPARE( interCurve->partCount(), 2 ); // check that the operation created 2 features
     QCOMPARE( interCurve->curveN( 0 )->asWkt( 2 ), u"LineString Z (-5863.79 3335.64 20, -5551.89 3559.33 20)"_s );
     QCOMPARE( interCurve->curveN( 1 )->asWkt( 2 ), u"LineString Z (-5520.8 3581.62 20, -5551.89 3559.33 20)"_s );
@@ -812,7 +811,8 @@ void TestQgsSfcgal::intersection3d()
       ")"_s
     );
 
-    const QgsMultiCurve *interCurve = qgsgeometry_cast<const QgsMultiCurve *>( scInterGeom->asQgisGeometry().release() );
+    std::unique_ptr<QgsAbstractGeometry> qgsIntersection = scInterGeom->asQgisGeometry();
+    const QgsMultiCurve *interCurve = qgsgeometry_cast<const QgsMultiCurve *>( qgsIntersection.get() );
     QCOMPARE( interCurve->partCount(), 2 ); // check that the operation created 2 features
     QCOMPARE( interCurve->curveN( 0 )->asWkt( 2 ), u"LineString Z (-6321.91 3651.67 0, -6229.56 3717.9 0)"_s );
     QCOMPARE( interCurve->curveN( 1 )->asWkt( 2 ), u"LineString Z (-5814.13 4015.84 0, -6229.56 3717.9 0)"_s );
@@ -829,7 +829,8 @@ void TestQgsSfcgal::intersection3d()
     QCOMPARE( resultGeom->wkbType(), Qgis::WkbType::GeometryCollectionZ );
     QCOMPARE( resultGeom->partCount(), 7 );
 
-    const QgsGeometryCollection *castGeom = qgsgeometry_cast<const QgsGeometryCollection *>( resultGeom->asQgisGeometry().release() );
+    std::unique_ptr<QgsAbstractGeometry> qgsResult = resultGeom->asQgisGeometry();
+    const QgsGeometryCollection *castGeom = qgsgeometry_cast<const QgsGeometryCollection *>( qgsResult.get() );
     QVERIFY( castGeom != nullptr );
     QCOMPARE( castGeom->partCount(), 7 );
 
@@ -878,7 +879,8 @@ void TestQgsSfcgal::unionCheck1()
 
   QVERIFY( combinedGeom->partCount() > 0 ); // check that the union did not fail
 
-  const QgsGeometryCollection *castGeom = qgsgeometry_cast<const QgsGeometryCollection *>( combinedGeom->asQgisGeometry().release() );
+  std::unique_ptr<QgsAbstractGeometry> qgsCombined = combinedGeom->asQgisGeometry();
+  const QgsGeometryCollection *castGeom = qgsgeometry_cast<const QgsGeometryCollection *>( qgsCombined.get() );
   QVERIFY( castGeom != nullptr );
 
   paintMultiPolygon( castGeom );
@@ -902,7 +904,8 @@ void TestQgsSfcgal::unionCheck2()
 
   QVERIFY( combinedGeom->partCount() > 0 ); // check that the union did not fail
 
-  const QgsPolygon *castGeom = qgsgeometry_cast<const QgsPolygon *>( combinedGeom->asQgisGeometry().release() );
+  std::unique_ptr<QgsAbstractGeometry> qgsCombined = combinedGeom->asQgisGeometry();
+  const QgsPolygon *castGeom = qgsgeometry_cast<const QgsPolygon *>( qgsCombined.get() );
   QVERIFY( castGeom != nullptr );
 
   paintPolygon( castGeom );
@@ -923,7 +926,8 @@ void TestQgsSfcgal::differenceCheck1()
 
   QVERIFY( diffGeom->partCount() > 0 ); // check that the union did not fail
 
-  const QgsPolygon *castGeom = qgsgeometry_cast<const QgsPolygon *>( diffGeom->asQgisGeometry().release() );
+  std::unique_ptr<QgsAbstractGeometry> qgsDiff = diffGeom->asQgisGeometry();
+  const QgsPolygon *castGeom = qgsgeometry_cast<const QgsPolygon *>( qgsDiff.get() );
   QVERIFY( castGeom != nullptr );
 
   paintPolygon( castGeom );
@@ -941,7 +945,8 @@ void TestQgsSfcgal::differenceCheck2()
 
   QVERIFY( diffGeom->partCount() > 0 ); // check that the union did not fail
 
-  const QgsPolygon *castGeom = qgsgeometry_cast<const QgsPolygon *>( diffGeom->asQgisGeometry().release() );
+  std::unique_ptr<QgsAbstractGeometry> qgsDiff = diffGeom->asQgisGeometry();
+  const QgsPolygon *castGeom = qgsgeometry_cast<const QgsPolygon *>( qgsDiff.get() );
   QVERIFY( castGeom != nullptr );
 
   paintPolygon( castGeom );
@@ -981,7 +986,8 @@ void TestQgsSfcgal::difference3d()
     QCOMPARE( scDiffGeom->wkbType(), Qgis::WkbType::TINZ );
     QVERIFY2( scDiffGeom, "diffGeom is NULL." );
 
-    const QgsTriangulatedSurface *castGeom = qgsgeometry_cast<const QgsTriangulatedSurface *>( scDiffGeom->asQgisGeometry().release() );
+    std::unique_ptr<QgsAbstractGeometry> qgsDiff = scDiffGeom->asQgisGeometry();
+    const QgsTriangulatedSurface *castGeom = qgsgeometry_cast<const QgsTriangulatedSurface *>( qgsDiff.get() );
     QVERIFY( castGeom != nullptr );
 
     // 3rd: prepare compare
@@ -1145,7 +1151,7 @@ void TestQgsSfcgal::primitiveCube()
 
   // check translate
   std::unique_ptr<QgsSfcgalGeometry> cubeT = cube->translate( { 1.0, 2.0, 3.0 } );
-  QCOMPARE( cubeT->primitiveTransform(), QgsMatrix4x4( 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 2.0, 0.0, 0.0, 1.0, 3.0, 0.0, 0.0, 0.0, 1.0 ) );
+  QCOMPARE( cubeT->primitiveTransform(), QMatrix4x4( 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 2.0, 0.0, 0.0, 1.0, 3.0, 0.0, 0.0, 0.0, 1.0 ) );
   QCOMPARE(
     cubeT->asWkt( 0 ),
     u"POLYHEDRALSURFACE Z (((1 2 3,1 7 3,6 7 3,6 2 3,1 2 3)),"
@@ -1158,9 +1164,9 @@ void TestQgsSfcgal::primitiveCube()
 
   // check rotate
   std::unique_ptr<QgsSfcgalGeometry> cubeR = cube->rotate3D( M_PI / 2.0, { 0.0, 0.0, 1.0 }, { 0.0, 0.0, 0.0 } );
-  QVERIFY( qFuzzyCompare2( cubeR->primitiveTransform(), QgsMatrix4x4( -1.0e-07, -1.0, 0.0, 0.0, 1.0, -1.0e-07, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) ) );
+  QVERIFY( qFuzzyCompare2( cubeR->primitiveTransform(), QMatrix4x4( -1.0e-07, -1.0, 0.0, 0.0, 1.0, -1.0e-07, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) ) );
   cubeR = cube->rotate3D( M_PI / 2.0, { 0.0, 0.0, 1.0 }, { 1.0, 2.0, 3.0 } );
-  QVERIFY( qFuzzyCompare2( cubeR->primitiveTransform(), QgsMatrix4x4( -1.0e-07, -1.0, 0.0, -3.0, 1.0, -1.0e-07, 0.0, -1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) ) );
+  QVERIFY( qFuzzyCompare2( cubeR->primitiveTransform(), QMatrix4x4( -1.0e-07, -1.0, 0.0, -3.0, 1.0, -1.0e-07, 0.0, -1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) ) );
   QCOMPARE(
     cubeR->asWkt( 0 ),
     u"POLYHEDRALSURFACE Z (((-3 -1 0,-8 -1 0,-8 4 0,-3 4 0,-3 -1 0)),"
@@ -1173,9 +1179,9 @@ void TestQgsSfcgal::primitiveCube()
 
   // check scale
   std::unique_ptr<QgsSfcgalGeometry> cubeS = cube->scale( { 1.0, 2.0, 3.0 }, { 0.0, 0.0, 0.0 } );
-  QCOMPARE( cubeS->primitiveTransform(), QgsMatrix4x4( 1.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 3.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) );
+  QCOMPARE( cubeS->primitiveTransform(), QMatrix4x4( 1.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 3.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) );
   cubeS = cube->scale( { 1.0, 2.0, 3.0 }, { 1.0, 2.0, 3.0 } );
-  QCOMPARE( cubeS->primitiveTransform(), QgsMatrix4x4( 1.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 2.0, 0.0, 0.0, 3.0, 6.0, 0.0, 0.0, 0.0, 1.0 ) );
+  QCOMPARE( cubeS->primitiveTransform(), QMatrix4x4( 1.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 2.0, 0.0, 0.0, 3.0, 6.0, 0.0, 0.0, 0.0, 1.0 ) );
   QCOMPARE(
     cubeS->asWkt( 0 ),
     u"POLYHEDRALSURFACE Z (((0 2 6,0 12 6,5 12 6,5 2 6,0 2 6)),"
@@ -1205,39 +1211,6 @@ void TestQgsSfcgal::primitiveCube()
   QCOMPARE( param.toDouble(), 8.2 );
 
 #endif
-}
-
-void TestQgsSfcgal::toSolid()
-{
-  QString phsWkt = u"POLYHEDRALSURFACE Z (((0 0 0,0 1 0,1 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0.5 0.5 1,0 0 0)),((1 0 0,1 1 0,0.5 0.5 1,1 0 0)),((1 1 0,0 1 0,0.5 0.5 1,1 1 0)),((0 1 0,0 0 0,0.5 0.5 1,0 1 0)))"_s;
-
-  QgsSfcgalGeometry sfcgalPolyhedralSurface( phsWkt );
-  QVERIFY2( sfcgalPolyhedralSurface.sfcgalGeometry() != nullptr, "Solid, input phs is NULL" );
-  QCOMPARE( sfcgalPolyhedralSurface.wkbType(), Qgis::WkbType::PolyhedralSurfaceZ );
-  std::unique_ptr<QgsSfcgalGeometry> solid = sfcgalPolyhedralSurface.toSolid();
-  QCOMPARE( solid->asWkt( 1 ), u"SOLID Z ((((0.0 0.0 0.0,0.0 1.0 0.0,1.0 1.0 0.0,1.0 0.0 0.0,0.0 0.0 0.0)),((0.0 0.0 0.0,1.0 0.0 0.0,0.5 0.5 1.0,0.0 0.0 0.0)),((1.0 0.0 0.0,1.0 1.0 0.0,0.5 0.5 1.0,1.0 0.0 0.0)),((1.0 1.0 0.0,0.0 1.0 0.0,0.5 0.5 1.0,1.0 1.0 0.0)),((0.0 1.0 0.0,0.0 0.0 0.0,0.5 0.5 1.0,0.0 1.0 0.0))))"_s );
-
-  // solid conversion does not work on a polygon
-  QgsSfcgalGeometry sfcgalPolygonZ( "POLYGON Z ((0 0 1, 20 0 2, 20 10 3, 0 10 4, 0 0 1))" );
-  QVERIFY2( sfcgalPolygonZ.sfcgalGeometry() != nullptr, "Solid, input polygon is NULL" );
-  QCOMPARE( sfcgalPolygonZ.wkbType(), Qgis::WkbType::PolygonZ );
-  QVERIFY_EXCEPTION_THROWN( sfcgalPolygonZ.toSolid(), QgsSfcgalException );
-}
-
-void TestQgsSfcgal::toPolyhedralSurface()
-{
-  QString solidWkt = u"SOLID Z ((((0 0 0,0 1 0,1 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0.5 0.5 1,0 0 0)),((1 0 0,1 1 0,0.5 0.5 1,1 0 0)),((1 1 0,0 1 0,0.5 0.5 1,1 1 0)),((0 1 0,0 0 0,0.5 0.5 1,0 1 0))))"_s;
-
-  QgsSfcgalGeometry sfcgalSolid( solidWkt );
-  QVERIFY2( sfcgalSolid.sfcgalGeometry() != nullptr, "toPolyhedralSurface, input solid is NULL" );
-  std::unique_ptr<QgsSfcgalGeometry> phs = sfcgalSolid.toPolyhedralSurface();
-  QCOMPARE( phs->asWkt( 1 ), u"POLYHEDRALSURFACE Z (((0.0 0.0 0.0,0.0 1.0 0.0,1.0 1.0 0.0,1.0 0.0 0.0,0.0 0.0 0.0)),((0.0 0.0 0.0,1.0 0.0 0.0,0.5 0.5 1.0,0.0 0.0 0.0)),((1.0 0.0 0.0,1.0 1.0 0.0,0.5 0.5 1.0,1.0 0.0 0.0)),((1.0 1.0 0.0,0.0 1.0 0.0,0.5 0.5 1.0,1.0 1.0 0.0)),((0.0 1.0 0.0,0.0 0.0 0.0,0.5 0.5 1.0,0.0 1.0 0.0)))"_s );
-
-  // solid conversion does not work on a polygon
-  QgsSfcgalGeometry sfcgalPolygonZ( u"POLYGON Z ((0 0 1, 20 0 2, 20 10 3, 0 10 4, 0 0 1))"_s );
-  QVERIFY2( sfcgalPolygonZ.sfcgalGeometry() != nullptr, "toPolyhedralSurface, input polygon is NULL" );
-  QCOMPARE( sfcgalPolygonZ.wkbType(), Qgis::WkbType::PolygonZ );
-  QVERIFY_EXCEPTION_THROWN( sfcgalPolygonZ.toPolyhedralSurface(), QgsSfcgalException );
 }
 
 QGSTEST_MAIN( TestQgsSfcgal )

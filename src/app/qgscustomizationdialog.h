@@ -173,7 +173,7 @@ class APP_EXPORT QgsCustomizationDialog : public QMainWindow, private Ui::QgsCus
      * \brief tree view to edit a customization
      * \since QGIS 4.0
      */
-    class APP_EXPORT QgsCustomizationModel : public QAbstractItemModel
+    class QgsCustomizationModel : public QAbstractItemModel
     {
       public:
         enum class Mode

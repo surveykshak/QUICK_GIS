@@ -59,7 +59,7 @@ Qgis::ProcessingAlgorithmDocumentationFlags QgsAggregateAlgorithm::documentation
 
 QStringList QgsAggregateAlgorithm::tags() const
 {
-  return QObject::tr( "attributes,sum,mean,median,count,collect,dissolve,statistics,merge,combine,concatenate" ).split( ',' );
+  return QObject::tr( "attributes,sum,mean,collect,dissolve,statistics,merge" ).split( ',' );
 }
 
 QString QgsAggregateAlgorithm::group() const

@@ -17,7 +17,7 @@
    <item>
     <widget class="QgsScrollArea" name="scrollArea">
      <property name="frameShape">
-      <enum>QFrame::Shape::NoFrame</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="widgetResizable">
       <bool>true</bool>
@@ -28,7 +28,7 @@
         <x>0</x>
         <y>0</y>
         <width>533</width>
-        <height>1002</height>
+        <height>944</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -162,114 +162,61 @@
              </layout>
             </widget>
             <widget class="QWidget" name="page_2">
-             <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0" columnstretch="0">
+             <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,2,5" columnstretch="0,0">
               <property name="leftMargin">
-               <number>9</number>
+               <number>0</number>
               </property>
               <property name="topMargin">
-               <number>9</number>
+               <number>0</number>
               </property>
               <property name="rightMargin">
-               <number>9</number>
+               <number>0</number>
               </property>
               <property name="bottomMargin">
-               <number>9</number>
+               <number>0</number>
               </property>
-              <item row="1" column="0">
-               <widget class="QRadioButton" name="mGeospatialPDFCustomConfigRadioButton">
-                <property name="toolTip">
-                 <string>Set a custom configuration of layer and group names, order, etc.</string>
+              <item row="1" column="0" colspan="2">
+               <widget class="QgsCollapsibleGroupBoxBasic" name="mIncludeMapThemesCheck">
+                <property name="title">
+                 <string>Include multiple map themes</string>
                 </property>
-                <property name="text">
-                 <string>Custom configuration</string>
-                </property>
-                <property name="checked">
+                <property name="checkable">
                  <bool>true</bool>
                 </property>
+                <property name="checked">
+                 <bool>false</bool>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_4">
+                 <item>
+                  <widget class="QListWidget" name="mThemesList"/>
+                 </item>
+                </layout>
                </widget>
               </item>
-              <item row="0" column="0">
-               <widget class="QRadioButton" name="mGeospatialPDFLayerTreeConfigRadioButton">
-                <property name="toolTip">
-                 <string>Prefer layer tree properties for layer and group names, order, and visibility.</string>
+              <item row="2" column="0" colspan="2">
+               <widget class="QGroupBox" name="mExportGeospatialPdfFeaturesCheckBox">
+                <property name="title">
+                 <string>Layer Structure</string>
                 </property>
-                <property name="text">
-                 <string>Follow layer tree configuration</string>
+                <property name="checkable">
+                 <bool>false</bool>
                 </property>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QFrame" name="mGeospatialPDFCustomConfigFrame">
-                <property name="frameShape">
-                 <enum>QFrame::Shape::NoFrame</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Shadow::Raised</enum>
-                </property>
-                <layout class="QGridLayout" name="gridLayout_4">
-                 <property name="leftMargin">
-                  <number>20</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>0</number>
-                 </property>
-                 <item row="0" column="0">
-                  <widget class="QgsCollapsibleGroupBoxBasic" name="mIncludeMapThemesCheck">
-                   <property name="title">
-                    <string>Include multiple map themes</string>
+                <layout class="QVBoxLayout" name="verticalLayout_5">
+                 <item>
+                  <widget class="QLabel" name="label_2">
+                   <property name="text">
+                    <string>Uncheck layers to avoid exporting vector feature information for those layers, and optionally set the group name to allow multiple layers to be joined into a single logical PDF group. Layers can be dragged and dropped to rearrange their order in the generated Geospatial PDF table of contents.</string>
                    </property>
-                   <property name="checkable">
+                   <property name="wordWrap">
                     <bool>true</bool>
                    </property>
-                   <property name="checked">
-                    <bool>false</bool>
-                   </property>
-                   <layout class="QVBoxLayout" name="verticalLayout_4">
-                    <property name="leftMargin">
-                     <number>9</number>
-                    </property>
-                    <item>
-                     <widget class="QListWidget" name="mThemesList"/>
-                    </item>
-                   </layout>
                   </widget>
                  </item>
-                 <item row="1" column="0">
-                  <widget class="QGroupBox" name="mExportGeospatialPdfFeaturesCheckBox">
-                   <property name="title">
-                    <string>Layer Structure</string>
+                 <item>
+                  <widget class="QTreeView" name="mGeospatialPdfStructureTree">
+                   <property name="headerHidden">
+                    <bool>true</bool>
                    </property>
-                   <property name="checkable">
-                    <bool>false</bool>
-                   </property>
-                   <layout class="QVBoxLayout" name="verticalLayout_5">
-                    <property name="leftMargin">
-                     <number>9</number>
-                    </property>
-                    <item>
-                     <widget class="QLabel" name="label_2">
-                      <property name="text">
-                       <string>Uncheck layers to avoid exporting vector feature information for those layers, and optionally set the group name to allow multiple layers to be joined into a single logical PDF group. Layers can be dragged and dropped to rearrange their order in the generated Geospatial PDF table of contents.</string>
-                      </property>
-                      <property name="wordWrap">
-                       <bool>true</bool>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QTreeView" name="mGeospatialPdfStructureTree">
-                      <property name="headerHidden">
-                       <bool>true</bool>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
                   </widget>
                  </item>
                 </layout>
@@ -317,10 +264,10 @@
        <item>
         <spacer name="horizontalSpacer">
          <property name="orientation">
-          <enum>Qt::Orientation::Vertical</enum>
+          <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Policy::Expanding</enum>
+          <enum>QSizePolicy::Expanding</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -339,17 +286,17 @@
      <item>
       <widget class="QDialogButtonBox" name="mHelpButtonBox">
        <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
+        <enum>Qt::Horizontal</enum>
        </property>
        <property name="standardButtons">
-        <set>QDialogButtonBox::StandardButton::Help</set>
+        <set>QDialogButtonBox::Help</set>
        </property>
       </widget>
      </item>
      <item>
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
+        <enum>Qt::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -369,10 +316,10 @@
      <item>
       <widget class="QDialogButtonBox" name="buttonBox">
        <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
+        <enum>Qt::Horizontal</enum>
        </property>
        <property name="standardButtons">
-        <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Save</set>
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
        </property>
       </widget>
      </item>
@@ -402,14 +349,11 @@
   <tabstop>mTextRenderFormatComboBox</tabstop>
   <tabstop>mComboImageCompression</tabstop>
   <tabstop>mGeospatialPDFGroupBox</tabstop>
-  <tabstop>mGeospatialPDFLayerTreeConfigRadioButton</tabstop>
-  <tabstop>mGeospatialPDFCustomConfigRadioButton</tabstop>
   <tabstop>mIncludeMapThemesCheck</tabstop>
   <tabstop>mThemesList</tabstop>
   <tabstop>mGeospatialPdfStructureTree</tabstop>
-  <tabstop>mDisableRasterTilingCheckBox</tabstop>
   <tabstop>mSimplifyGeometriesCheckbox</tabstop>
-  <tabstop>mOpenAfterExportingCheckBox</tabstop>
+  <tabstop>mDisableRasterTilingCheckBox</tabstop>
  </tabstops>
  <resources/>
  <connections>

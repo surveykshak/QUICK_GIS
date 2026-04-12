@@ -4400,7 +4400,6 @@ bool QgsLayoutDesignerDialog::getPdfExportSettings( QgsLayoutExporter::PdfExport
   bool disableRasterTiles = false;
   bool simplify = true;
   bool geospatialPdf = false;
-  bool useLayerTreeConfig = false;
   bool losslessImages = false;
   QStringList exportThemes;
   QStringList geospatialPdfLayerOrder;
@@ -4414,7 +4413,6 @@ bool QgsLayoutDesignerDialog::getPdfExportSettings( QgsLayoutExporter::PdfExport
     disableRasterTiles = mLayout->customProperty( u"pdfDisableRasterTiles"_s, 0 ).toBool();
     simplify = mLayout->customProperty( u"pdfSimplify"_s, 1 ).toBool();
     geospatialPdf = mLayout->customProperty( u"pdfCreateGeoPdf"_s, 0 ).toBool();
-    useLayerTreeConfig = mLayout->customProperty( u"pdfUseLayerTreeConfig"_s, 0 ).toBool();
     const QString themes = mLayout->customProperty( u"pdfExportThemes"_s ).toString();
     if ( !themes.isEmpty() )
       exportThemes = themes.split( u"~~~"_s );
@@ -4436,8 +4434,6 @@ bool QgsLayoutDesignerDialog::getPdfExportSettings( QgsLayoutExporter::PdfExport
   if ( mLayout )
     mLayout->layoutItems( maps );
 
-  bool mapWithNoPresets = false;
-
   for ( const QgsLayoutItemMap *map : maps )
   {
     if ( !map->crs().isValid() )
@@ -4456,9 +4452,6 @@ bool QgsLayoutDesignerDialog::getPdfExportSettings( QgsLayoutExporter::PdfExport
       break;
     }
 #endif
-
-    if ( !map->followVisibilityPreset() && !map->keepLayerSet() )
-      mapWithNoPresets = true;
   }
 
   QgsLayoutPdfExportOptionsDialog dialog( this, allowGeospatialPdfExport, dialogGeospatialPdfReason, geospatialPdfLayerOrder );
@@ -4475,13 +4468,6 @@ bool QgsLayoutDesignerDialog::getPdfExportSettings( QgsLayoutExporter::PdfExport
   dialog.setLosslessImageExport( losslessImages );
   dialog.setOpenAfterExporting( QgsLayoutExporter::settingOpenAfterExportingPdf->value() );
 
-  // The Follow layer tree configuration radio button is only enabled
-  // if there is at least one map that does not follow map themes or locked layers.
-  if ( !mapWithNoPresets )
-    dialog.disableUseLayerTreeConfig();
-  else
-    dialog.setUseLayerTreeConfig( useLayerTreeConfig );
-
   if ( dialog.exec() != QDialog::Accepted )
     return false;
 
@@ -4492,7 +4478,6 @@ bool QgsLayoutDesignerDialog::getPdfExportSettings( QgsLayoutExporter::PdfExport
   simplify = dialog.geometriesSimplified();
   Qgis::TextRenderFormat textRenderFormat = dialog.textRenderFormat();
   geospatialPdf = dialog.exportGeospatialPdf();
-  useLayerTreeConfig = dialog.useLayerTreeConfig();
   exportThemes = dialog.exportThemes();
   geospatialPdfLayerOrder = dialog.geospatialPdfLayerOrder();
   losslessImages = dialog.losslessImageExport();
@@ -4508,7 +4493,6 @@ bool QgsLayoutDesignerDialog::getPdfExportSettings( QgsLayoutExporter::PdfExport
     mLayout->setCustomProperty( u"pdfTextFormat"_s, static_cast<int>( textRenderFormat ) );
     mLayout->setCustomProperty( u"pdfSimplify"_s, simplify ? 1 : 0 );
     mLayout->setCustomProperty( u"pdfCreateGeoPdf"_s, geospatialPdf ? 1 : 0 );
-    mLayout->setCustomProperty( u"pdfUseLayerTreeConfig"_s, useLayerTreeConfig ? 1 : 0 );
     mLayout->setCustomProperty( u"pdfExportThemes"_s, exportThemes.join( "~~~"_L1 ) );
     mLayout->setCustomProperty( u"pdfLayerOrder"_s, geospatialPdfLayerOrder.join( "~~~"_L1 ) );
     mLayout->setCustomProperty( u"pdfGroupOrder"_s, dialog.geospatialPdfGroupOrder() );
@@ -4521,7 +4505,6 @@ bool QgsLayoutDesignerDialog::getPdfExportSettings( QgsLayoutExporter::PdfExport
   settings.textRenderFormat = textRenderFormat;
   settings.simplifyGeometries = simplify;
   settings.writeGeoPdf = geospatialPdf;
-  settings.useLayerTreeConfig = useLayerTreeConfig;
   settings.useIso32000ExtensionFormatGeoreferencing = true;
   settings.exportThemes = exportThemes;
   settings.predefinedMapScales = QgsLayoutUtils::predefinedScales( mLayout );

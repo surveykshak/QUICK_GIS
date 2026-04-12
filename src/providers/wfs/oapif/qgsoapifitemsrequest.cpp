@@ -165,15 +165,9 @@ void QgsOapifItemsRequest::processReply()
   {
     VSIUnlink( vsimemFilename.toUtf8().constData() );
     VSIUnlink( CPLResetExtension( vsimemFilename.toUtf8().constData(), "gfs" ) );
-
-    // Some requests can lead to no features detected for which the JSON-FG
-    // driver returns a dataset without layers.
-    if ( extension != "json"_L1 || ( buffer.indexOf( "\"numberReturned\":0" ) < 0 && buffer.indexOf( "\"features\":[]" ) < 0 ) )
-    {
-      mErrorCode = QgsBaseNetworkRequest::ApplicationLevelError;
-      mAppLevelError = ApplicationLevelError::JsonError;
-      mErrorMessage = errorMessageWithReason( tr( "Loading of items failed" ) );
-    }
+    mErrorCode = QgsBaseNetworkRequest::ApplicationLevelError;
+    mAppLevelError = ApplicationLevelError::JsonError;
+    mErrorMessage = errorMessageWithReason( tr( "Loading of items failed" ) );
     emit gotResponse();
     return;
   }
@@ -205,7 +199,7 @@ void QgsOapifItemsRequest::processReply()
   {
     idField = mFields.indexOf( "id"_L1 );
     // If no "id" field, then use the first field if it contains "id" in it.
-    if ( idField < 0 && mFields.size() >= 1 && mFields[0].name().indexOf( "id"_L1, 0, Qt::CaseInsensitive ) >= 0 )
+    if ( idField < 0 && mFields.size() >= 1 && mFields[0].name().indexOf( "id"_L1, 0, Qt::CaseInsensitive ) )
     {
       idField = 0;
     }
@@ -220,10 +214,6 @@ void QgsOapifItemsRequest::processReply()
     if ( idField >= 0 )
     {
       id = f.attribute( idField ).toString();
-    }
-    else if ( mFeatureFormat == PSEUDO_JSONFG_MEDIA_TYPE )
-    {
-      id = QString::number( f.id() );
     }
     mFeatures.push_back( QgsFeatureUniqueIdPair( f, id ) );
   }

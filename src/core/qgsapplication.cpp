@@ -92,7 +92,6 @@
 #include "qgsstyle.h"
 #include "qgsstylemodel.h"
 #include "qgssvgcache.h"
-#include "qgssymbolconverterregistry.h"
 #include "qgssymbollayerregistry.h"
 #include "qgssymbollayerutils.h"
 #include "qgstaskmanager.h"
@@ -140,6 +139,8 @@ const QgsSettingsEntryString *QgsApplication::settingsLocaleGlobalLocale = new Q
 const QgsSettingsEntryBool *QgsApplication::settingsLocaleShowGroupSeparator = new QgsSettingsEntryBool( u"showGroupSeparator"_s, QgsSettingsTree::sTreeLocale, false );
 
 const QgsSettingsEntryStringList *QgsApplication::settingsSearchPathsForSVG = new QgsSettingsEntryStringList( u"searchPathsForSVG"_s, QgsSettingsTree::sTreeSvg, QStringList() );
+
+const QgsSettingsEntryString *QgsApplication::settingsNullRepresentation = new QgsSettingsEntryString( u"null-value"_s, QgsSettingsTree::sTreeQgis, u"NULL"_s );
 
 const QgsSettingsEntryInteger *QgsApplication::settingsConnectionPoolMaximumConcurrentConnections
   = new QgsSettingsEntryInteger( u"connection-pool-maximum-concurrent-connections"_s, QgsSettingsTree::sTreeCore, 4, QObject::tr( "Maximum number of concurrent connections per connection pool" ), Qgis::SettingsOptions(), 4, 999 );
@@ -193,7 +194,6 @@ struct QgsApplication::ApplicationMembers
     std::unique_ptr<QgsNetworkContentFetcherRegistry > mNetworkContentFetcherRegistry;
     std::unique_ptr<QgsScaleBarRendererRegistry > mScaleBarRendererRegistry;
     std::unique_ptr<QgsLabelingEngineRuleRegistry > mLabelingEngineRuleRegistry;
-    std::unique_ptr<QgsSymbolConverterRegistry > mSymbolConverterRegistry;
     std::unique_ptr<QgsValidityCheckRegistry > mValidityCheckRegistry;
     std::unique_ptr<QgsMessageLog > mMessageLog;
     std::unique_ptr<QgsPaintEffectRegistry > mPaintEffectRegistry;
@@ -2204,7 +2204,7 @@ QString QgsApplication::nullRepresentation()
   ApplicationMembers *appMembers = members();
   if ( appMembers->mNullRepresentation.isNull() )
   {
-    appMembers->mNullRepresentation = QgsSettings().value( u"qgis/nullValue"_s, u"NULL"_s ).toString();
+    appMembers->mNullRepresentation = settingsNullRepresentation->value();
   }
   return appMembers->mNullRepresentation;
 }
@@ -2216,7 +2216,7 @@ void QgsApplication::setNullRepresentation( const QString &nullRepresentation )
     return;
 
   appMembers->mNullRepresentation = nullRepresentation;
-  QgsSettings().setValue( u"qgis/nullValue"_s, nullRepresentation );
+  settingsNullRepresentation->setValue( nullRepresentation );
 
   QgsApplication *app = instance();
   if ( app )
@@ -2756,11 +2756,6 @@ QgsLabelingEngineRuleRegistry *QgsApplication::labelingEngineRuleRegistry()
   return members()->mLabelingEngineRuleRegistry.get();
 }
 
-QgsSymbolConverterRegistry *QgsApplication::symbolConverterRegistry()
-{
-  return members()->mSymbolConverterRegistry.get();
-}
-
 QgsProjectStorageRegistry *QgsApplication::projectStorageRegistry()
 {
   return members()->mProjectStorageRegistry.get();
@@ -2949,12 +2944,6 @@ QgsApplication::ApplicationMembers::ApplicationMembers()
     profiler->end();
   }
   {
-    profiler->start( tr( "Setup symbol converter registry" ) );
-    mSymbolConverterRegistry = std::make_unique<QgsSymbolConverterRegistry>();
-    mSymbolConverterRegistry->populate();
-    profiler->end();
-  }
-  {
     profiler->start( tr( "Setup sensor registry" ) );
     mSensorRegistry = std::make_unique<QgsSensorRegistry>();
     mSensorRegistry->populate();
@@ -3059,7 +3048,6 @@ QgsApplication::ApplicationMembers::~ApplicationMembers()
   mCalloutRegistry.reset();
   mRecentStyleHandler.reset();
   mLabelingEngineRuleRegistry.reset();
-  mSymbolConverterRegistry.reset();
   mSymbolLayerRegistry.reset();
   mExternalStorageRegistry.reset();
   mProfileSourceRegistry.reset();

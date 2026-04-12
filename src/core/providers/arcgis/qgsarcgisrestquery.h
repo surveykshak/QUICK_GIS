@@ -21,6 +21,7 @@
 #include "qgshttpheaders.h"
 #include "qgsrectangle.h"
 
+#include <QPointer>
 #include <QString>
 #include <QVariantMap>
 
@@ -257,7 +258,7 @@ class CORE_EXPORT QgsArcGisAsyncQuery : public QObject
     void handleReply();
 
   private:
-    QNetworkReply *mReply = nullptr;
+    QPointer<QNetworkReply> mReply;
     QByteArray *mResult = nullptr;
 };
 

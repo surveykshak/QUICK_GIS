@@ -335,12 +335,12 @@ QVariantMap QgsDetectVectorChangesAlgorithm::processAlgorithm( const QVariantMap
         {
           case Topological:
           {
-            geometryMatch = revised.isTopologicallyEqual( original );
+            geometryMatch = revised.isGeosEqual( original );
             break;
           }
 
           case Exact:
-            geometryMatch = revised.isExactlyEqual( original );
+            geometryMatch = revised.equals( original );
             break;
         }
 

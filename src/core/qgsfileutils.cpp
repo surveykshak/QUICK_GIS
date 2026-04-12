@@ -545,7 +545,7 @@ bool QgsFileUtils::renameDataset( const QString &oldPath, const QString &newPath
 
 int QgsFileUtils::openedFileLimit()
 {
-#if defined( Q_OS_UNIX ) && !defined( __EMSCRIPTEN__ )
+#ifdef Q_OS_UNIX
   struct rlimit rescLimit;
   if ( getrlimit( RLIMIT_NOFILE, &rescLimit ) == 0 )
   {

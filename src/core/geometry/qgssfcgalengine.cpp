@@ -19,6 +19,7 @@
 #include "qgssfcgalengine.h"
 
 #include <SFCGAL/capi/sfcgal_c.h>
+#include <array>
 #include <nlohmann/json.hpp>
 
 #include "qgsgeometry.h"
@@ -924,12 +925,30 @@ sfcgal::shared_geom QgsSfcgalEngine::extrude( const sfcgal::geometry *geom, cons
   // sfcgal_geometry_extrude returns a SOLID
   // This is not handled by QGIS
   // convert it to a PolyhedralSurface
-  sfcgal::shared_geom polySurface = QgsSfcgalEngine::toPolyhedralSurface( solid, errorMsg );
+  sfcgal_geometry_t *polySurface = sfcgal_polyhedral_surface_create();
+  for ( unsigned int shellIdx = 0; shellIdx < sfcgal_solid_num_shells( solid ); ++shellIdx )
+  {
+    const sfcgal_geometry_t *shell = sfcgal_solid_shell_n( solid, shellIdx );
+#if SFCGAL_VERSION_NUM >= SFCGAL_MAKE_VERSION( 2, 1, 0 )
+    for ( unsigned int polyIdx = 0; polyIdx < sfcgal_polyhedral_surface_num_patches( shell ); ++polyIdx )
+    {
+      const sfcgal_geometry_t *patch = sfcgal_polyhedral_surface_patch_n( shell, polyIdx );
+      sfcgal_polyhedral_surface_add_patch( polySurface, sfcgal_geometry_clone( patch ) );
+    }
+#else
+    for ( unsigned int polyIdx = 0; polyIdx < sfcgal_polyhedral_surface_num_polygons( shell ); ++polyIdx )
+    {
+      const sfcgal_geometry_t *patch = sfcgal_polyhedral_surface_polygon_n( shell, polyIdx );
+      sfcgal_polyhedral_surface_add_polygon( polySurface, sfcgal_geometry_clone( patch ) );
+    }
+#endif
+  }
+
   sfcgal_geometry_delete( solid );
 
   CHECK_SUCCESS( errorMsg, nullptr );
 
-  return polySurface;
+  return sfcgal::make_shared_geom( polySurface );
 }
 
 sfcgal::shared_geom QgsSfcgalEngine::simplify( const sfcgal::geometry *geom, double tolerance, bool preserveTopology, QString *errorMsg )
@@ -962,59 +981,24 @@ sfcgal::shared_geom QgsSfcgalEngine::approximateMedialAxis( const sfcgal::geomet
   return sfcgal::make_shared_geom( result );
 }
 
-sfcgal::shared_geom QgsSfcgalEngine::toSolid( const sfcgal::geometry *geom, QString *errorMsg )
-{
-  sfcgal::errorHandler()->clearText( errorMsg );
-  CHECK_NOT_NULL( geom, nullptr );
-
-  sfcgal::geometry *solid = sfcgal_geometry_make_solid( geom );
-  CHECK_SUCCESS( errorMsg, nullptr );
-
-  return sfcgal::make_shared_geom( solid );
-}
-
-sfcgal::shared_geom QgsSfcgalEngine::toPolyhedralSurface( const sfcgal::geometry *geom, QString *errorMsg )
-{
-  sfcgal::errorHandler()->clearText( errorMsg );
-  CHECK_NOT_NULL( geom, nullptr );
-
-  if ( sfcgal_geometry_type_id( geom ) != SFCGAL_TYPE_SOLID )
-  {
-    sfcgal::errorHandler()->addText( u"toPolyhedralSurface() only applies to solids"_s );
-    return nullptr;
-  }
-
-  sfcgal_geometry_t *polySurface = sfcgal_polyhedral_surface_create();
-  for ( unsigned int shellIdx = 0; shellIdx < sfcgal_solid_num_shells( geom ); ++shellIdx )
-  {
-    const sfcgal_geometry_t *shell = sfcgal_solid_shell_n( geom, shellIdx );
-#if SFCGAL_VERSION_NUM >= SFCGAL_MAKE_VERSION( 2, 1, 0 )
-    for ( unsigned int polyIdx = 0; polyIdx < sfcgal_polyhedral_surface_num_patches( shell ); ++polyIdx )
-    {
-      const sfcgal_geometry_t *patch = sfcgal_polyhedral_surface_patch_n( shell, polyIdx );
-      sfcgal_polyhedral_surface_add_patch( polySurface, sfcgal_geometry_clone( patch ) );
-    }
-#else
-    for ( unsigned int polyIdx = 0; polyIdx < sfcgal_polyhedral_surface_num_polygons( shell ); ++polyIdx )
-    {
-      const sfcgal_geometry_t *patch = sfcgal_polyhedral_surface_polygon_n( shell, polyIdx );
-      sfcgal_polyhedral_surface_add_polygon( polySurface, sfcgal_geometry_clone( patch ) );
-    }
-#endif
-  }
-
-  CHECK_SUCCESS( errorMsg, nullptr );
-  return sfcgal::make_shared_geom( polySurface );
-}
 
 #if SFCGAL_VERSION_NUM >= SFCGAL_MAKE_VERSION( 2, 3, 0 )
-sfcgal::shared_geom QgsSfcgalEngine::transform( const sfcgal::geometry *geom, const QgsMatrix4x4 &mat, QString *errorMsg )
+sfcgal::shared_geom QgsSfcgalEngine::transform( const sfcgal::geometry *geom, const QMatrix4x4 &mat, QString *errorMsg )
 {
   sfcgal::errorHandler()->clearText( errorMsg );
   CHECK_NOT_NULL( geom, nullptr );
 
   sfcgal::geometry *result;
-  result = sfcgal_geometry_transform( geom, mat.constData() );
+
+  // Convert matrix float data to double for SFCGAL API
+  std::array<double, 16> matDouble;
+  const float *matFloatData = mat.constData();
+  for ( unsigned int i = 0; i < 16; ++i )
+  {
+    matDouble[i] = static_cast<double>( matFloatData[i] );
+  }
+
+  result = sfcgal_geometry_transform( geom, matDouble.data() );
 
   CHECK_SUCCESS( errorMsg, nullptr );
   return sfcgal::make_shared_geom( result );
@@ -1039,7 +1023,7 @@ sfcgal::shared_prim QgsSfcgalEngine::createCube( double size, QString *errorMsg 
   return sfcgal::make_shared_prim( result );
 }
 
-sfcgal::shared_geom QgsSfcgalEngine::primitiveAsPolyhedral( const sfcgal::primitive *prim, const QgsMatrix4x4 &mat, QString *errorMsg )
+sfcgal::shared_geom QgsSfcgalEngine::primitiveAsPolyhedral( const sfcgal::primitive *prim, const QMatrix4x4 &mat, QString *errorMsg )
 {
   sfcgal::errorHandler()->clearText( errorMsg );
   CHECK_NOT_NULL( prim, nullptr );
@@ -1049,7 +1033,15 @@ sfcgal::shared_geom QgsSfcgalEngine::primitiveAsPolyhedral( const sfcgal::primit
 
   if ( !mat.isIdentity() )
   {
-    sfcgal::geometry *result2 = sfcgal_geometry_transform( result, mat.constData() );
+    // Convert matrix float data to double for SFCGAL API
+    std::array<double, 16> matDouble;
+    const float *matFloatData = mat.constData();
+    for ( unsigned int i = 0; i < 16; ++i )
+    {
+      matDouble[i] = static_cast<double>( matFloatData[i] );
+    }
+
+    sfcgal::geometry *result2 = sfcgal_geometry_transform( result, matDouble.data() );
     sfcgal_geometry_delete( result );
     result = result2;
     CHECK_SUCCESS( errorMsg, nullptr );

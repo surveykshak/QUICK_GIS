@@ -83,7 +83,6 @@ class QgsFontManager;
 class QgsSensorRegistry;
 class QgsProfileSourceRegistry;
 class QgsLabelingEngineRuleRegistry;
-class QgsSymbolConverterRegistry;
 
 // clang-format off
 /**
@@ -1055,14 +1054,6 @@ class CORE_EXPORT QgsApplication : public QApplication
   labelingEngineRuleRegistry() SIP_KEEPREFERENCE;
 
   /**
-   * Gets the registry of available symbol converters.
-   *
-   * \since QGIS 4.2
-   */
-  static QgsSymbolConverterRegistry *
-  symbolConverterRegistry() SIP_KEEPREFERENCE;
-
-  /**
    * Returns registry of available project storage implementations.
    * \since QGIS 3.2
    */
@@ -1225,6 +1216,8 @@ class CORE_EXPORT QgsApplication : public QApplication
    * \since QGIS 3.4
    */
   void collectTranslatableObjects(QgsTranslationContext *translationContext);
+
+  static const QgsSettingsEntryString *settingsNullRepresentation SIP_SKIP;
 
 #ifndef SIP_RUN
   //! Settings entry locale user locale

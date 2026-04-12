@@ -978,29 +978,6 @@ void QgsAttributeTableDialog::editingToggled()
   }
 }
 
-void QgsAttributeTableDialog::addAttribute( const QgsField &field )
-{
-  QgsAttributeTableModel *masterModel = mMainView->masterModel();
-  mLayer->beginEditCommand( tr( "Attribute added" ) );
-  if ( mLayer->addAttribute( field ) )
-  {
-    mLayer->endEditCommand();
-
-    if ( mLayer->displayExpression().isEmpty() )
-    {
-      mLayer->setDisplayExpression( field.name() );
-    }
-  }
-  else
-  {
-    mLayer->destroyEditCommand();
-    QMessageBox::critical( this, tr( "Add Field" ), tr( "Failed to add field '%1' of type '%2'. Is the field name unique?" ).arg( field.name(), field.typeName() ) );
-  }
-
-  // update model - a field has been added or updated
-  masterModel->reload( masterModel->index( 0, 0 ), masterModel->index( masterModel->rowCount() - 1, masterModel->columnCount() - 1 ) );
-}
-
 void QgsAttributeTableDialog::mActionAddAttribute_triggered()
 {
   if ( !mLayer )
@@ -1008,51 +985,29 @@ void QgsAttributeTableDialog::mActionAddAttribute_triggered()
     return;
   }
 
+  QgsAttributeTableModel *masterModel = mMainView->masterModel();
+
   QgsAddAttrDialog dialog( mLayer, this );
   if ( dialog.exec() == QDialog::Accepted )
   {
-    const QgsField field { dialog.field() };
-    addAttribute( field );
-  }
-}
-
-void QgsAttributeTableDialog::removeAttributes( const QList<int> &attributes )
-{
-  if ( attributes.empty() )
-  {
-    return;
-  }
-
-  // check whether display expression is a single field
-  int fieldIdx = QgsExpression::expressionToLayerFieldIndex( mLayer->displayExpression(), mLayer );
-  QgsAttributeTableModel *masterModel = mMainView->masterModel();
-
-  mLayer->beginEditCommand( tr( "Deleted attribute" ) );
-  if ( mLayer->deleteAttributes( attributes ) )
-  {
-    mLayer->endEditCommand();
-
-    if ( fieldIdx != -1 && attributes.contains( fieldIdx ) )
-      mLayer->setDisplayExpression( mLayer->fields().count() > 0 ? mLayer->fields().at( 0 ).name() : QString() );
-
-    // store the deleted attributes column index to update the model after deletion
-    QList<int> columnsToRemove;
-    for ( int attribute : std::as_const( attributes ) )
+    mLayer->beginEditCommand( tr( "Attribute added" ) );
+    if ( mLayer->addAttribute( dialog.field() ) )
     {
-      columnsToRemove.append( masterModel->fieldCol( attribute ) );
+      mLayer->endEditCommand();
+
+      if ( mLayer->displayExpression().isEmpty() )
+      {
+        mLayer->setDisplayExpression( dialog.field().name() );
+      }
+    }
+    else
+    {
+      mLayer->destroyEditCommand();
+      QMessageBox::critical( this, tr( "Add Field" ), tr( "Failed to add field '%1' of type '%2'. Is the field name unique?" ).arg( dialog.field().name(), dialog.field().typeName() ) );
     }
 
-    std::sort( columnsToRemove.begin(), columnsToRemove.end() );
-
-    for ( int col = static_cast<int>( columnsToRemove.count() ) - 1; col >= 0; --col )
-    {
-      masterModel->removeColumn( col );
-    }
-  }
-  else
-  {
-    QgisApp::instance()->messageBar()->pushMessage( tr( "Attribute error" ), tr( "The attribute(s) could not be deleted" ), Qgis::MessageLevel::Warning );
-    mLayer->destroyEditCommand();
+    // update model - a field has been added or updated
+    masterModel->reload( masterModel->index( 0, 0 ), masterModel->index( masterModel->rowCount() - 1, masterModel->columnCount() - 1 ) );
   }
 }
 
@@ -1066,8 +1021,31 @@ void QgsAttributeTableDialog::mActionRemoveAttribute_triggered()
   QgsDelAttrDialog dialog( mLayer );
   if ( dialog.exec() == QDialog::Accepted )
   {
-    const QList<int> attributes = dialog.selectedAttributes();
-    removeAttributes( attributes );
+    QList<int> attributes = dialog.selectedAttributes();
+    if ( attributes.empty() )
+    {
+      return;
+    }
+
+    // check whether display expression is a single field
+    int fieldIdx = QgsExpression::expressionToLayerFieldIndex( mLayer->displayExpression(), mLayer );
+    QgsAttributeTableModel *masterModel = mMainView->masterModel();
+
+    mLayer->beginEditCommand( tr( "Deleted attribute" ) );
+    if ( mLayer->deleteAttributes( attributes ) )
+    {
+      mLayer->endEditCommand();
+
+      if ( fieldIdx != -1 && attributes.contains( fieldIdx ) )
+        mLayer->setDisplayExpression( mLayer->fields().count() > 0 ? mLayer->fields().at( 0 ).name() : QString() );
+    }
+    else
+    {
+      QgisApp::instance()->messageBar()->pushMessage( tr( "Attribute error" ), tr( "The attribute(s) could not be deleted" ), Qgis::MessageLevel::Warning );
+      mLayer->destroyEditCommand();
+    }
+    // update model - a field has been added or updated
+    masterModel->reload( masterModel->index( 0, 0 ), masterModel->index( masterModel->rowCount() - 1, masterModel->columnCount() - 1 ) );
   }
 }
 

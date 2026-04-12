@@ -85,6 +85,7 @@ using namespace Qt::StringLiterals;
 #include "qgssettingsregistrycore.h"
 #include "qgssettingsentryenumflag.h"
 #include "qgssettingsentryimpl.h"
+#include "qgssettingstree.h"
 #include "qgssettingsregistrygui.h"
 #include "qgsnetworkaccessmanager.h"
 #include "qgsapplication.h"
@@ -621,9 +622,12 @@ static void setTitleBarText_( QWidget &qgisApp )
   if ( QgsProject::instance()->isDirty() )
     caption.prepend( '*' );
 
-  caption += QgisApp::tr( "QUICKGIS" );
+  caption += QgisApp::tr( "QGIS" );
 
-
+  if ( Qgis::version().endsWith( "Master"_L1 ) )
+  {
+    caption += u" %1"_s.arg( Qgis::devVersion() );
+  }
 
   // Add current profile (if it's not the default one)
   if ( QgisApp::instance()->userProfileManager()->allProfiles().count() > 1 )
@@ -984,13 +988,15 @@ QgisApp *QgisApp::sInstance = nullptr;
 // constructor starts here
 const QgisApp::AppOptions QgisApp::DEFAULT_OPTIONS = QgisApp::AppOptions( QgisApp::AppOption::RestorePlugins ) | QgisApp::AppOption::EnablePython;
 
+const QgsSettingsEntryBool *QgisApp::settingsAskToDeleteFeatures = new QgsSettingsEntryBool( u"ask-to-delete-features"_s, QgsSettingsTree::sTreeApp, true );
+
 QgisApp::QgisApp( QSplashScreen *splash, AppOptions options, const QString &rootProfileLocation, const QString &activeProfile, QWidget *parent, Qt::WindowFlags fl )
   : QMainWindow( parent, fl )
   , mSplash( splash )
 {
   if ( sInstance )
   {
-    QMessageBox::critical( this, tr( "Multiple Instances of QgisApp" ), tr( "Multiple instances of QUICKGIS application object detected.\nPlease contact the developers.\n" ) );
+    QMessageBox::critical( this, tr( "Multiple Instances of QgisApp" ), tr( "Multiple instances of QGIS application object detected.\nPlease contact the developers.\n" ) );
     abort();
   }
 
@@ -8813,8 +8819,7 @@ void QgisApp::deleteSelected( QgsMapLayer *layer, QWidget *, bool checkFeaturesV
 
   if ( !confirmationServed )
   {
-    QgsSettings settings;
-    const bool showConfirmation = settings.value( u"askToDeleteFeatures"_s, true, QgsSettings::App ).toBool();
+    const bool showConfirmation = QgisApp::settingsAskToDeleteFeatures->value();
     if ( showConfirmation )
     {
       QMessageBox confirmMessage(
@@ -8833,7 +8838,7 @@ void QgisApp::deleteSelected( QgsMapLayer *layer, QWidget *, bool checkFeaturesV
 
       if ( confirmMessage.checkBox()->isChecked() )
       {
-        settings.setValue( u"askToDeleteFeatures"_s, false, QgsSettings::App );
+        settingsAskToDeleteFeatures->setValue( false );
       }
     }
   }
@@ -15262,7 +15267,7 @@ void QgisApp::activateDeactivateLayerRelatedActions( QgsMapLayer *layer )
     }
   }
 
-  bool identifyModeIsActiveLayer = QgsSettings().enumValue( u"/Map/identifyMode"_s, QgsMapToolIdentify::ActiveLayer ) == QgsMapToolIdentify::ActiveLayer;
+  bool identifyModeIsActiveLayer = QgsMapToolIdentify::settingIdentifyMode->value() == QgsMapToolIdentify::ActiveLayer;
 
   if ( !layer )
   {

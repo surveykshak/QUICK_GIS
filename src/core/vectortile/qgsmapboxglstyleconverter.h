@@ -370,6 +370,7 @@ class CORE_EXPORT QgsMapBoxGlStyleConverter
       Opacity,      //!< Opacity property
       Point,        //!< Point/offset property
       NumericArray, //!< Numeric array for dash arrays or such
+      DashArray,    //!< Dash array. Like numeric array, but must be even length array. Odd length arrays are considered as having an additional 0 value. \since QGIS 4.2
     };
     Q_ENUM( PropertyType )
 
@@ -922,8 +923,6 @@ class CORE_EXPORT QgsMapBoxGlStyleConverter
 
     QList< QgsMapBoxGlStyleAbstractSource * > mSources;
     QList< QgsMapBoxGlStyleRasterSubLayer> mRasterSubLayers;
-
-    friend class QgsSymbolConverterMapBoxGl;
 };
 
 #endif // QGSMAPBOXGLSTYLECONVERTER_H

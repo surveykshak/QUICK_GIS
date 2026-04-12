@@ -101,7 +101,7 @@ class APP_EXPORT QgsCustomization
      * change whether or not the item should be displayed or not.
      * It's also used to serialize these customization in an XML file.
      */
-    class APP_EXPORT QgsItem
+    class QgsItem
     {
       public:
         /**
@@ -122,9 +122,6 @@ class APP_EXPORT QgsCustomization
          * Destructor
          */
         virtual ~QgsItem();
-
-        QgsItem( const QgsItem & ) = delete;
-        QgsItem &operator=( const QgsItem & ) = delete;
 
         /**
          * Returns name
@@ -242,14 +239,13 @@ class APP_EXPORT QgsCustomization
          */
         enum class ItemCapability : int
         {
-          None = 0,                                //! No capability
-          AddUserMenuChild = 1 << 0,               //! Support adding QgsUserMenuItem item as child
-          AddActionRefChild = 1 << 1,              //! Support adding QgsActionRefItem as child
-          AddUserToolBarChild = 1 << 2,            //! Support adding QgsUserToolBarItem as child
-          AddProcessingAlgorithmRefChild = 1 << 3, //! Support adding QgsProcessingAlgorithmRefItem as child. \since QGIS 4.2
-          Rename = 1 << 4,                         //! Support renaming
-          Delete = 1 << 5,                         //! Support delete
-          Drag = 1 << 6                            //! Support dragging for later droping
+          None = 0,                     //! No capability
+          AddUserMenuChild = 1 << 0,    //! Support adding UserMenu item as child
+          AddActionRefChild = 1 << 1,   //! Support adding ActionRef as child
+          AddUserToolBarChild = 1 << 2, //! Support adding UserToolBar as child
+          Rename = 1 << 3,              //! Support renaming
+          Delete = 1 << 4,              //! Support delete
+          Drag = 1 << 5                 //! Support dragging for later droping
         };
 
         /**
@@ -302,7 +298,7 @@ class APP_EXPORT QgsCustomization
     /**
      * \brief Represents an action
      */
-    class APP_EXPORT QgsActionItem : public QgsItem
+    class QgsActionItem : public QgsItem
     {
       public:
         /**
@@ -358,10 +354,7 @@ class APP_EXPORT QgsCustomization
         qsizetype mQActionIndex = -1;
     };
 
-    /**
-     * Represent a reference to an existing action item
-     */
-    class APP_EXPORT QgsActionRefItem : public QgsActionItem
+    class QgsActionRefItem : public QgsActionItem
     {
       public:
         QgsActionRefItem( QgsItem *parent );
@@ -392,7 +385,7 @@ class APP_EXPORT QgsCustomization
      * Inherits from Action because QMenu are stored within a QAction and we want to keep
      * track of the menu associated action
      */
-    class APP_EXPORT QgsMenuItem : public QgsActionItem
+    class QgsMenuItem : public QgsActionItem
     {
       public:
         /**
@@ -422,7 +415,7 @@ class APP_EXPORT QgsCustomization
         ItemCapability capabilities() const override;
     };
 
-    class APP_EXPORT QgsUserMenuItem : public QgsMenuItem
+    class QgsUserMenuItem : public QgsMenuItem
     {
       public:
         /**
@@ -453,7 +446,7 @@ class APP_EXPORT QgsCustomization
     /**
      * Represents a toolbar
      */
-    class APP_EXPORT QgsToolBarItem : public QgsItem
+    class QgsToolBarItem : public QgsItem
     {
       public:
         /**
@@ -499,7 +492,7 @@ class APP_EXPORT QgsCustomization
         bool mWasVisible = false;
     };
 
-    class APP_EXPORT QgsUserToolBarItem : public QgsToolBarItem
+    class QgsUserToolBarItem : public QgsToolBarItem
     {
       public:
         /**
@@ -529,7 +522,7 @@ class APP_EXPORT QgsCustomization
     /**
      * Root item for all ToolBar item
      */
-    class APP_EXPORT QgsToolBarsItem : public QgsItem
+    class QgsToolBarsItem : public QgsItem
     {
       public:
         /**
@@ -553,7 +546,7 @@ class APP_EXPORT QgsCustomization
     /**
      * Root item for all Menus item
      */
-    class APP_EXPORT QgsMenusItem : public QgsItem
+    class QgsMenusItem : public QgsItem
     {
       public:
         /**
@@ -577,7 +570,7 @@ class APP_EXPORT QgsCustomization
     /**
      * Represent a Dock
      */
-    class APP_EXPORT QgsDockItem : public QgsItem
+    class QgsDockItem : public QgsItem
     {
       public:
         /**
@@ -625,7 +618,7 @@ class APP_EXPORT QgsCustomization
     /**
      * Root item for all dock items
      */
-    class APP_EXPORT QgsDocksItem : public QgsItem
+    class QgsDocksItem : public QgsItem
     {
       public:
         /**
@@ -648,7 +641,7 @@ class APP_EXPORT QgsCustomization
     /**
      * Represent a QgsBrowserDockWidget item
      */
-    class APP_EXPORT QgsBrowserElementItem : public QgsItem
+    class QgsBrowserElementItem : public QgsItem
     {
       public:
         /**
@@ -679,7 +672,7 @@ class APP_EXPORT QgsCustomization
     /**
      * Root item for all browser items
      */
-    class APP_EXPORT QgsBrowserElementsItem : public QgsItem
+    class QgsBrowserElementsItem : public QgsItem
     {
       public:
         /**
@@ -702,7 +695,7 @@ class APP_EXPORT QgsCustomization
     /**
      * Represent a QgsStatusBar widget
      */
-    class APP_EXPORT QgsStatusBarWidgetItem : public QgsItem
+    class QgsStatusBarWidgetItem : public QgsItem
     {
       public:
         /**
@@ -732,7 +725,7 @@ class APP_EXPORT QgsCustomization
     /**
      * Root item for all StatusBarWidget
      */
-    class APP_EXPORT QgsStatusBarWidgetsItem : public QgsItem
+    class QgsStatusBarWidgetsItem : public QgsItem
     {
       public:
         /**
@@ -746,170 +739,6 @@ class APP_EXPORT QgsCustomization
         std::unique_ptr<QgsCustomization::QgsStatusBarWidgetsItem> cloneStatusBarWidgetsItem( QgsCustomization::QgsItem *parent = nullptr ) const;
 
         std::unique_ptr<QgsCustomization::QgsItem> clone( QgsCustomization::QgsItem *parent = nullptr ) const override { return cloneStatusBarWidgetsItem( parent ); };
-
-      protected:
-        QString xmlTag() const override;
-        std::unique_ptr<QgsItem> createChildItem( const QDomElement &childElem ) override;
-    };
-
-    /**
-     * Represent a processing provider
-     */
-    class QgsProcessingProviderItem : public QgsItem
-    {
-      public:
-        /**
-         * Constructor
-         */
-        QgsProcessingProviderItem( QgsItem *parent );
-
-        /**
-         * Constructor
-         * \param name name identifier
-         * \param title title
-         * \param parent parent Item
-         */
-        QgsProcessingProviderItem( const QString &name, const QString &title, QgsItem *parent );
-
-        /**
-         * Returns this item clone with \a parent as parent item
-         */
-        std::unique_ptr<QgsCustomization::QgsProcessingProviderItem> cloneProcessingProviderItem( QgsCustomization::QgsItem *parent = nullptr ) const;
-
-        std::unique_ptr<QgsCustomization::QgsItem> clone( QgsCustomization::QgsItem *parent = nullptr ) const override { return cloneProcessingProviderItem( parent ); };
-
-      protected:
-        QString xmlTag() const override;
-        std::unique_ptr<QgsItem> createChildItem( const QDomElement &childElem ) override;
-    };
-
-    /**
-     * Represent a processing algorithm group
-     */
-    class QgsProcessingGroupItem : public QgsItem
-    {
-      public:
-        /**
-         * Constructor
-         */
-        QgsProcessingGroupItem( QgsItem *parent );
-
-        /**
-         * Constructor
-         * \param name name identifier
-         * \param title title
-         * \param parent parent Item
-         */
-        QgsProcessingGroupItem( const QString &name, const QString &title, QgsItem *parent );
-
-        /**
-         * Returns this item clone with \a parent as parent item
-         */
-        std::unique_ptr<QgsCustomization::QgsProcessingGroupItem> cloneProcessingGroupItem( QgsCustomization::QgsItem *parent = nullptr ) const;
-
-        std::unique_ptr<QgsCustomization::QgsItem> clone( QgsCustomization::QgsItem *parent = nullptr ) const override { return cloneProcessingGroupItem( parent ); };
-
-      protected:
-        QString xmlTag() const override;
-        std::unique_ptr<QgsItem> createChildItem( const QDomElement &childElem ) override;
-    };
-
-    /**
-     * Represent a processing algorithm
-     *
-     * \since QGIS 4.2
-     */
-    class QgsProcessingAlgorithmItem : public QgsItem
-    {
-      public:
-        /**
-         * Constructor
-         */
-        QgsProcessingAlgorithmItem( QgsItem *parent );
-
-        /**
-         * Constructor
-         * \param name name identifier
-         * \param title title
-         * \param parent parent Item
-         */
-        QgsProcessingAlgorithmItem( const QString &name, const QString &title, QgsItem *parent );
-
-        /**
-         * Returns this item clone with \a parent as parent item
-         */
-        std::unique_ptr<QgsCustomization::QgsProcessingAlgorithmItem> cloneProcessingAlgorithmItem( QgsCustomization::QgsItem *parent = nullptr ) const;
-
-        std::unique_ptr<QgsCustomization::QgsItem> clone( QgsCustomization::QgsItem *parent = nullptr ) const override { return cloneProcessingAlgorithmItem( parent ); };
-
-      protected:
-        QString xmlTag() const override;
-        ItemCapability capabilities() const override;
-    };
-
-    /**
-     * Represent a reference to an existing processing algorithm item
-     *
-     * \since QGIS 4.2
-     */
-    class QgsProcessingAlgorithmRefItem : public QgsItem
-    {
-      public:
-        /**
-         * Constructor
-         */
-        QgsProcessingAlgorithmRefItem( QgsItem *parent );
-
-        /**
-         * Constructor
-         * \param id algorithm id, \see QgsProcessingRegistry::algorithmById()
-         * \param name name identifier
-         * \param title title
-         * \param parent parent Item
-         */
-        QgsProcessingAlgorithmRefItem( const QString &id, const QString &name, const QString &title, QgsItem *parent );
-
-        /**
-         * Returns algorithm id, \see QgsProcessingRegistry::algorithmById()
-         */
-        const QString &id() const;
-
-        /**
-         * Returns this item clone with \a parent as parent item
-         */
-        std::unique_ptr<QgsCustomization::QgsProcessingAlgorithmRefItem> cloneProcessingAlgorithmItem( QgsCustomization::QgsItem *parent = nullptr ) const;
-
-        std::unique_ptr<QgsCustomization::QgsItem> clone( QgsCustomization::QgsItem *parent = nullptr ) const override { return cloneProcessingAlgorithmItem( parent ); };
-
-      protected:
-        QString xmlTag() const override;
-        ItemCapability capabilities() const override;
-        void writeXmlItem( QDomElement &elem ) const override;
-        void readXmlItem( const QDomElement &elem ) override;
-        void copyItemAttributes( const QgsItem *other ) override;
-
-        QString mId;
-    };
-
-    /**
-     * Root item for all Processing providers
-     *
-     * \since QGIS 4.2
-     */
-    class QgsProcessingProvidersItem : public QgsItem
-    {
-      public:
-        /**
-         * Constructor
-         */
-        QgsProcessingProvidersItem();
-
-        /**
-         * Returns this item clone with \a parent as parent item
-         */
-        std::unique_ptr<QgsCustomization::QgsProcessingProvidersItem> cloneProcessingProvidersItem( QgsCustomization::QgsItem *parent = nullptr ) const;
-
-        std::unique_ptr<QgsCustomization::QgsItem> clone( QgsCustomization::QgsItem *parent = nullptr ) const override { return cloneProcessingProvidersItem( parent ); };
 
       protected:
         QString xmlTag() const override;
@@ -940,14 +769,6 @@ class APP_EXPORT QgsCustomization
      * Returns toolbar items to customize QToolBar content
      */
     QgsCustomization::QgsToolBarsItem *toolBarsItem() const;
-
-    /**
-     * Returns processing provider items, so user can create action that trigger processing
-     * algorithm in user defined menu or toolbars
-     *
-     * \since QGIS 4.2
-     */
-    QgsCustomization::QgsProcessingProvidersItem *processingProvidersItem() const;
 
     /**
      * Apply customization to the application
@@ -991,13 +812,6 @@ class APP_EXPORT QgsCustomization
      * Returns an action unique name within the entire application
      */
     QString uniqueActionName( const QString &originalActionName ) const;
-
-    /**
-     * Returns a processing algorithm unique name within the entire application
-     *
-     * \since QGIS 4.2
-     */
-    QString uniqueProcessingAlgorithmName( const QString &originalProcessingAlgorithmName ) const;
 
     /**
      * Returns customization item according to its \a path. \a path is a '/' separated list of
@@ -1050,13 +864,6 @@ class APP_EXPORT QgsCustomization
     void loadApplicationToolBars();
 
     /**
-     * Update customization model with current application processing elements
-     *
-     * \since QGIS 4.2
-     */
-    void loadProcessingProviders();
-
-    /**
      * Apply browser items customization to the application
      */
     void applyToBrowserItems() const;
@@ -1080,12 +887,6 @@ class APP_EXPORT QgsCustomization
      * Apply toolbar customization to the application
      */
     void applyToToolBars() const;
-
-    /**
-     * Find recursively \a rootItem QgsProcessingAlgorithmRefItem children and set their icon
-     * using referenced algorithm one.
-     */
-    void loadProcessingAlgorithmItemIcons( QgsItem *rootItem );
 
     /**
      * Helper class to iterate over widget actions
@@ -1143,12 +944,12 @@ class APP_EXPORT QgsCustomization
     /**
      * Update action \a widget visibility based on \a item
      */
-    void updateActionVisibility( QgsCustomization::QgsItem *item, QWidget *widget ) const;
+    static void updateActionVisibility( QgsCustomization::QgsItem *item, QWidget *widget );
 
     /**
      * Update menu \a widget visibility based on \a item
      */
-    template<class WidgetType> void updateMenuActionVisibility( QgsCustomization::QgsItem *parentItem, WidgetType *parentWidget ) const;
+    template<class WidgetType> static void updateMenuActionVisibility( QgsCustomization::QgsItem *parentItem, WidgetType *parentWidget );
 
     /**
      * Returns QWidget corresponding to \a path. Path is a '/' separated list of
@@ -1170,7 +971,6 @@ class APP_EXPORT QgsCustomization
     std::unique_ptr<QgsMenusItem> mMenus;
     std::unique_ptr<QgsStatusBarWidgetsItem> mStatusBarWidgets;
     std::unique_ptr<QgsToolBarsItem> mToolBars;
-    std::unique_ptr<QgsProcessingProvidersItem> mProcessingProviders;
     bool mEnabled = false;
     QString mSplashPath;
 

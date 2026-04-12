@@ -67,9 +67,6 @@
           "name": "gles3",
           "platform": "emscripten"
         },
-        {
-          "name": "png"
-        },
         "concurrent",
         "freetype",
         "gui",

@@ -167,7 +167,7 @@ QVariantMap QgsDeleteDuplicateGeometriesAlgorithm::processAlgorithm( const QVari
         }
 
         const QgsGeometry candidateGeom = geometries.value( candidateId );
-        if ( geometry.isTopologicallyEqual( candidateGeom ) )
+        if ( geometry.isGeosEqual( candidateGeom ) )
         {
           // candidate is a duplicate of feature
           uniqueFeatures.remove( candidateId );

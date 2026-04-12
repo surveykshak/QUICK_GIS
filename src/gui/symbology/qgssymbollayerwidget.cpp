@@ -45,6 +45,7 @@
 #include "qgssvgselectorwidget.h"
 #include "qgssymbollayerutils.h"
 #include "qgsvectorlayer.h"
+#include "qgsvectorlayerutils.h"
 
 #include <QAbstractButton>
 #include <QAction>
@@ -55,6 +56,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QMainWindow>
 #include <QMenu>
 #include <QMessageBox>
 #include <QMovie>
@@ -1960,8 +1962,6 @@ QgsTemplatedLineSymbolLayerWidget::QgsTemplatedLineSymbolLayerWidget( TemplatedS
   mAverageAngleUnit->setUnits( units );
   mIntervalUnitWidget->setUnits( units );
   mBlankSegmentsUnitWidget->setUnits( units );
-  mTrimDistanceStartUnitWidget->setUnits( QgsUnitTypes::RenderUnitList( units ) << Qgis::RenderUnit::Percentage );
-  mTrimDistanceEndUnitWidget->setUnits( QgsUnitTypes::RenderUnitList( units ) << Qgis::RenderUnit::Percentage );
 
   mRingFilterComboBox->addItem( QgsApplication::getThemeIcon( u"mIconAllRings.svg"_s ), tr( "All Rings" ), QgsLineSymbolLayer::AllRings );
   mRingFilterComboBox->addItem( QgsApplication::getThemeIcon( u"mIconExteriorRing.svg"_s ), tr( "Exterior Ring Only" ), QgsLineSymbolLayer::ExteriorRingOnly );
@@ -1978,8 +1978,6 @@ QgsTemplatedLineSymbolLayerWidget::QgsTemplatedLineSymbolLayerWidget( TemplatedS
   mSpinOffsetAlongLine->setClearValue( 0.0 );
   mHashRotationSpinBox->setClearValue( 0 );
   mSpinAverageAngleLength->setClearValue( 4.0 );
-  mTrimStartDistanceSpin->setClearValue( 0.0 );
-  mTrimDistanceEndSpin->setClearValue( 0.0 );
 
   connect( spinInterval, static_cast<void ( QDoubleSpinBox::* )( double )>( &QDoubleSpinBox::valueChanged ), this, &QgsTemplatedLineSymbolLayerWidget::setInterval );
   connect( mSpinOffsetAlongLine, static_cast<void ( QDoubleSpinBox::* )( double )>( &QDoubleSpinBox::valueChanged ), this, &QgsTemplatedLineSymbolLayerWidget::setOffsetAlongLine );
@@ -2006,36 +2004,6 @@ QgsTemplatedLineSymbolLayerWidget::QgsTemplatedLineSymbolLayerWidget( TemplatedS
     }
   } );
 
-  connect( mTrimStartDistanceSpin, static_cast<void ( QDoubleSpinBox::* )( double )>( &QDoubleSpinBox::valueChanged ), this, [this]( double value ) {
-    if ( !mLayer )
-      return;
-
-    mLayer->setTrimDistanceStart( value );
-    emit changed();
-  } );
-  connect( mTrimDistanceStartUnitWidget, &QgsUnitSelectionWidget::changed, this, [this] {
-    if ( !mLayer )
-      return;
-
-    mLayer->setTrimDistanceStartUnit( mTrimDistanceStartUnitWidget->unit() );
-    mLayer->setTrimDistanceStartMapUnitScale( mTrimDistanceStartUnitWidget->getMapUnitScale() );
-    emit changed();
-  } );
-  connect( mTrimDistanceEndSpin, static_cast<void ( QDoubleSpinBox::* )( double )>( &QDoubleSpinBox::valueChanged ), this, [this]( double value ) {
-    if ( !mLayer )
-      return;
-
-    mLayer->setTrimDistanceEnd( value );
-    emit changed();
-  } );
-  connect( mTrimDistanceEndUnitWidget, &QgsUnitSelectionWidget::changed, this, [this] {
-    if ( !mLayer )
-      return;
-
-    mLayer->setTrimDistanceEndUnit( mTrimDistanceEndUnitWidget->unit() );
-    mLayer->setTrimDistanceEndMapUnitScale( mTrimDistanceEndUnitWidget->getMapUnitScale() );
-    emit changed();
-  } );
 
   switch ( mSymbolType )
   {
@@ -2047,7 +2015,6 @@ QgsTemplatedLineSymbolLayerWidget::QgsTemplatedLineSymbolLayerWidget( TemplatedS
       );
       mPlacementLabel->setText( tr( "Hash placement" ) );
       chkRotateMarker->setText( tr( "Rotate hash to follow line direction" ) );
-      mSpinOffsetAlongLine->setToolTip( tr( "Offset hashes in line direction if positive or in opposite line direction if negative" ) );
       mHashLengthLabel->setVisible( true );
       mSpinHashLength->setVisible( true );
       mHashLengthUnitWidget->setVisible( true );
@@ -2061,7 +2028,6 @@ QgsTemplatedLineSymbolLayerWidget::QgsTemplatedLineSymbolLayerWidget( TemplatedS
     case TemplatedSymbolType::Marker:
       mPlacementLabel->setText( tr( "Marker placement" ) );
       chkRotateMarker->setText( tr( "Rotate marker to follow line direction" ) );
-      mSpinOffsetAlongLine->setToolTip( tr( "Offset markers in line direction if positive or in opposite line direction if negative" ) );
       mHashLengthLabel->setVisible( false );
       mSpinHashLength->setVisible( false );
       mHashLengthUnitWidget->setVisible( false );
@@ -2070,6 +2036,18 @@ QgsTemplatedLineSymbolLayerWidget::QgsTemplatedLineSymbolLayerWidget( TemplatedS
       mHashRotationSpinBox->setVisible( false );
       mHashRotationDDBtn->setVisible( false );
   }
+}
+
+bool QgsTemplatedLineSymbolLayerWidget::event( QEvent *event )
+{
+  if ( event->type() == QEvent::Show )
+  {
+    // Blank segments button is enabled only in dock mode. That requires for this widget to be
+    // parented which is not the case when we create the widget. So we update on show event
+    updateBlankSegmentsWidget();
+  }
+
+  return QgsSymbolLayerWidget::event( event );
 }
 
 void QgsTemplatedLineSymbolLayerWidget::setSymbolLayer( QgsSymbolLayer *layer )
@@ -2104,9 +2082,6 @@ void QgsTemplatedLineSymbolLayerWidget::setSymbolLayer( QgsSymbolLayer *layer )
   spinOffset->setValue( mLayer->offset() );
   spinOffset->blockSignals( false );
 
-  whileBlocking( mTrimStartDistanceSpin )->setValue( mLayer->trimDistanceStart() );
-  whileBlocking( mTrimDistanceEndSpin )->setValue( mLayer->trimDistanceEnd() );
-
   whileBlocking( mCheckInterval )->setChecked( mLayer->placements() & Qgis::MarkerLinePlacement::Interval );
   whileBlocking( mCheckVertex )->setChecked( mLayer->placements() & Qgis::MarkerLinePlacement::InnerVertices || mLayer->placements() & Qgis::MarkerLinePlacement::Vertex );
   whileBlocking( mCheckVertexFirst )->setChecked( mLayer->placements() & Qgis::MarkerLinePlacement::FirstVertex || mLayer->placements() & Qgis::MarkerLinePlacement::Vertex );
@@ -2133,10 +2108,6 @@ void QgsTemplatedLineSymbolLayerWidget::setSymbolLayer( QgsSymbolLayer *layer )
   whileBlocking( mAverageAngleUnit )->setMapUnitScale( mLayer->averageAngleMapUnitScale() );
   whileBlocking( mSpinAverageAngleLength )->setValue( mLayer->averageAngleLength() );
   whileBlocking( mBlankSegmentsUnitWidget )->setUnit( mLayer->blankSegmentsUnit() );
-  whileBlocking( mTrimDistanceStartUnitWidget )->setUnit( mLayer->trimDistanceStartUnit() );
-  whileBlocking( mTrimDistanceStartUnitWidget )->setMapUnitScale( mLayer->trimDistanceStartMapUnitScale() );
-  whileBlocking( mTrimDistanceEndUnitWidget )->setUnit( mLayer->trimDistanceEndUnit() );
-  whileBlocking( mTrimDistanceEndUnitWidget )->setMapUnitScale( mLayer->trimDistanceEndMapUnitScale() );
 
   switch ( mSymbolType )
   {
@@ -2166,11 +2137,15 @@ void QgsTemplatedLineSymbolLayerWidget::setSymbolLayer( QgsSymbolLayer *layer )
   registerDataDefinedButton( mOffsetAlongLineDDBtn, QgsSymbolLayer::Property::OffsetAlongLine );
   registerDataDefinedButton( mAverageAngleDDBtn, QgsSymbolLayer::Property::AverageAngleLength );
   registerDataDefinedButton( mBlankSegmentsDDButton, QgsSymbolLayer::Property::BlankSegments );
-  registerDataDefinedButton( mTrimDistanceStartDDBtn, QgsSymbolLayer::Property::TrimStart );
-  registerDataDefinedButton( mTrimDistanceEndDDBtn, QgsSymbolLayer::Property::TrimEnd );
 
   connect( mBlankSegmentsDDButton, &QgsPropertyOverrideButton::changed, this, &QgsMarkerLineSymbolLayerWidget::updateBlankSegmentsWidget );
   connect( mBlankSegmentsDDButton, &QgsPropertyOverrideButton::createAuxiliaryField, this, &QgsMarkerLineSymbolLayerWidget::updateBlankSegmentsWidget );
+
+  if ( vectorLayer() )
+  {
+    connect( vectorLayer(), &QgsMapLayer::editingStarted, this, &QgsMarkerLineSymbolLayerWidget::updateBlankSegmentsWidget );
+    connect( vectorLayer(), &QgsMapLayer::editingStopped, this, &QgsMarkerLineSymbolLayerWidget::updateBlankSegmentsWidget );
+  }
 
   updateBlankSegmentsWidget();
 }
@@ -2399,7 +2374,6 @@ void QgsTemplatedLineSymbolLayerWidget::toggleMapToolEditBlankSegments( bool tog
 
 void QgsTemplatedLineSymbolLayerWidget::updateBlankSegmentsWidget()
 {
-  mEditBlankSegmentsBtn->setEnabled( blankSegmentsFieldIndex() > -1 );
   QString tooltip;
   switch ( mSymbolType )
   {
@@ -2412,9 +2386,25 @@ void QgsTemplatedLineSymbolLayerWidget::updateBlankSegmentsWidget()
       break;
   }
 
-  if ( !mEditBlankSegmentsBtn->isEnabled() )
+  if ( QgsPanelWidget *panelWidget = QgsPanelWidget::findParentPanel( this ); !panelWidget || !panelWidget->dockMode() )
   {
+    // It's not possible to edit blank segments from Layer properties dialog
+    mEditBlankSegmentsBtn->setEnabled( false );
+    tooltip += u"<br/><br/>"_s + tr( "This tool is disabled because map canvas interaction is only possible from Layer Styling panel, Layer properties dialog doesn't allow blank segments creation." );
+  }
+  else if ( blankSegmentsFieldIndex() < 0 )
+  {
+    mEditBlankSegmentsBtn->setEnabled( false );
     tooltip += u"<br/><br/>"_s + tr( "This tool is disabled because no valid field property has been set" );
+  }
+  else if ( !vectorLayer() || QgsVectorLayerUtils::fieldIsReadOnly( vectorLayer(), blankSegmentsFieldIndex() ) )
+  {
+    mEditBlankSegmentsBtn->setEnabled( false );
+    tooltip += u"<br/><br/>"_s + tr( "This tool is disabled because field property is not editable" );
+  }
+  else
+  {
+    mEditBlankSegmentsBtn->setEnabled( true );
   }
 
   mEditBlankSegmentsBtn->setToolTip( tooltip );
@@ -2423,7 +2413,7 @@ void QgsTemplatedLineSymbolLayerWidget::updateBlankSegmentsWidget()
 int QgsTemplatedLineSymbolLayerWidget::blankSegmentsFieldIndex() const
 {
   const QgsProperty blankSegmentsProperty = mLayer->dataDefinedProperties().property( QgsSymbolLayer::Property::BlankSegments );
-  return blankSegmentsProperty && blankSegmentsProperty.isActive() && blankSegmentsProperty.propertyType() == Qgis::PropertyType::Field
+  return blankSegmentsProperty && blankSegmentsProperty.isActive() && blankSegmentsProperty.propertyType() == Qgis::PropertyType::Field && vectorLayer()
            ? vectorLayer()->fields().indexFromName( blankSegmentsProperty.field() )
            : -1;
 }

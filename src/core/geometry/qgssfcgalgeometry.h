@@ -28,10 +28,10 @@ SIP_IF_MODULE( HAVE_SFCGAL_SIP )
 
 #include "qgsabstractgeometry.h"
 #include "qgslinestring.h"
-#include "qgsmatrix4x4.h"
 #include "qgspoint.h"
 #include "qgssfcgalengine.h"
 
+#include <QtGui/qmatrix4x4.h>
 
 /**
  * Wraps SFCGAL geometry object.
@@ -440,7 +440,7 @@ class CORE_EXPORT QgsSfcgalGeometry
      * \throws QgsSfcgalException if an error was encountered during the operation
      * \throws QgsNotSupportedException on QGIS builds based on SFCGAL < 2.3.
      */
-    std::unique_ptr<QgsSfcgalGeometry> transform( const QgsMatrix4x4 &mat ) const SIP_THROW( QgsSfcgalException );
+    std::unique_ptr<QgsSfcgalGeometry> transform( const QMatrix4x4 &mat ) const SIP_THROW( QgsSfcgalException );
 
     /**
      * Checks if \a otherGeom intersects this.
@@ -617,30 +617,6 @@ class CORE_EXPORT QgsSfcgalGeometry
      */
     std::unique_ptr<QgsSfcgalGeometry> approximateMedialAxis() const SIP_THROW( QgsSfcgalException );
 
-    /**
-     * Converts the geometry to a Solid geometry.
-     * The geometry must be of type PolyhedralSurface
-     *
-     * \return geometry as a Solid
-     *
-     * \throws QgsSfcgalException if an error was encountered during the operation
-     *
-     * \since QGIS 4.2
-     */
-    std::unique_ptr<QgsSfcgalGeometry> toSolid() const SIP_THROW( QgsSfcgalException );
-
-    /**
-     * Converts the geometry to a PolyhedralSurface geometry.
-     * The geometry must be of type Solid
-     *
-     * \return geometry as a PolyhedralSurface
-     *
-     * \throws QgsSfcgalException if an error was encountered during the operation
-     *
-     * \since QGIS 4.2
-     */
-    std::unique_ptr<QgsSfcgalGeometry> toPolyhedralSurface() const SIP_THROW( QgsSfcgalException );
-
     // ============= PRIMITIVE
 
     /**
@@ -702,7 +678,7 @@ class CORE_EXPORT QgsSfcgalGeometry
      * \throws QgsSfcgalException if an error was encountered during the operation
      * \throws QgsNotSupportedException on QGIS builds based on SFCGAL < 2.3.
      */
-    QgsMatrix4x4 primitiveTransform() const SIP_THROW( QgsSfcgalException );
+    QMatrix4x4 primitiveTransform() const SIP_THROW( QgsSfcgalException );
 
   protected:
 
@@ -726,7 +702,7 @@ class CORE_EXPORT QgsSfcgalGeometry
 
     sfcgal::shared_prim mSfcgalPrim;
     sfcgal::primitiveType mPrimType;
-    QgsMatrix4x4 mPrimTransform;
+    QMatrix4x4 mPrimTransform;
 #endif
 };
 

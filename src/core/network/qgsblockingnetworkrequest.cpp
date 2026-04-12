@@ -79,14 +79,10 @@ QgsBlockingNetworkRequest::ErrorCode QgsBlockingNetworkRequest::post( QNetworkRe
 
 QgsBlockingNetworkRequest::ErrorCode QgsBlockingNetworkRequest::post( QNetworkRequest &request, QIODevice *data, bool forceRefresh, QgsFeedback *feedback )
 {
-  mPayloadDataVariant = data;
-  return doRequest( Qgis::HttpMethod::Post, request, forceRefresh, feedback );
-}
-
-QgsBlockingNetworkRequest::ErrorCode QgsBlockingNetworkRequest::post( QNetworkRequest &request, QHttpMultiPart *data, bool forceRefresh, QgsFeedback *feedback )
-{
-  mPayloadDataVariant = data;
-  return doRequest( Qgis::HttpMethod::Post, request, forceRefresh, feedback );
+  mPayloadData = data;
+  const QgsBlockingNetworkRequest::ErrorCode res = doRequest( Qgis::HttpMethod::Post, request, forceRefresh, feedback );
+  mPayloadData = nullptr;
+  return res;
 }
 
 QgsBlockingNetworkRequest::ErrorCode QgsBlockingNetworkRequest::head( QNetworkRequest &request, bool forceRefresh, QgsFeedback *feedback )
@@ -104,8 +100,10 @@ QgsBlockingNetworkRequest::ErrorCode QgsBlockingNetworkRequest::put( QNetworkReq
 
 QgsBlockingNetworkRequest::ErrorCode QgsBlockingNetworkRequest::put( QNetworkRequest &request, QIODevice *data, QgsFeedback *feedback )
 {
-  mPayloadDataVariant = data;
-  return doRequest( Qgis::HttpMethod::Put, request, true, feedback );
+  mPayloadData = data;
+  const QgsBlockingNetworkRequest::ErrorCode res = doRequest( Qgis::HttpMethod::Put, request, true, feedback );
+  mPayloadData = nullptr;
+  return res;
 }
 
 QgsBlockingNetworkRequest::ErrorCode QgsBlockingNetworkRequest::deleteResource( QNetworkRequest &request, QgsFeedback *feedback )
@@ -122,19 +120,7 @@ void QgsBlockingNetworkRequest::sendRequestToNetworkAccessManager( const QNetwor
       break;
 
     case Qgis::HttpMethod::Post:
-      if ( std::holds_alternative<QHttpMultiPart *>( mPayloadDataVariant ) )
-      {
-        mReply = QgsNetworkAccessManager::instance()->post( request, std::get<QHttpMultiPart *>( mPayloadDataVariant ) );
-      }
-      else if ( std::holds_alternative<QIODevice *>( mPayloadDataVariant ) )
-      {
-        mReply = QgsNetworkAccessManager::instance()->post( request, std::get<QIODevice *>( mPayloadDataVariant ) );
-      }
-      else
-      {
-        // should not happen, but might if someone extends the variant type without updating this code
-        QgsDebugError( QString( "Not implemented std::variant type" ) );
-      }
+      mReply = QgsNetworkAccessManager::instance()->post( request, mPayloadData );
       break;
 
     case Qgis::HttpMethod::Head:
@@ -142,7 +128,7 @@ void QgsBlockingNetworkRequest::sendRequestToNetworkAccessManager( const QNetwor
       break;
 
     case Qgis::HttpMethod::Put:
-      mReply = QgsNetworkAccessManager::instance()->put( request, std::get<QIODevice *>( mPayloadDataVariant ) );
+      mReply = QgsNetworkAccessManager::instance()->put( request, mPayloadData );
       break;
 
     case Qgis::HttpMethod::Delete:

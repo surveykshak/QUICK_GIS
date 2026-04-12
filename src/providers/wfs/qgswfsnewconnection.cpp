@@ -20,7 +20,6 @@
 
 #include "qgslogger.h"
 #include "qgsmessagelog.h"
-#include "qgsoapifutils.h"
 #include "qgsowsconnection.h"
 #include "qgswfsguiutils.h"
 
@@ -36,7 +35,7 @@ static QString translatedImageFormatFromMediaType( const QString &type )
 {
   static QMap<QString, QString> mapMimeTypeToTranslated {
     { u"default"_s, QObject::tr( "Default" ) },
-    { PSEUDO_JSONFG_MEDIA_TYPE, QObject::tr( "JSON-FG" ) },
+    { u"application/fg+json"_s, QObject::tr( "JSON-FG" ) },
     { u"application/flatgeobuf"_s, QObject::tr( "FlatGeoBuf" ) },
     { u"application/geo+json"_s, QObject::tr( "GeoJSON" ) },
     { u"application/gml+xml"_s, QObject::tr( "GML" ) },

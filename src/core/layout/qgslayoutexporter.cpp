@@ -588,11 +588,7 @@ QgsLayoutExporter::ExportResult QgsLayoutExporter::exportToPdf( const QString &f
   mLayout->renderContext().setFlag( Qgis::LayoutRenderFlag::SynchronousLegendGraphics, true );
 
   mLayout->renderContext().setTextRenderFormat( settings.textRenderFormat );
-
-  if ( settings.writeGeoPdf && !settings.useLayerTreeConfig )
-  {
-    mLayout->renderContext().setExportThemes( settings.exportThemes );
-  }
+  mLayout->renderContext().setExportThemes( settings.exportThemes );
 
   ExportResult result = Success;
   if ( settings.writeGeoPdf || settings.exportLayersAsSeperateFiles ) //#spellok
@@ -605,19 +601,6 @@ QgsLayoutExporter::ExportResult QgsLayoutExporter::exportToPdf( const QString &f
     subSettings.exportLayersAsSeperateFiles = false; //#spellok
 
     const QList<QGraphicsItem *> items = mLayout->items( Qt::AscendingOrder );
-
-    if ( settings.writeGeoPdf && settings.useLayerTreeConfig )
-    {
-      bool res = geospatialPdfExporter->setMapItemLayersBeforeRendering();
-      // If no map was found to set project layers, it means that all of them
-      // have map theme presets or have locked layers, which is not supported
-      // when exporting a Geospatial PDF following QGIS layer tree properties.
-      if ( !res )
-      {
-        mErrorMessage = u"The Geospatial PDF cannot be exported following QGIS project configuration: At least one map layout item must not follow map themes nor locked layers."_s;
-        return PrintError;
-      }
-    }
 
     QList< QgsLayoutGeospatialPdfExporter::ComponentLayerDetail > pdfComponents;
 
@@ -661,12 +644,6 @@ QgsLayoutExporter::ExportResult QgsLayoutExporter::exportToPdf( const QString &f
     };
     auto getExportGroupNameFunc = []( QgsLayoutItem *item ) -> QString { return item->customProperty( u"pdfExportGroup"_s ).toString(); };
     result = handleLayeredExport( items, exportFunc, getExportGroupNameFunc );
-
-    if ( settings.writeGeoPdf && settings.useLayerTreeConfig )
-    {
-      // Restore map item layers right after the layer rendering
-      geospatialPdfExporter->restoreMapItemLayersAfterRendering();
-    }
     if ( result != Success )
       return result;
 
@@ -678,6 +655,7 @@ QgsLayoutExporter::ExportResult QgsLayoutExporter::exportToPdf( const QString &f
       QgsLayoutSize pageSize = mLayout->pageCollection()->page( 0 )->sizeWithUnits();
       QgsLayoutSize pageSizeMM = mLayout->renderContext().measurementConverter().convert( pageSize, Qgis::LayoutUnit::Millimeters );
       details.pageSizeMm = pageSizeMM.toQSizeF();
+      details.mutuallyExclusiveGroups = mutuallyExclusiveGroups;
 
       if ( settings.exportMetadata )
       {
@@ -689,6 +667,12 @@ QgsLayoutExporter::ExportResult QgsLayoutExporter::exportToPdf( const QString &f
         details.subject = mLayout->project()->metadata().abstract();
         details.title = mLayout->project()->metadata().title();
         details.keywords = mLayout->project()->metadata().keywords();
+      }
+
+      const QList< QgsMapLayer * > layers = mLayout->project()->mapLayers().values();
+      for ( const QgsMapLayer *layer : layers )
+      {
+        details.layerIdToPdfLayerTreeNameMap.insert( layer->id(), layer->name() );
       }
 
       if ( settings.appendGeoreference )
@@ -734,23 +718,12 @@ QgsLayoutExporter::ExportResult QgsLayoutExporter::exportToPdf( const QString &f
         }
       }
 
-      if ( !settings.useLayerTreeConfig )
-      {
-        details.customLayerTreeGroups = geospatialPdfExporter->customLayerTreeGroups();
-        details.initialLayerVisibility = geospatialPdfExporter->initialLayerVisibility();
-        details.layerOrder = geospatialPdfExporter->layerOrder();
-        details.layerTreeGroupOrder = geospatialPdfExporter->layerTreeGroupOrder();
-        details.mutuallyExclusiveGroups = mutuallyExclusiveGroups;
-
-        const QList< QgsMapLayer * > layers = mLayout->project()->mapLayers().values();
-        for ( const QgsMapLayer *layer : layers )
-        {
-          details.layerIdToPdfLayerTreeNameMap.insert( layer->id(), layer->name() );
-        }
-      }
+      details.customLayerTreeGroups = geospatialPdfExporter->customLayerTreeGroups();
+      details.initialLayerVisibility = geospatialPdfExporter->initialLayerVisibility();
+      details.layerOrder = geospatialPdfExporter->layerOrder();
+      details.layerTreeGroupOrder = geospatialPdfExporter->layerTreeGroupOrder();
       details.includeFeatures = settings.includeGeoPdfFeatures;
       details.useIso32000ExtensionFormatGeoreferencing = settings.useIso32000ExtensionFormatGeoreferencing;
-      details.useLayerTreeConfig = settings.useLayerTreeConfig;
 
       if ( !geospatialPdfExporter->finalize( pdfComponents, filePath, details ) )
       {

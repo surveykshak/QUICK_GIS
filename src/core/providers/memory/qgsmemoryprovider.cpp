@@ -78,8 +78,6 @@ QgsMemoryProvider::QgsMemoryProvider( const QString &uri, const ProviderOptions 
     mCrs = QgsCoordinateReferenceSystem( u"EPSG:4326"_s );
   }
 
-  elevationProperties()->setContainsElevationData( QgsWkbTypes::hasZ( mWkbType ) );
-
   mNextFeatureId = 1;
 
   setNativeTypes(
@@ -344,14 +342,9 @@ QgsFeatureIterator QgsMemoryProvider::getFeatures( const QgsFeatureRequest &requ
 
 QgsRectangle QgsMemoryProvider::extent() const
 {
-  return extent3D().toRectangle();
-}
-
-QgsBox3D QgsMemoryProvider::extent3D() const
-{
-  if ( mExtent3D.isEmpty() && !mFeatures.isEmpty() )
+  if ( mExtent.isEmpty() && !mFeatures.isEmpty() )
   {
-    mExtent3D.setNull();
+    mExtent.setNull();
     if ( mSubsetString.isEmpty() )
     {
       // fast way - iterate through all features
@@ -359,26 +352,26 @@ QgsBox3D QgsMemoryProvider::extent3D() const
       for ( const QgsFeature &feat : constMFeatures )
       {
         if ( feat.hasGeometry() )
-          mExtent3D.combineWith( feat.geometry().boundingBox3D() );
+          mExtent.combineExtentWith( feat.geometry().boundingBox() );
       }
     }
     else
     {
-      QgsFeature feat;
-      QgsFeatureIterator featIt = getFeatures( QgsFeatureRequest().setNoAttributes() );
-      while ( featIt.nextFeature( feat ) )
+      QgsFeature f;
+      QgsFeatureIterator fi = getFeatures( QgsFeatureRequest().setNoAttributes() );
+      while ( fi.nextFeature( f ) )
       {
-        if ( feat.hasGeometry() )
-          mExtent3D.combineWith( feat.geometry().boundingBox3D() );
+        if ( f.hasGeometry() )
+          mExtent.combineExtentWith( f.geometry().boundingBox() );
       }
     }
   }
   else if ( mFeatures.isEmpty() )
   {
-    mExtent3D.setNull();
+    mExtent.setNull();
   }
 
-  return mExtent3D;
+  return mExtent;
 }
 
 Qgis::WkbType QgsMemoryProvider::wkbType() const
@@ -425,7 +418,7 @@ void QgsMemoryProvider::handlePostCloneOperations( QgsVectorDataProvider *source
     // these properties aren't copied when cloning a memory provider by uri, so we need to do it manually
     mFeatures = other->mFeatures;
     mNextFeatureId = other->mNextFeatureId;
-    mExtent3D = other->mExtent3D;
+    mExtent = other->mExtent;
   }
 }
 
@@ -434,12 +427,12 @@ bool QgsMemoryProvider::addFeatures( QgsFeatureList &flist, Flags flags )
 {
   bool result = true;
   // whether or not to update the layer extent on the fly as we add features
-  const bool updateExtent = mFeatures.isEmpty() || !mExtent3D.isEmpty();
+  const bool updateExtent = mFeatures.isEmpty() || !mExtent.isEmpty();
 
   const int fieldCount = mFields.count();
 
   // For rollback
-  const auto oldExtent3D { mExtent3D };
+  const auto oldExtent { mExtent };
   const auto oldNextFeatureId { mNextFeatureId };
   QgsFeatureIds addedFids;
 
@@ -520,9 +513,7 @@ bool QgsMemoryProvider::addFeatures( QgsFeatureList &flist, Flags flags )
     if ( it->hasGeometry() )
     {
       if ( updateExtent )
-      {
-        mExtent3D.combineWith( it->geometry().boundingBox3D() );
-      }
+        mExtent.combineExtentWith( it->geometry().boundingBox() );
 
       // update spatial index
       if ( mSpatialIndex )
@@ -539,7 +530,7 @@ bool QgsMemoryProvider::addFeatures( QgsFeatureList &flist, Flags flags )
     {
       mFeatures.remove( addedFid );
     }
-    mExtent3D = oldExtent3D;
+    mExtent = oldExtent;
     mNextFeatureId = oldNextFeatureId;
   }
   else
@@ -771,7 +762,7 @@ bool QgsMemoryProvider::setSubsetString( const QString &theSQL, bool updateFeatu
 
   mSubsetString = theSQL;
   clearMinMaxCache();
-  mExtent3D.setNull();
+  mExtent.setNull();
 
   emit dataChanged();
   return true;
@@ -836,13 +827,13 @@ bool QgsMemoryProvider::truncate()
 {
   mFeatures.clear();
   clearMinMaxCache();
-  mExtent3D.setNull();
+  mExtent.setNull();
   return true;
 }
 
 void QgsMemoryProvider::updateExtents()
 {
-  mExtent3D.setNull();
+  mExtent.setNull();
 }
 
 QString QgsMemoryProvider::name() const

@@ -1051,13 +1051,6 @@ Gets the registry of available labeling engine rules.
 .. versionadded:: 3.40
 %End
 
-  static QgsSymbolConverterRegistry *symbolConverterRegistry() /KeepReference/;
-%Docstring
-Gets the registry of available symbol converters.
-
-.. versionadded:: 4.2
-%End
-
   static QgsProjectStorageRegistry *projectStorageRegistry() /KeepReference/;
 %Docstring
 Returns registry of available project storage implementations.
@@ -1232,6 +1225,7 @@ file
 
 .. versionadded:: 3.4
 %End
+
 
 
 %If (ANDROID)

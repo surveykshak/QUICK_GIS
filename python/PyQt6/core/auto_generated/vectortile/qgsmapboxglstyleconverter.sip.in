@@ -363,6 +363,7 @@ Constructor for QgsMapBoxGlStyleConverter.
       Opacity,
       Point,
       NumericArray,
+      DashArray,
     };
 
     enum class InterpolationType

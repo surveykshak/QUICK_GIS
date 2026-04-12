@@ -57,6 +57,8 @@ class TestQgsAttributeTable : public QObject
     // will be called before each testfunction is executed.
     void cleanup() {} // will be called after every testfunction.
 
+  public slots:
+
     void testRegression15974();
     void testFieldCalculation();
     void testFieldCalculationArea();
@@ -64,6 +66,8 @@ class TestQgsAttributeTable : public QObject
     void testSelected();
     void testEdited();
     void testSelectedOnTop();
+    void testSortByDisplayExpression();
+    void testOrderColumn();
     void testFilteredFeatures();
     void testOpenWithFilterExpression();
     void testVisibleTemporal();
@@ -73,10 +77,8 @@ class TestQgsAttributeTable : public QObject
     void testMultiEditMakeUncommittedChanges();
     void testInvalidView();
     void testEnsureEditSelection();
+  private slots:
     void testFetchAllAttributes();
-    void testSortByDisplayExpression();
-    void testOrderColumn();
-    void testEmptyModelCrash();
 
   private:
     QgisApp *mQgisApp = nullptr;
@@ -429,7 +431,6 @@ void TestQgsAttributeTable::testSortByDisplayExpression()
   auto dlg = std::make_unique<QgsAttributeTableDialog>( tempLayer.get() );
 
   dlg->mMainView->mFeatureListView->setDisplayExpression( "pk" );
-  dlg->mMainView->mFeatureListModel->setSortByDisplayExpression( true );
   QgsFeatureListModel *listModel = dlg->mMainView->mFeatureListModel;
   QCOMPARE( listModel->rowCount(), 3 );
 
@@ -455,7 +456,7 @@ void TestQgsAttributeTable::testSortNumbers()
   f1.setAttribute( 1, 2.001 );
   QgsFeature f2( tempLayer->dataProvider()->fields(), 2 );
   f2.setAttribute( 0, 2 );
-  f2.setAttribute( 1, 11001 );
+  f2.setAttribute( 1, 1001 );
   QgsFeature f3( tempLayer->dataProvider()->fields(), 3 );
   f3.setAttribute( 0, 3 );
   f3.setAttribute( 1, 10.0001 );
@@ -478,11 +479,11 @@ void TestQgsAttributeTable::testSortNumbers()
 
   QCOMPARE( model->data( model->index( 2, 1 ), Qt::ItemDataRole::DisplayRole ).toString(), QString( "2,00100" ) );
   QCOMPARE( model->data( model->index( 1, 1 ), Qt::ItemDataRole::DisplayRole ).toString(), QString( "10,00010" ) );
-  QCOMPARE( model->data( model->index( 0, 1 ), Qt::ItemDataRole::DisplayRole ).toString(), QString( "11.001,00000" ) );
+  QCOMPARE( model->data( model->index( 0, 1 ), Qt::ItemDataRole::DisplayRole ).toString(), QString( "1.001,00000" ) );
 
   QCOMPARE( model->data( model->index( 2, 2 ), static_cast<int>( QgsAttributeTableModel::CustomRole::Sort ) ).toDouble(), 2.001 );
   QCOMPARE( model->data( model->index( 1, 2 ), static_cast<int>( QgsAttributeTableModel::CustomRole::Sort ) ).toDouble(), 10.0001 );
-  QCOMPARE( model->data( model->index( 0, 2 ), static_cast<int>( QgsAttributeTableModel::CustomRole::Sort ) ).toDouble(), 11001.0 );
+  QCOMPARE( model->data( model->index( 0, 2 ), static_cast<int>( QgsAttributeTableModel::CustomRole::Sort ) ).toDouble(), 1001.0 );
 
   QCOMPARE( dlg->mMainView->mTableView->horizontalHeader()->sortIndicatorSection(), 1 );
   QCOMPARE( dlg->mMainView->mTableView->horizontalHeader()->sortIndicatorOrder(), Qt::SortOrder::DescendingOrder );
@@ -611,23 +612,23 @@ void TestQgsAttributeTable::testOrderColumn()
   QVERIFY( tempLayer->isValid() );
 
   QgsFeature f1( tempLayer->dataProvider()->fields(), 1 );
-  f1.setAttribute( 0, 1 );  // pk
-  f1.setAttribute( 1, 13 ); // col1
-  f1.setAttribute( 2, 7 );  // col2
+  f1.setAttribute( 0, 1 );
+  f1.setAttribute( 1, 13 );
+  f1.setAttribute( 2, 7 );
   QVERIFY( tempLayer->dataProvider()->addFeatures( QgsFeatureList() << f1 ) );
 
   auto dlg = std::make_unique<QgsAttributeTableDialog>( tempLayer.get() );
 
   // Issue https://github.com/qgis/QGIS/issues/28493
   // When we reorder column (last column becomes first column), and we select an entire row
-  // the currentIndex is no longer the first column, and consequently it breaks editing
+  // the currentIndex is no longer the first column, and consequently it breaks edition
 
   QgsAttributeTableConfig config = QgsAttributeTableConfig();
   config.update( tempLayer->dataProvider()->fields() );
   QVector<QgsAttributeTableConfig::ColumnConfig> columns = config.columns();
 
   // move last column in first position
-  columns.move( 2, 0 ); // col2, pk, col1
+  columns.move( 2, 0 );
   config.setColumns( columns );
 
   dlg->mMainView->setAttributeTableConfig( config );
@@ -645,14 +646,14 @@ void TestQgsAttributeTable::testOrderColumn()
 
   qDebug() << filterModel->mapFromSource( filterModel->sourceModel()->index( 0, 0 ) );
 
-  // column 0 is indeed column 2 since we moved it
+  // column 0 is indeed column 2 since we move it
   QCOMPARE( filterModel->sortColumn(), 2 );
 
   // Assume an action column at the index 0,3
   // When we request the source index, it should be invalid (because there is no source of this column)
   index = filterModel->mapToSource( filterModel->sourceModel()->index( 0, 3 ) );
-  QVERIFY( !index.isValid() );
-  // Then we request the source index by mapToMaster, there should be returned the source index of the first column
+  QVERIFY( index.isValid() );
+  // "hen we request the source index by mapToMaster, there should be returned the source index of the first column
   // that's done to provide the feature
   index = filterModel->mapToMaster( filterModel->sourceModel()->index( 0, 3 ) );
   QCOMPARE( index.column(), 0 );
@@ -923,20 +924,6 @@ void TestQgsAttributeTable::testFetchAllAttributes()
   QCOMPARE( dlg->mMainView->masterModel()->data( dlg->mMainView->masterModel()->index( 0, 0 ), Qt::DisplayRole ).toString(), "Jet" );
   QCOMPARE( dlg->mMainView->masterModel()->data( dlg->mMainView->masterModel()->index( 0, 1 ), Qt::DisplayRole ).toString(), "90" );
   QCOMPARE( dlg->mMainView->masterModel()->data( dlg->mMainView->masterModel()->index( 0, 2 ), Qt::DisplayRole ).toString(), "3.000" );
-}
-
-void TestQgsAttributeTable::testEmptyModelCrash()
-{
-  auto tempLayer = std::make_unique<QgsVectorLayer>( u"Point?crs=epsg:4326"_s, u"vl"_s, u"memory"_s );
-  QVERIFY( tempLayer->isValid() );
-  QgsFeature f1( tempLayer->dataProvider()->fields(), 1 );
-  f1.setGeometry( QgsGeometry::fromPointXY( QgsPointXY( 0, 0 ) ) );
-  QVERIFY( tempLayer->dataProvider()->addFeature( f1 ) );
-  QVERIFY( tempLayer->startEditing() );
-  auto dlg = std::make_unique<QgsAttributeTableDialog>( tempLayer.get() );
-  const QgsField field { u"int"_s, QMetaType::Int };
-  dlg->addAttribute( field );
-  dlg->removeAttributes( QList<int>() << 0 );
 }
 
 QGSTEST_MAIN( TestQgsAttributeTable )

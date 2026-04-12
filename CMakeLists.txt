@@ -64,10 +64,10 @@ endif()
 #############################################################
 # Project and version
 set(CPACK_PACKAGE_VERSION_MAJOR "4")
-set(CPACK_PACKAGE_VERSION_MINOR "1")
-set(CPACK_PACKAGE_VERSION_PATCH "0")
+set(CPACK_PACKAGE_VERSION_MINOR "0")
+set(CPACK_PACKAGE_VERSION_PATCH "1")
 set(COMPLETE_VERSION ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH})
-set(RELEASE_NAME "Master")
+set(RELEASE_NAME "Norrköping")
 project(qgis VERSION ${COMPLETE_VERSION})
 
 set(QGIS_APP_NAME "qgis" CACHE STRING "The main app name and bundle name")
@@ -415,7 +415,7 @@ if(WITH_CORE)
   #############################################################
   # search for dependencies
 
-  if(NOT WIN32 AND NOT ANDROID AND NOT EMSCRIPTEN)
+  if(NOT WIN32 AND NOT ANDROID)
     include(CheckFunctionExists)
     CHECK_FUNCTION_EXISTS(openpty OPENPTY_IN_LIBC)
     if(NOT OPENPTY_IN_LIBC)
