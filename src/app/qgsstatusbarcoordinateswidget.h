@@ -69,7 +69,26 @@ class APP_EXPORT QgsStatusBarCoordinatesWidget : public QWidget
     void showExtent();
     void ensureCoordinatesVisible();
     void updateCoordinateDisplay();
+    void updateCoordinateDisplayUpdated(const QgsPointXY &mapPoint);
     void coordinateDisplaySettingsChanged();
+
+  private:
+    // Mil Grid Function declaration Nihcas added
+    QString LatLongToMilgridConversion(const QgsPointXY &p);
+    QString LatLongTopoSheetConversion(const QgsPointXY &p);
+    QString eveLatLongToMilgridConversion(const QgsPointXY &p);
+    QString eveLatLongTopoSheetConversion(const QgsPointXY &p);
+
+    const char *check_row_2_sides(int r);
+    int check_domain_2_sides(float lat1, float long1, float lat2, float long2,
+                             double latitude, double longitude);
+    const char *check_row_3_sides(int r);
+    int check_domain_3_sides(float lat1, float long1, float lat2, float long2,
+                             double latitude, double longitude);
+    const char *check_row_4_sides(int r);
+    int check_domain_4_sides(float lat1, float long1, float lat2, float long2,
+                             double latitude, double longitude);
+    int *checkarray(int pe_local, int pn_local);
 
   private:
     void refreshMapCanvas();
@@ -78,6 +97,22 @@ class APP_EXPORT QgsStatusBarCoordinatesWidget : public QWidget
     QToolButton *mToggleExtentsViewButton = nullptr;
     //! Widget that will live on the statusbar to display "Coordinate / Extent"
     QLabel *mLabel = nullptr;
+    QLabel *mLabeldgr = nullptr;
+    QLabel *mLabeldsheet = nullptr;
+    QLabel *mLabelegr = nullptr;
+    QLabel *mLabelesheet = nullptr;
+    QLabel *mLabelgeocord = nullptr;
+    QValidator *mCoordsEditValidator = nullptr;
+
+    // Variables for milgrid controls Nihcas added
+    QLineEdit *mCoordsGeocord = nullptr;
+    QLineEdit *mCoordsEditMgrid = nullptr;
+    QLineEdit *mCoordsEditMgrideve = nullptr;
+    QLineEdit *mCoordsEditMsheet = nullptr;
+    QLineEdit *mCoordsEditMsheeteve = nullptr;
+    //! The validator for the mCoordsEdit
+    QValidator *mCoordsEditMgridValidator = nullptr;
+    QValidator *mCoordsEditMgrideveValidator = nullptr;
 
     QTimer *mDizzyTimer = nullptr;
     QgsMapCanvas *mMapCanvas = nullptr;

@@ -621,12 +621,9 @@ static void setTitleBarText_( QWidget &qgisApp )
   if ( QgsProject::instance()->isDirty() )
     caption.prepend( '*' );
 
-  caption += QgisApp::tr( "QGIS" );
+  caption += QgisApp::tr( "QUICKGIS" );
 
-  if ( Qgis::version().endsWith( "Master"_L1 ) )
-  {
-    caption += u" %1"_s.arg( Qgis::devVersion() );
-  }
+
 
   // Add current profile (if it's not the default one)
   if ( QgisApp::instance()->userProfileManager()->allProfiles().count() > 1 )
@@ -993,7 +990,7 @@ QgisApp::QgisApp( QSplashScreen *splash, AppOptions options, const QString &root
 {
   if ( sInstance )
   {
-    QMessageBox::critical( this, tr( "Multiple Instances of QgisApp" ), tr( "Multiple instances of QGIS application object detected.\nPlease contact the developers.\n" ) );
+    QMessageBox::critical( this, tr( "Multiple Instances of QgisApp" ), tr( "Multiple instances of QUICKGIS application object detected.\nPlease contact the developers.\n" ) );
     abort();
   }
 
