@@ -77,6 +77,8 @@ qgis-test.ctest
 qgis.kdev4
 qgis.supp
 qtcreator-build/
+out/build*
+out/build/
 resources/themes/*/style.qss.auto
 resources/server/src/landingpage/node_modules/
 scripts/Debug
