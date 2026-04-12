@@ -622,7 +622,7 @@ static void setTitleBarText_( QWidget &qgisApp )
   if ( QgsProject::instance()->isDirty() )
     caption.prepend( '*' );
 
-  caption += QgisApp::tr( "QGIS" );
+  caption += QgisApp::tr( "QUICKGIS-4.0" );
 
   if ( Qgis::version().endsWith( "Master"_L1 ) )
   {
@@ -996,7 +996,7 @@ QgisApp::QgisApp( QSplashScreen *splash, AppOptions options, const QString &root
 {
   if ( sInstance )
   {
-    QMessageBox::critical( this, tr( "Multiple Instances of QgisApp" ), tr( "Multiple instances of QGIS application object detected.\nPlease contact the developers.\n" ) );
+    QMessageBox::critical( this, tr( "Multiple Instances of QgisApp" ), tr( "Multiple instances of QUICKGIS application object detected.\nPlease contact the developers.\n" ) );
     abort();
   }
 
@@ -1557,10 +1557,10 @@ QgisApp::QgisApp( QSplashScreen *splash, AppOptions options, const QString &root
   connect( QgsGui::mapLayerActionRegistry(), &QgsMapLayerActionRegistry::changed, this, &QgisApp::refreshActionFeatureAction );
 
   // set application's caption
-  QString caption = tr( "QGIS - %1 ('%2')" ).arg( Qgis::version(), Qgis::releaseName() );
+  QString caption = tr( "QUICKGIS-4.0 - %1 ('%2')" ).arg( Qgis::version(), Qgis::releaseName() );
   setWindowTitle( caption );
 
-  // QgsMessageLog::logMessage( tr( "QGIS starting…" ), QString(), Qgis::MessageLevel::Info );
+  // QgsMessageLog::logMessage( tr( "QUICKGIS starting…" ), QString(), Qgis::MessageLevel::Info );
 
   connect( QgsProject::instance(), &QgsProject::isDirtyChanged, this, [this] { setTitleBarText_( *this ); } );
 
@@ -1739,11 +1739,11 @@ QgisApp::QgisApp( QSplashScreen *splash, AppOptions options, const QString &root
   QgsStyle::defaultStyle();
   endProfile();
 
-  mSplash->showMessage( tr( "QGIS Ready!" ), Qt::AlignHCenter | Qt::AlignBottom, splashTextColor );
+  mSplash->showMessage( tr( "QUICKGIS Ready!" ), Qt::AlignHCenter | Qt::AlignBottom, splashTextColor );
 
   QgsMessageLog::logMessage( QgsApplication::showSettings(), QString(), Qgis::MessageLevel::Info );
 
-  //QgsMessageLog::logMessage( tr( "QGIS Ready!" ), QString(), Qgis::MessageLevel::Info );
+  //QgsMessageLog::logMessage( tr( "QUICKGIS Ready!" ), QString(), Qgis::MessageLevel::Info );
 
   mMapTipsVisible = false;
   // This turns on the map tip if they where active in the last session
@@ -3205,7 +3205,7 @@ void QgisApp::createActions()
   mActionReportaBug->setShortcut( QString() );
 #endif
 
-  mActionHelpContents->setEnabled( QFileInfo::exists( QgsApplication::pkgDataPath() + "/doc/index.html" ) );
+  mActionHelpContents->setEnabled( QFileInfo::exists( QgsApplication::pkgDataPath() + "/doc/QuickGis_Guide.pdf" ) );
 
   connect( mActionHelpContents, &QAction::triggered, this, &QgisApp::helpContents );
   connect( mActionHelpAPI, &QAction::triggered, this, &QgisApp::apiDocumentation );
@@ -5532,11 +5532,11 @@ QString QgisApp::getVersionString()
   const QString compLabel = tr( "Compiled" );
   const QString runLabel = tr( "Running" );
 
-  versionString += u"<tr><td>%1</td><td>%2</td>"_s.arg( tr( "QGIS version" ), Qgis::version() );
+  versionString += u"<tr><td>%1</td><td>%2</td>"_s.arg( tr( "QUICKGIS version" ), Qgis::version() );
   versionString += "</tr><tr>"_L1;
   if ( QString( Qgis::devVersion() ) == "exported"_L1 )
   {
-    versionString += u"<td>%1</td>"_s.arg( tr( "QGIS code branch" ) );
+    versionString += u"<td>%1</td>"_s.arg( tr( "QUICKGIS code branch" ) );
     if ( Qgis::version().endsWith( "Master"_L1 ) )
     {
       versionString += "<td><a href=\"https://github.com/qgis/QGIS/tree/master\">master</a></td>"_L1;
