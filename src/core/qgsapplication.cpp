@@ -238,9 +238,9 @@ struct QgsApplication::ApplicationMembers
 QObject *ABISYM( QgsApplication::mFileOpenEventReceiver ) = nullptr;
 bool ABISYM( QgsApplication::mInitialized ) = false;
 bool ABISYM( QgsApplication::mRunningFromBuildDir ) = false;
-const char *QgsApplication::QGIS_ORGANIZATION_NAME = "QGIS";
-const char *QgsApplication::QGIS_ORGANIZATION_DOMAIN = "qgis.org";
-const char *QgsApplication::QGIS_APPLICATION_NAME = "QGIS4";
+const char *QgsApplication::QGIS_ORGANIZATION_NAME = "QUICKGIS4_0";
+const char *QgsApplication::QGIS_ORGANIZATION_DOMAIN = "quickgis.org";
+const char *QgsApplication::QGIS_APPLICATION_NAME = "QUICKGIS4_0";
 QgsApplication::ApplicationMembers *QgsApplication::sApplicationMembers = nullptr;
 QgsAuthManager *QgsApplication::sAuthManager = nullptr;
 int ABISYM( QgsApplication::sMaxThreads ) = -1;
