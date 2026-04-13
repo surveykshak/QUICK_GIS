@@ -29,7 +29,20 @@ ELSE(QSCI_MOD_VERSION_STR)
       FILE(READ ${_qsci_metadata} _qsci_metadata_contents)
       STRING(REGEX REPLACE ".*\nVersion: ([^\n]+).*$" "\\1" QSCI_MOD_VERSION_STR ${_qsci_metadata_contents})
     ELSE(_qsci_metadata)
-      EXECUTE_PROCESS(COMMAND ${Python_EXECUTABLE} -c "from Py${QT_VERSION_BASE}.Qsci import QSCINTILLA_VERSION_STR; print(QSCINTILLA_VERSION_STR, end='')" OUTPUT_VARIABLE QSCI_MOD_VERSION_STR)
+      if(WIN32)
+        # On Windows, qscintilla2_qt6.dll (and Qt6 DLLs) must be in PATH or the
+        # import will fail with 0xC0000135 (STATUS_DLL_NOT_FOUND).
+        set(_osgeo4w_qt6_bin "C:/OSGeo4W/apps/Qt6/bin")
+        set(_osgeo4w_bin     "C:/OSGeo4W/bin")
+        EXECUTE_PROCESS(
+          COMMAND ${CMAKE_COMMAND} -E env
+            "PATH=${_osgeo4w_qt6_bin};${_osgeo4w_bin};$ENV{PATH}"
+            ${Python_EXECUTABLE} -c "from Py${QT_VERSION_BASE}.Qsci import QSCINTILLA_VERSION_STR; print(QSCINTILLA_VERSION_STR, end='')"
+          OUTPUT_VARIABLE QSCI_MOD_VERSION_STR
+        )
+      else()
+        EXECUTE_PROCESS(COMMAND ${Python_EXECUTABLE} -c "from Py${QT_VERSION_BASE}.Qsci import QSCINTILLA_VERSION_STR; print(QSCINTILLA_VERSION_STR, end='')" OUTPUT_VARIABLE QSCI_MOD_VERSION_STR)
+      endif()
     ENDIF(_qsci_metadata)
 
     IF(QSCI_MOD_VERSION_STR)
