@@ -487,16 +487,18 @@ void QgsStatusBarCoordinatesWidget::refreshMapCanvas()
 {
   if ( !mMapCanvas )
     return;
-
   //stop any current rendering
   mMapCanvas->stopRendering();
   mMapCanvas->redrawAllLayers();
 }
 
-void QgsStatusBarCoordinatesWidget::showMouseCoordinates( const QgsPointXY &mapPoint )
+void QgsStatusBarCoordinatesWidget::showMouseCoordinates( const QgsPointXY &mapPoint)
 {
   mLastCoordinate = mapPoint;
-  mLastCoordinateCrs = mMapCanvas->mapSettings().destinationCrs();
+  //updateCoordinateDisplay();
+  //updateCoordinateDisplayUpdated(p);
+
+ //Nihcas added below
 
   QgsPointXY p;
   QgsPointXY p1 = QgsPointXY( mapPoint);
@@ -504,22 +506,28 @@ void QgsStatusBarCoordinatesWidget::showMouseCoordinates( const QgsPointXY &mapP
   crsSrc = mMapCanvas->mapSettings().destinationCrs();
   if (crsSrc.authid() != "EPSG:4326")
   {
-    crsWgs = QgsCoordinateReferenceSystem("EPSG:4326");
+    crsWgs = QgsCoordinateReferenceSystem(4326);
     QgsCoordinateTransform xform = QgsCoordinateTransform(crsSrc, crsWgs, QgsProject::instance());
     p = xform.transform(p1);
-    mCoordsGeocord->setText(QgsCoordinateUtils::formatCoordinateForProject(QgsProject::instance(), p, crsSrc, 4));
+    //QString qs = p.toString();
+
+    mCoordsGeocord->setText(QgsCoordinateUtils::formatCoordinateForProject(QgsProject::instance(), p, crsSrc, 4));  //precision for latitude and longitude to show on screen
     ensureCoordinatesVisible();
   }
   else
   {
     p = mapPoint;
-    mLineEdit->setText(QgsCoordinateUtils::formatCoordinateForProject(QgsProject::instance(), p, mMapCanvas->mapSettings().destinationCrs(), mMousePrecisionDecimalPlaces));
-    crsWgs = QgsCoordinateReferenceSystem("EPSG:4326");
+    mLineEdit->setText(QgsCoordinateUtils::formatCoordinateForProject(QgsProject::instance(), p, mMapCanvas->mapSettings().destinationCrs(),
+      mMousePrecisionDecimalPlaces));
+    crsWgs = QgsCoordinateReferenceSystem(4326);
     QgsCoordinateTransform xform = QgsCoordinateTransform(crsSrc, crsWgs, QgsProject::instance());
     p = xform.transform(p1);
-    mCoordsGeocord->setText(QgsCoordinateUtils::formatCoordinateForProject(QgsProject::instance(), p, crsSrc, 4));
+    QString qs = p.toString();
+    mCoordsGeocord->setText(QgsCoordinateUtils::formatCoordinateForProject(QgsProject::instance(), p, crsSrc, 4));  //precision for latitude and longitude to show on screen
     ensureCoordinatesVisible();
   }
+  //Nihcas added below
+  //Mil Grid Display for dsm series map
 
   QString str, str1, str2, str3;
   if ((p.x() > -180 && p.x() < 180) && (p.y() > -90 && p.y() < 90))
@@ -540,7 +548,40 @@ void QgsStatusBarCoordinatesWidget::showMouseCoordinates( const QgsPointXY &mapP
     str1 = "OUT OF BOUND AREA";
   }
 
-  if ((p.x() > 57 && p.x() < 110) && (p.y() > 8 && p.y() < 44))
+  //for everest series map
+  if ((p.x() >= 60 && p.x() <= 78 && p.y() >= 36 && p.y() <= 44) ||
+    (p.x() >= 60 && p.x() <= 79 && p.y() >= 28 && p.y() <= 36) ||
+    (p.x() >= 79 && p.x() <= 81 && p.y() >= 29 && p.y() <= 36) ||
+    (p.x() >= 78 && p.x() <= 81 && p.y() >= 36 && p.y() <= 37) ||
+    (p.x() >= 81 && p.x() <= 102 && p.y() >= 30 && p.y() <= 37) ||
+    (p.x() >= 57 && p.x() <= 60 && p.y() >= 25 && p.y() <= 28) ||
+    (p.x() >= 60 && p.x() <= 72 && p.y() >= 20 && p.y() <= 28) ||
+    (p.x() >= 72 && p.x() <= 79 && p.y() >= 22 && p.y() <= 28) ||
+    (p.x() >= 79 && p.x() <= 82 && p.y() >= 22 && p.y() <= 29) ||
+    (p.x() >= 82 && p.x() <= 83 && p.y() >= 26 && p.y() <= 28) ||
+    (p.x() >= 81 && p.x() <= 82 && p.y() >= 29 && p.y() <= 30) ||
+    (p.x() >= 82 && p.x() <= 83 && p.y() >= 28 && p.y() <= 30) ||
+    (p.x() >= 82 && p.x() <= 83 && p.y() >= 22 && p.y() <= 26) ||
+    (p.x() >= 83 && p.x() <= 85 && p.y() >= 22 && p.y() <= 30) ||
+    (p.x() >= 85 && p.x() <= 91 && p.y() >= 21 && p.y() <= 30) ||
+    (p.x() >= 91 && p.x() <= 93 && p.y() >= 22 && p.y() <= 30) ||
+    (p.x() >= 93 && p.x() <= 110 && p.y() >= 22.5 && p.y() <= 30) ||
+    (p.x() >= 60 && p.x() <= 72 && p.y() >= 15 && p.y() <= 20) ||
+    (p.x() >= 72 && p.x() <= 85 && p.y() >= 15 && p.y() <= 22) ||
+    (p.x() >= 85 && p.x() <= 90 && p.y() >= 15 && p.y() <= 21) ||
+    (p.x() >= 90 && p.x() <= 91 && p.y() >= 15.5 && p.y() <= 21) ||
+    (p.x() >= 91 && p.x() <= 93 && p.y() >= 15.5 && p.y() <= 22) ||
+    (p.x() >= 93 && p.x() <= 112 && p.y() >= 15.5 && p.y() <= 22.5) ||
+    (p.x() >= 112 && p.x() <= 116 && p.y() >= 15.5 && p.y() <= 22.5) ||
+    (p.x() >= 60 && p.x() <= 76 && p.y() >= 8 && p.y() <= 15) ||
+    (p.x() >= 76 && p.x() <= 79.5 && p.y() >= 5.5 && p.y() <= 15) ||
+    (p.x() >= 79.5 && p.x() <= 82 && p.y() >= 10 && p.y() <= 15) ||
+    (p.x() >= 82 && p.x() <= 90 && p.y() >= 8 && p.y() <= 15) ||
+    (p.x() >= 90 && p.x() <= 92 && p.y() >= 8 && p.y() <= 15.5) ||
+    (p.x() >= 92 && p.x() <= 94 && p.y() >= 6 && p.y() <= 15.5) ||
+    (p.x() >= 94 && p.x() <= 98.67 && p.y() >= 7 && p.y() <= 15.5) ||
+    (p.x() >= 98.67 && p.x() <= 105 && p.y() >= 8 && p.y() <= 15.5) ||
+    (p.x() >= 105 && p.x() <= 116 && p.y() >= 7 && p.y() <= 15.5))
   {
     str2 = eveLatLongToMilgridConversion(p);
   }
@@ -549,7 +590,39 @@ void QgsStatusBarCoordinatesWidget::showMouseCoordinates( const QgsPointXY &mapP
     str2 = "OUT OF BOUND AREA";
   }
 
-  if (((p.x() > 44 && p.x() < 104)) && (p.y() > 4 && p.y() < 40))
+  if (((p.x() >= 60 && p.x() <= 78 && p.y() >= 36 && p.y() <= 44) ||
+    (p.x() >= 60 && p.x() <= 79 && p.y() >= 28 && p.y() <= 36) ||
+    (p.x() >= 79 && p.x() <= 81 && p.y() >= 29 && p.y() <= 36) ||
+    (p.x() >= 78 && p.x() <= 81 && p.y() >= 36 && p.y() <= 37) ||
+    (p.x() >= 81 && p.x() <= 102 && p.y() >= 30 && p.y() <= 37) ||
+    (p.x() >= 57 && p.x() <= 60 && p.y() >= 25 && p.y() <= 28) ||
+    (p.x() >= 60 && p.x() <= 72 && p.y() >= 20 && p.y() <= 28) ||
+    (p.x() >= 72 && p.x() <= 79 && p.y() >= 22 && p.y() <= 28) ||
+    (p.x() >= 79 && p.x() <= 82 && p.y() >= 22 && p.y() <= 29) ||
+    (p.x() >= 82 && p.x() <= 83 && p.y() >= 26 && p.y() <= 28) ||
+    (p.x() >= 81 && p.x() <= 82 && p.y() >= 29 && p.y() <= 30) ||
+    (p.x() >= 82 && p.x() <= 83 && p.y() >= 28 && p.y() <= 30) ||
+    (p.x() >= 82 && p.x() <= 83 && p.y() >= 22 && p.y() <= 26) ||
+    (p.x() >= 83 && p.x() <= 85 && p.y() >= 22 && p.y() <= 30) ||
+    (p.x() >= 85 && p.x() <= 91 && p.y() >= 21 && p.y() <= 30) ||
+    (p.x() >= 91 && p.x() <= 93 && p.y() >= 22 && p.y() <= 30) ||
+    (p.x() >= 93 && p.x() <= 110 && p.y() >= 22.5 && p.y() <= 30) ||
+    (p.x() >= 60 && p.x() <= 72 && p.y() >= 15 && p.y() <= 20) ||
+    (p.x() >= 72 && p.x() <= 85 && p.y() >= 15 && p.y() <= 22) ||
+    (p.x() >= 85 && p.x() <= 90 && p.y() >= 15 && p.y() <= 21) ||
+    (p.x() >= 90 && p.x() <= 91 && p.y() >= 15.5 && p.y() <= 21) ||
+    (p.x() >= 91 && p.x() <= 93 && p.y() >= 15.5 && p.y() <= 22) ||
+    (p.x() >= 93 && p.x() <= 112 && p.y() >= 15.5 && p.y() <= 22.5) ||
+    (p.x() >= 112 && p.x() <= 116 && p.y() >= 15.5 && p.y() <= 22.5) ||
+    (p.x() >= 60 && p.x() <= 76 && p.y() >= 8 && p.y() <= 15) ||
+    (p.x() >= 76 && p.x() <= 79.5 && p.y() >= 5.5 && p.y() <= 15) ||
+    (p.x() >= 79.5 && p.x() <= 82 && p.y() >= 10 && p.y() <= 15) ||
+    (p.x() >= 82 && p.x() <= 90 && p.y() >= 8 && p.y() <= 15) ||
+    (p.x() >= 90 && p.x() <= 92 && p.y() >= 8 && p.y() <= 15.5) ||
+    (p.x() >= 92 && p.x() <= 94 && p.y() >= 6 && p.y() <= 15.5) ||
+    (p.x() >= 94 && p.x() <= 98.67 && p.y() >= 7 && p.y() <= 15.5) ||
+    (p.x() >= 98.67 && p.x() <= 105 && p.y() >= 8 && p.y() <= 15.5) ||
+    (p.x() >= 105 && p.x() <= 116 && p.y() >= 7 && p.y() <= 15.5)))
   {
     str3 = eveLatLongTopoSheetConversion(p);
   }
@@ -558,12 +631,16 @@ void QgsStatusBarCoordinatesWidget::showMouseCoordinates( const QgsPointXY &mapP
     str3 = "NOT AVAILABLE";
   }
 
-  mCoordsEditMgrid->setText(str);
-  mCoordsEditMsheet->setText(str1);
-  mCoordsEditMgrideve->setText(str2);
-  mCoordsEditMsheeteve->setText(str3);
+  //To display values
 
+  mCoordsEditMgrid->setText(str); //Display DSM GR
+  mCoordsEditMsheet->setText(str1); //Display DSM Sheet No
+  mCoordsEditMgrideve->setText(str2); //Display ESM GR
+  mCoordsEditMsheeteve->setText(str3); //Display ESM Sheet No
+  //mCoordsGeocord->setText("T");
   updateCoordinateDisplay();
+
+  //Nihcas above
 }
 
 void QgsStatusBarCoordinatesWidget::showExtent()
@@ -582,29 +659,29 @@ void QgsStatusBarCoordinatesWidget::showExtent()
 void QgsStatusBarCoordinatesWidget::ensureCoordinatesVisible()
 {
   //ensure the label is big (and small) enough
-  const int width = std::max( mLineEdit->fontMetrics().boundingRect( mLineEdit->text() ).width() + 16, mMinimumWidth );
+  const int width = std::max(mLineEdit->fontMetrics().boundingRect(mLineEdit->text()).width() + 16, mMinimumWidth);
 
   bool allowResize = false;
-  if ( mIsFirstSizeChange )
+  if (mIsFirstSizeChange)
   {
     allowResize = true;
   }
-  else if ( mLineEdit->minimumWidth() < width )
+  else if (mLineEdit->minimumWidth() < width)
   {
     // always immediately grow to fit
     allowResize = true;
   }
-  else if ( ( mLineEdit->minimumWidth() - width ) > mTwoCharSize )
+  else if ((mLineEdit->minimumWidth() - width) > mTwoCharSize)
   {
     // only allow shrinking when a sufficient time has expired since we last resized.
     // this avoids extraneous shrinking/growing resulting in distracting UI changes
-    allowResize = mLastSizeChangeTimer.hasExpired( 2000 );
+    allowResize = mLastSizeChangeTimer.hasExpired(2000);
   }
 
-  if ( allowResize )
+  if (allowResize)
   {
-    mLineEdit->setMinimumWidth( width );
-    mLineEdit->setMaximumWidth( width );
+    mLineEdit->setMinimumWidth(width);
+    mLineEdit->setMaximumWidth(width);
     mLastSizeChangeTimer.restart();
     mIsFirstSizeChange = false;
   }
@@ -612,20 +689,19 @@ void QgsStatusBarCoordinatesWidget::ensureCoordinatesVisible()
 
 void QgsStatusBarCoordinatesWidget::updateCoordinateDisplay()
 {
-  if ( mToggleExtentsViewButton->isChecked() )
+  if (mToggleExtentsViewButton->isChecked())
   {
     return;
   }
 
-  if ( mLastCoordinate.isEmpty() )
+  if (mLastCoordinate.isEmpty())
     mLineEdit->clear();
   else
-    mLineEdit->setText( QgsCoordinateUtils::formatCoordinateForProject( QgsProject::instance(), mLastCoordinate, mLastCoordinateCrs, static_cast<int>( mMousePrecisionDecimalPlaces ) ) );
+    mLineEdit->setText(QgsCoordinateUtils::formatCoordinateForProject(QgsProject::instance(), mLastCoordinate, mMapCanvas->mapSettings().destinationCrs(),
+      static_cast<int>(mMousePrecisionDecimalPlaces)));
 
   ensureCoordinatesVisible();
 }
-
-
 
 //Overload updatecordinate
 void QgsStatusBarCoordinatesWidget::updateCoordinateDisplayUpdated(const QgsPointXY& Qp)
@@ -636,19 +712,15 @@ void QgsStatusBarCoordinatesWidget::updateCoordinateDisplayUpdated(const QgsPoin
   }
 
   if (mLastCoordinate.isEmpty())
-    //   mLineEdit->clear();
     mCoordsGeocord->clear();
   else {
-    /* mLineEdit->setText(QgsCoordinateUtils::formatCoordinateForProject(QgsProject::instance(), mLastCoordinate, mMapCanvas->mapSettings().destinationCrs(),
-       static_cast<int>(mMousePrecisionDecimalPlaces)));*/
-
     QgsPointXY p;
     QgsPointXY p1 = QgsPointXY(Qp);
     QgsCoordinateReferenceSystem crsSrc, crsWgs;
     crsSrc = mMapCanvas->mapSettings().destinationCrs();
     if (crsSrc.authid() != "EPSG:4326")
     {
-      crsWgs = QgsCoordinateReferenceSystem("EPSG:4326");
+      crsWgs = QgsCoordinateReferenceSystem(4326);
       QgsCoordinateTransform xform = QgsCoordinateTransform(crsSrc, crsWgs, QgsProject::instance());
       p = xform.transform(p1);
       mCoordsGeocord->setText(QgsCoordinateUtils::formatCoordinateForProject(QgsProject::instance(), p, crsWgs, 2));  //precision for latitude and longitude to show on screen
@@ -667,8 +739,6 @@ void QgsStatusBarCoordinatesWidget::updateCoordinateDisplayUpdated(const QgsPoin
 
   ensureCoordinatesVisible();
 }
-
-
 
 //Nihcas below Function for Mil Grid
 QString QgsStatusBarCoordinatesWidget::eveLatLongTopoSheetConversion(const QgsPointXY& mp)
@@ -1138,237 +1208,448 @@ QString QgsStatusBarCoordinatesWidget::LatLongToMilgridConversion(const QgsPoint
 
 QString QgsStatusBarCoordinatesWidget::eveLatLongToMilgridConversion(const QgsPointXY& mp)
 {
-
   double std_para1 = 0.0, std_para2 = 0.0, temp1 = 0.0, temp2 = 0.0;
-  double central_meridian, central_parallel, theta, deltalongitude;
+  double central_meridian, central_parallel;
   double dist_east = 0.0, dist_north = 0.0, pe = 0.0, pn = 0.0;
-  double ro = 0.0, r = 0.0, r0 = 0.0, n1 = 0.0, n2 = 0.0, n = 0.0, n0 = 0.0, q0 = 0.0, q = 0.0, q1 = 0.0, q2 = 0.0, l1 = 0.0, zone_constant = 0.0, scale_factor = 0.0, scale_factor_center = 0.0;
+  double r = 0.0, r0 = 0.0, n1 = 0.0, n2 = 0.0, n = 0.0, n0 = 0.0, q0 = 0.0, q = 0.0, q1 = 0.0, q2 = 0.0, l1 = 0.0, zone_constant = 0.0, scale_factor = 0.0, scale_factor_center = 0.0;
   int false_easting, false_northing;
-  double ecc = 298.2572, semi_minor_axis = 6356100.231, e1 = 0.0814729759340358, e = 2.718281828, semi_major_axis = 6377301.243;
-  double diff = 6.0 / 7.0, pi = 180.0, correct = 3.14159265358979 / 180;//pi=22.f/7.f;
+  double semi_minor_axis = 6356100.231, e = 2.718281828, semi_major_axis = 6377301.243, e1 = 0.0814729759340358;
+  double pi = 180, correct = 3.14159265358979 / 180;
   int var = 0;
-  double LAT = mp.y();//30.47691944;//mp.y();
-  double LONG = mp.x();//78.01554444;//mp.x();
-  QString finaloutput1, finaloutput2;
+
+  QString finaloutput1, finaloutput2, grid;
   int grid_return[4];
   char str_temp1[1];
   char str_temp2[1];
   char str_temp3[9];
   char str_temp4[9];
-  double grid_data[9][6] = { { 68, 32.50, 29.65527, 35.31447, 2743196.400, 914398.800 },{ 90, 32.50, 29.65527, 35.31447,  2743196.400, 914398.800 },{ 74, 26, 23.157823, 28.81827, 2743196.400, 914398.800 },{ 90, 26, 23.157823, 28.81894083, 2743196.400, 914398.800 },{ 80, 19,  16.1602, 21.8231625, 2743196.400, 914398.800 },{ 100, 19,  16.1603875, 21.8231625, 2743196.400, 914398.800 },{ 80, 12, 9.162838611, 14.8269, 2743196.400, 914398.800 },{ 104, 12, 9.162838611, 14.8269, 2743196.400, 914398.800 },{ 68, 39.50, 36.2916, 42.65625, 2153866.400, 2368292.900 } };
-  //bounding box for various sides polygon
-  float grid_3_sides[11][4] = { { 36,60,44,78 },{ 28,60,36,79 },{ 29,79,36,81 },{ 25,82,28,83 },{ 22.50,79,29,82 },{ 22,72,28,79 },{ 20,60,28,72 },{ 25,57,28,60 },{ 15,60,20,72 },{ 15,72,22,85 },{ 15,85,21,90 } };
-  float grid_2_sides[11][4] = { { 36,78,37,81 },{ 30,81,37,102 },{ 29,81,30,82 },{ 28,82,30,83 },{ 22,82,25,83 },{ 22,83,30,93 },{ 21,85,22,91 },{ 22.50,93,30,110 },{ 15.50,90,21,91 },{ 15.50,91,22,93 },{ 15.50,93,22.50,110 } };
-  float grid_4_sides[9][4] = { { 8,60,15,76 },{ 5,76,15,79.50 },{ 10,79.50,15,82 },{ 8,82,15,90 },{ 8,90,15.50,92 },{ 6,92,15.50,94 },{ 7,94,15.50,98.66 },{ 8,98.66,15.50,105 },{ 7,105,15.50,110 } };
-  int row = 0;
-  const char* p2 = nullptr;
-  QChar p2arr[29];
-  //the below code works as follows
-  //check_domain_X_sides function takes four parameter from grid_X_sides matrix above (where X=2,3 or 4)...check_domain_X_side compare these four values with latitude and longitude and "if latitude and longitude lies in between these four then 1 is returned else 0 is returned"
-  //if 1 is retuned then if condition inside for loop becomes true and we get to know that latitude and longitude lies in a grid which is of x sides
-  //check_row_X_sides just sees in which grid number it lies as larger grid is divided into many smaller grids
-  //for two sides
-  for (row = 0; row < 11; row++) {
-    var = check_domain_2_sides(grid_2_sides[row][0], grid_2_sides[row][1], grid_2_sides[row][2], grid_2_sides[row][3], LAT, LONG);
-    if (var == 1) {
-      p2 = check_row_2_sides(row);			//check_row_X_sides just sees in which grid number it lies as larger grid is divided into many smaller grids
-      break;
-    }
-  }
-  //for three sides
-  if (var != 1) {
-    for (row = 0; row < 11; row++) {
-      int var = check_domain_3_sides(grid_3_sides[row][0], grid_3_sides[row][1], grid_3_sides[row][2], grid_3_sides[row][3], LAT, LONG);
-      if (var == 1) {
-        p2 = check_row_3_sides(row);
-        break;
-      }
-    }
-  }
-  //for four sides
-  if (var != 1) {
-    for (row = 0; row < 9; row++) {
-      int var = check_domain_4_sides(grid_4_sides[row][0], grid_4_sides[row][1], grid_4_sides[row][2], grid_4_sides[row][3], LAT, LONG);
-      if (var == 1) {
-        p2 = check_row_4_sides(row);
-        break;
-      }
-    }
-  }
-  //cout<<p2<<"\n";					//print grid number...
-  //this code is used for below cde
-  row = -1;
-  try
-  {
-    if (p2 != nullptr)
-      if (strcmp(p2, "GRID IA") == 0) {
-        row = 0;
-      }
-      else if (strcmp(p2, "GRID IB") == 0) {
-        row = 1;
-      }
-      else if (strcmp(p2, "GRID IIA") == 0) {
-        row = 2;
-      }
-      else if (strcmp(p2, "GRID IIB") == 0) {
-        row = 3;
-      }
-      else if (strcmp(p2, "GRID IIIA") == 0) {
-        row = 4;
-      }
-      else if (strcmp(p2, "GRID IIIB") == 0) {
-        row = 5;
-      }
-      else if (strcmp(p2, "GRID IVA") == 0) {
-        row = 6;
-      }
-      else if (strcmp(p2, "GRID IVB") == 0) {
-        row = 7;
-      }
-      else if (strcmp(p2, "GRID O") == 0) {
-        row = 8;
-      }
-      else { row = -1; }
-    if (row == -1)
-    {
-      finaloutput2 = "OUT OF BOUND AREA";
-      return finaloutput2;
-    }
-    else
-    {
-      for (int i = 0; i < 29; i++)
-      {
-        p2arr[i] = ' ';
-      }
-      for (int i = 0; i < 9; i++)
-      {
-        p2arr[i] = p2[i];  //*(p2+i)
-      }
-      central_meridian = grid_data[row][0];
-      central_parallel = grid_data[row][1];
-      std_para1 = grid_data[row][2];
-      std_para2 = grid_data[row][3];
-      false_easting = grid_data[row][4];
-      false_northing = grid_data[row][5];
-      //this is to find q1
-      temp2 = (1 - e1 * sin(std_para1 * correct)) / (1 + e1 * sin(std_para1 * correct));
-      temp1 = pow(temp2, (e1 / 2));
-      q1 = tan(((pi / 4) + (std_para1 / 2)) * correct);
-      q1 = temp1 * q1;
-      q1 = log(q1);
-      //this is to find q2
-      temp1 = 0.0;
-      temp2 = 0.0;
-      temp2 = (1 - e1 * sinf(std_para2 * correct)) / (1 + e1 * sinf(std_para2 * correct));
-      temp1 = powf(temp2, (e1 / 2));
-      q2 = temp1 * (tan(((pi / 4) + (std_para2 / 2)) * correct));
-      q2 = logf(q2);
-      //this is to find q
-      temp1 = 0.0;
-      temp2 = 0.0;
-      temp2 = (1 - e1 * sinf(LAT * correct)) / (1 + e1 * sinf(LAT * correct));
-      temp1 = powf(temp2, (e1 / 2));
-      q = temp1 * (tan(((pi / 4) + (LAT / 2)) * correct));
-      q = logf(q);
-      //this is to find n1
-      temp1 = 0.0;
-      temp2 = 0.0;
-      temp1 = powf(e1, 2.0) * powf(sinf(std_para1 * correct), 2);
-      n1 = semi_major_axis / sqrt(1 - temp1);
-      //this is to find n2
-      temp1 = 0.0;
-      temp1 = powf(e1, 2.0) * powf(sinf(std_para2 * correct), 2);
-      n2 = semi_major_axis / sqrt(1 - temp1);
-      //this is to find n
-      temp1 = 0.0;
-      temp1 = powf(e1, 2.0) * powf(sinf(LAT * correct), 2);
-      n = semi_major_axis / sqrt(1 - temp1);
-      //this is to find l1
-      temp1 = 0.0;
-      temp1 = logf(n1 * cosf(std_para1 * correct));
-      temp2 = logf(n2 * cosf(std_para2 * correct));
-      temp1 = temp1 - temp2;
-      l1 = temp1 / (q2 - q1);
-      temp1 = 0.0;
-      temp1 = asinf(l1);
-      central_parallel = temp1 / correct;  // central parallel by calculation
-      //this is to find q0
-      temp1 = 0.0;
-      temp2 = (1 - e1 * sinf(central_parallel * correct)) / (1 + e1 * sinf(central_parallel * correct));
-      temp1 = powf(temp2, (e1 / 2));
-      q0 = temp1 * (tan(((pi / 4) + (central_parallel / 2)) * correct));
-      q0 = logf(q0);
-      //this is to find n0
-      temp1 = 0.0;
-      temp2 = 0.0;
-      temp1 = powf(e1, 2.0) * powf(sinf(central_parallel * correct), 2);
-      n0 = semi_major_axis / sqrt(1 - temp1);
-      //this is to find zone_consant(K)
-      zone_constant = (n1 * cosf(std_para1 * correct)) / (l1 * expf(-l1 * q1));
-      zone_constant = (n2 * cosf(std_para2 * correct)) / (l1 * expf(-l1 * q2));
-      //this is to find k
-      scale_factor = (zone_constant * l1 * expf(-l1 * q)) / (n * cosf(LAT * correct));
-      //this is to find k0
-      scale_factor_center = (zone_constant * l1 * expf(-l1 * q0)) / (n0 * cosf(central_parallel * correct));
-      //this is to find r0 and r
-      r0 = scale_factor_center * n0 * (1 / (tanf(central_parallel * correct)));
-      r = zone_constant * expf(-l1 * q);
-      //this is to find dist_east and dist_north
-      dist_east = r * sinf(l1 * (LONG - central_meridian) * correct); //distance from false easting
-      dist_north = r0 - r * cosf(l1 * (LONG - central_meridian) * correct);// distance from false northing
-      //this is to find pe and pn
-      pe = false_easting + dist_east;
-      pn = false_northing + dist_north - 34;
-      //cout<<pe<<"\n\n";
-      //cout<<pn;
-      pe = int(pe);
-      pn = int(pn);
-      int pe1 = pe / 1000;
-      int pn1 = pn / 1000;
-      int* pointer = checkarray(pe1, pn1);
-      int* pointer1 = grid_return;
-      grid_return[0] = pointer[0];
-      grid_return[1] = pointer[1];
-      grid_return[2] = pe;
-      grid_return[3] = pn;
-      sprintf(str_temp1, "%c", grid_return[0]);
-      p2arr[10] = str_temp1[0];
-      sprintf(str_temp2, "%c", grid_return[1]);
-      p2arr[11] = str_temp2[0];
-      p2arr[12] = ' ';
-      sprintf(str_temp3, "%d", grid_return[2]);
-      sprintf(str_temp4, "%d", grid_return[3]);
-      int k = 0;
-      k = strlen(str_temp3);
-      for (int i = 0; i < k - 1; i++)
-      {
-        p2arr[13 + i] = str_temp3[i + 2];
-      }
-      p2arr[11 + k] = ' ';
-      int a = 0;
-      int getresult = 5;
-      a = strlen(str_temp4);
-      for (int w = (a - getresult); w < a; w++)
-      {
-        p2arr[11 + k + 1 + 1 + w] = str_temp4[w];
-      }
-      finaloutput1.resize(28);
-      for (int y = 0; y < 28; y++)
-      {
-        finaloutput1[y] = p2arr[y];
-      }
-      return finaloutput1;
-      /*
-      return "check";
-      */
-    }
-  }
-  catch (...)
-  {
 
+  // Datum shift: WGS84 to Everest (Kalianpur 1975)
+  double LAT_dsm = mp.y();
+  double LONG_dsm = mp.x();
+  double LAT, LONG, a, b, E, v, h, X, Y, Z, RAD;
+  double dX = 295;
+  double dY = 736;
+  double dZ = 257;
+  double a1, b1, E1, v1, Xb, Yb, Zb, TempLat, LAT_skc;
+  int i;
+
+  a = 6378137;
+  b = 6356752.3142;
+  h = 0.0;
+  RAD = 3.14159265358979 / 180;
+  TempLat = 0;
+  E = sqrt((a * a - b * b) / (a * a));
+  v = a / (sqrt(1 - (pow(E, 2)) * sin(RAD * LAT_dsm) * sin(RAD * LAT_dsm)));
+  X = (v + h) * cos(RAD * LAT_dsm) * cos(RAD * LONG_dsm);
+  Y = (v + h) * cos(RAD * LAT_dsm) * sin(RAD * LONG_dsm);
+  Z = (((1 - pow(E, 2)) * v) + h) * sin(RAD * LAT_dsm);
+
+  Xb = X - dX;
+  Yb = Y - dY;
+  Zb = Z - dZ;
+
+  a1 = 6377301.243;
+  b1 = 6356100.231;
+  E1 = sqrt((a1 * a1 - b1 * b1) / (a1 * a1));
+  v1 = a1 / sqrt(1 - pow(E1, 2) * sin(RAD * LAT_dsm) * sin(RAD * LAT_dsm));
+
+  for (i = 0; i < 11; i++)
+  {
+    LAT_skc = TempLat;
+    LAT_skc = (atan((Zb + (pow(E1, 2)) * v1 * sin(LAT_skc * RAD)) / (sqrt(Xb * Xb + Yb * Yb)))) / RAD;
+    v1 = a1 / (sqrt(1 - pow(E1, 2) * sin(RAD * LAT_skc) * sin(RAD * LAT_skc)));
+    TempLat = LAT_skc;
   }
+
+  LAT = TempLat;
+  LONG = atan(Yb / Xb) / RAD;
+  if (LONG < 0) {
+    LONG = 180 + LONG;
+  }
+
+  double CLong, CLat, sp1, sp2;
+  double Lat_Grid_org, Long_Grid_Org, Central_Scale_Factor, False_Easting, False_Northing;
+
+  CLong = LONG + 2.77777777777778E-10; // ADD THIS TO AVOID ERROR AT LIMITING ZONE
+  CLat = LAT + 2.77777777777778E-10;
+  Central_Scale_Factor = 823.0 / 824.0;
+  False_Easting = 2743196.4;
+  False_Northing = 914398.8;
+
+  if (CLong >= 60 && CLong <= 78 && CLat >= 36 && CLat <= 44)
+  {
+    Lat_Grid_org = 39.5;
+    Long_Grid_Org = 68;
+    False_Easting = 2153866.4;
+    False_Northing = 2368292.9;
+    Central_Scale_Factor = 649.0 / 650.0;
+    sp1 = 36.2916667;
+    sp2 = 42.65625;
+  }
+  else if (CLong >= 60 && CLong <= 79 && CLat >= 28 && CLat <= 36) {
+    grid = "I-A";
+    Lat_Grid_org = 32.5;
+    Long_Grid_Org = 68;
+    sp1 = 29.6552711;
+    sp2 = 35.3144722;
+  }
+  else if (CLong >= 79 && CLong <= 81 && CLat >= 29 && CLat <= 36) {
+    grid = "I-A";
+    Lat_Grid_org = 32.5;
+    Long_Grid_Org = 68;
+    sp1 = 29.6552711;
+    sp2 = 35.3144722;
+  }
+  else if (CLong >= 78 && CLong <= 81 && CLat >= 36 && CLat <= 37) {
+    grid = "I-B";
+    Lat_Grid_org = 32.5;
+    Long_Grid_Org = 90;
+    sp1 = 29.6552711;
+    sp2 = 35.3144722;
+  }
+  else if (CLong >= 81 && CLong <= 102 && CLat >= 30 && CLat <= 37) {
+    grid = "I-B";
+    Lat_Grid_org = 32.5;
+    Long_Grid_Org = 90;
+    sp1 = 29.6552711;
+    sp2 = 35.3144722;
+  }
+  else if (CLong >= 57 && CLong <= 60 && CLat >= 25 && CLat <= 28) {
+    grid = "II-A";
+    Lat_Grid_org = 26;
+    Long_Grid_Org = 74;
+    sp1 = 23.157823056;
+    sp2 = 28.81894083;
+  }
+  else if (CLong >= 60 && CLong <= 72 && CLat >= 20 && CLat <= 28) {
+    grid = "II-A";
+    Lat_Grid_org = 26;
+    Long_Grid_Org = 74;
+    sp1 = 23.157823056;
+    sp2 = 28.81894083;
+  }
+  else if (CLong >= 72 && CLong <= 79 && CLat >= 22 && CLat <= 28) {
+    grid = "II-A";
+    Lat_Grid_org = 26;
+    Long_Grid_Org = 74;
+    sp1 = 23.157823056;
+    sp2 = 28.81894083;
+  }
+  else if (CLong >= 79 && CLong <= 82 && CLat >= 22 && CLat <= 29) {
+    grid = "II-A";
+    Lat_Grid_org = 26;
+    Long_Grid_Org = 74;
+    sp1 = 23.157823056;
+    sp2 = 28.81894083;
+  }
+  else if (CLong >= 82 && CLong <= 83 && CLat >= 26 && CLat <= 28) {
+    grid = "II-A";
+    Lat_Grid_org = 26;
+    Long_Grid_Org = 74;
+    sp1 = 23.157823056;
+    sp2 = 28.81894083;
+  }
+  else if (CLong >= 81 && CLong <= 82 && CLat >= 29 && CLat <= 30) {
+    grid = "II-B";
+    Lat_Grid_org = 26;
+    Long_Grid_Org = 90;
+    sp1 = 23.157823056;
+    sp2 = 28.81894083;
+  }
+  else if (CLong >= 82 && CLong <= 83 && CLat >= 28 && CLat <= 30) {
+    grid = "II-B";
+    Lat_Grid_org = 26;
+    Long_Grid_Org = 90;
+    sp1 = 23.157823056;
+    sp2 = 28.81894083;
+  }
+  else if (CLong >= 82 && CLong <= 83 && CLat >= 22 && CLat <= 26) {
+    grid = "II-B";
+    Lat_Grid_org = 26;
+    Long_Grid_Org = 90;
+    sp1 = 23.157823056;
+    sp2 = 28.81894083;
+  }
+  else if (CLong >= 83 && CLong <= 85 && CLat >= 22 && CLat <= 30) {
+    grid = "II-B";
+    Lat_Grid_org = 26;
+    Long_Grid_Org = 90;
+    sp1 = 23.157823056;
+    sp2 = 28.81894083;
+  }
+  else if (CLong >= 85 && CLong <= 91 && CLat >= 21 && CLat <= 30) {
+    grid = "II-B";
+    Lat_Grid_org = 26;
+    Long_Grid_Org = 90;
+    sp1 = 23.157823056;
+    sp2 = 28.81894083;
+  }
+  else if (CLong >= 91 && CLong <= 93 && CLat >= 22 && CLat <= 30) {
+    grid = "II-B";
+    Lat_Grid_org = 26;
+    Long_Grid_Org = 90;
+    sp1 = 23.157823056;
+    sp2 = 28.81894083;
+  }
+  else if (CLong >= 93 && CLong <= 110 && CLat >= 22.5 && CLat <= 30) {
+    grid = "II-B";
+    Lat_Grid_org = 26;
+    Long_Grid_Org = 90;
+    sp1 = 23.157823056;
+    sp2 = 28.81894083;
+  }
+  else if (CLong >= 60 && CLong <= 72 && CLat >= 15 && CLat <= 20) {
+    grid = "III-A";
+    Lat_Grid_org = 19;
+    Long_Grid_Org = 80;
+    sp1 = 16.1603875;
+    sp2 = 21.8231625;
+  }
+  else if (CLong >= 72 && CLong <= 85 && CLat >= 15 && CLat <= 22) {
+    grid = "III-A";
+    Lat_Grid_org = 19;
+    Long_Grid_Org = 80;
+    sp1 = 16.1603875;
+    sp2 = 21.8231625;
+  }
+  else if (CLong >= 85 && CLong <= 90 && CLat >= 15 && CLat <= 21) {
+    grid = "III-A";
+    Lat_Grid_org = 19;
+    Long_Grid_Org = 80;
+    sp1 = 16.1603875;
+    sp2 = 21.8231625;
+  }
+  else if (CLong >= 90 && CLong <= 91 && CLat >= 15.5 && CLat <= 21) {
+    grid = "III-B";
+    Lat_Grid_org = 19;
+    Long_Grid_Org = 100;
+    sp1 = 16.1603875;
+    sp2 = 21.8231625;
+  }
+  else if (CLong >= 91 && CLong <= 93 && CLat >= 15.5 && CLat <= 22) {
+    grid = "III-B";
+    Lat_Grid_org = 19;
+    Long_Grid_Org = 100;
+    sp1 = 16.1603875;
+    sp2 = 21.8231625;
+  }
+  else if (CLong >= 93 && CLong <= 112 && CLat >= 15.5 && CLat <= 22.5) {
+    grid = "III-B";
+    Lat_Grid_org = 19;
+    Long_Grid_Org = 100;
+    sp1 = 16.1603875;
+    sp2 = 21.8231625;
+  }
+  else if (CLong >= 112 && CLong <= 116 && CLat >= 15.5 && CLat <= 22.5) {
+    grid = "III-B";
+    Lat_Grid_org = 19;
+    Long_Grid_Org = 100;
+    sp1 = 16.1603875;
+    sp2 = 21.8231625;
+  }
+  else if (CLong >= 60 && CLong <= 76 && CLat >= 8 && CLat <= 15) {
+    grid = "IV-A";
+    Lat_Grid_org = 12;
+    Long_Grid_Org = 80;
+    sp1 = 9.162838611;
+    sp2 = 14.82698583;
+  }
+  else if (CLong >= 76 && CLong <= 79.5 && CLat >= 5.5 && CLat <= 15) {
+    grid = "IV-A";
+    Lat_Grid_org = 12;
+    Long_Grid_Org = 80;
+    sp1 = 9.162838611;
+    sp2 = 14.82698583;
+  }
+  else if (CLong >= 79.5 && CLong <= 82 && CLat >= 10 && CLat <= 15) {
+    grid = "IV-A";
+    Lat_Grid_org = 12;
+    Long_Grid_Org = 80;
+    sp1 = 9.162838611;
+    sp2 = 14.82698583;
+  }
+  else if (CLong >= 82 && CLong <= 90 && CLat >= 8 && CLat <= 15) {
+    grid = "IV-A";
+    Lat_Grid_org = 12;
+    Long_Grid_Org = 80;
+    sp1 = 9.162838611;
+    sp2 = 14.82698583;
+  }
+  else if (CLong >= 90 && CLong <= 92 && CLat >= 8 && CLat <= 15.5) {
+    grid = "IV-B";
+    Lat_Grid_org = 12;
+    Long_Grid_Org = 104;
+    sp1 = 9.162838611;
+    sp2 = 14.82698583;
+  }
+  else if (CLong >= 92 && CLong <= 94 && CLat >= 6 && CLat <= 15.5) {
+    grid = "IV-B";
+    Lat_Grid_org = 12;
+    Long_Grid_Org = 104;
+    sp1 = 9.162838611;
+    sp2 = 14.82698583;
+  }
+  else if (CLong >= 94 && CLong <= 98.67 && CLat >= 7 && CLat <= 15.5) {
+    grid = "IV-B";
+    Lat_Grid_org = 12;
+    Long_Grid_Org = 104;
+    sp1 = 9.162838611;
+    sp2 = 14.82698583;
+  }
+  else if (CLong >= 98.67 && CLong <= 105 && CLat >= 8 && CLat <= 15.5) {
+    grid = "IV-B";
+    Lat_Grid_org = 12;
+    Long_Grid_Org = 104;
+    sp1 = 9.162838611;
+    sp2 = 14.82698583;
+  }
+  else if (CLong >= 105 && CLong <= 116 && CLat >= 7 && CLat <= 15.5) {
+    grid = "IV-B";
+    Lat_Grid_org = 12;
+    Long_Grid_Org = 104;
+    sp1 = 9.162838611;
+    sp2 = 14.82698583;
+  }
+
+  central_meridian = Long_Grid_Org;
+  central_parallel = Lat_Grid_org;
+  std_para1 = sp1;
+  std_para2 = sp2;
+  false_easting = False_Easting;
+  false_northing = False_Northing;
+
+  // this is to find q1
+  temp2 = (1 - e1 * sin(std_para1 * correct)) / (1 + e1 * sin(std_para1 * correct));
+  temp1 = pow(temp2, (e1 / 2));
+  q1 = tan(((pi / 4) + (std_para1 / 2)) * correct);
+  q1 = temp1 * q1;
+  q1 = log(q1);
+
+  // this is to find q2
+  temp1 = 0.0;
+  temp2 = (1 - e1 * sin(std_para2 * correct)) / (1 + e1 * sin(std_para2 * correct));
+  temp1 = pow(temp2, (e1 / 2));
+  q2 = temp1 * (tan(((pi / 4) + (std_para2 / 2)) * correct));
+  q2 = log(q2);
+
+  // this is to find q
+  temp1 = 0.0;
+  temp2 = (1 - e1 * sin(LAT * correct)) / (1 + e1 * sin(LAT * correct));
+  temp1 = pow(temp2, (e1 / 2));
+  q = temp1 * (tan(((pi / 4) + (LAT / 2)) * correct));
+  q = log(q);
+
+  // this is to find n1
+  temp1 = pow(e1, 2.0) * pow(sin(std_para1 * correct), 2);
+  n1 = semi_major_axis / sqrt(1 - temp1);
+
+  // this is to find n2
+  temp1 = pow(e1, 2.0) * pow(sin(std_para2 * correct), 2);
+  n2 = semi_major_axis / sqrt(1 - temp1);
+
+  // this is to find n
+  temp1 = pow(e1, 2.0) * pow(sin(LAT * correct), 2);
+  n = semi_major_axis / sqrt(1 - temp1);
+
+  // this is to find l1
+  temp1 = log(n1 * cos(std_para1 * correct));
+  temp2 = log(n2 * cos(std_para2 * correct));
+  temp1 = temp1 - temp2;
+  l1 = temp1 / (q2 - q1);
+
+  temp1 = asin(l1);
+
+  // this is to find q0
+  temp1 = 0.0;
+  temp2 = (1 - e1 * sin(central_parallel * correct)) / (1 + e1 * sin(central_parallel * correct));
+  temp1 = pow(temp2, (e1 / 2));
+  q0 = temp1 * (tan(((pi / 4) + (central_parallel / 2)) * correct));
+  q0 = log(q0);
+
+  // this is to find n0
+  temp1 = pow(e1, 2.0) * pow(sin(central_parallel * correct), 2);
+  n0 = semi_major_axis / sqrt(1 - temp1);
+
+  // this is to find zone_constant(K)
+  zone_constant = (n1 * cos(std_para1 * correct)) / (l1 * exp(-l1 * q1));
+
+  // this is to find k
+  scale_factor = (zone_constant * l1 * exp(-l1 * q)) / (n * cos(LAT * correct));
+
+  // this is to find k0
+  scale_factor_center = (zone_constant * l1 * exp(-l1 * q0)) / (n0 * cos(central_parallel * correct));
+
+  // this is to find r0 and r
+  r0 = zone_constant * exp(-l1 * q0);
+  r = zone_constant * exp(-l1 * q);
+
+  // this is to find dist_east and dist_north
+  dist_east = r * sin(l1 * (LONG - central_meridian) * correct);
+  dist_north = r0 - r * cos(l1 * (LONG - central_meridian) * correct);
+
+  // this is to find pe and pn
+  pe = false_easting + dist_east;
+  pn = false_northing + dist_north;
+
+  int Ep = round(pe);
+  int Np = round(pn);
+
+  int easting = abs(Ep);
+  int northing = abs(Np);
+
+  int EastM1 = easting / 500000;
+  if (EastM1 >= 5) EastM1 = EastM1 % 5;
+
+  int NorthM2 = northing / 500000;
+  if (NorthM2 >= 5) NorthM2 = NorthM2 % 5;
+
+  int rem1 = easting % 500000;
+  int rem2 = northing % 500000;
+  int eastn1 = rem1 / 100000;
+  if (eastn1 >= 5) eastn1 = eastn1 % 5;
+
+  int northn2 = rem2 / 100000;
+  if (northn2 >= 5) northn2 = northn2 % 5;
+
+  char p2arr_skc[18];
+  char grid1[5][5] = {
+    {'V', 'Q', 'L', 'F', 'A'},
+    {'W', 'R', 'M', 'G', 'B'},
+    {'X', 'S', 'N', 'H', 'C'},
+    {'Y', 'T', 'O', 'J', 'D'},
+    {'Z', 'U', 'P', 'K', 'E'}
+  };
+
+  p2arr_skc[0] = grid1[EastM1][NorthM2];
+  p2arr_skc[1] = grid1[eastn1][northn2];
+  p2arr_skc[2] = ' ';
+
+  char str_temp3_skc[12];
+  char str_temp4_skc[12];
+  sprintf(str_temp3_skc, "%d", easting);
+  sprintf(str_temp4_skc, "%d", northing);
+  int k_len = strlen(str_temp3_skc);
+  for (int i_val = 0; i_val < 5; i_val++)
+  {
+    p2arr_skc[3 + i_val] = str_temp3_skc[i_val + k_len - 5];
+  }
+  p2arr_skc[8] = ' ';
+  int a_len = strlen(str_temp4_skc);
+  for (int w_skc = 0; w_skc < 5; w_skc++)
+  {
+    p2arr_skc[9 + w_skc] = str_temp4_skc[w_skc + a_len - 5];
+  }
+
+  QString finaloutput1_skc;
+  finaloutput1_skc.resize(14);
+  for (int y_skc = 0; y_skc < 14; y_skc++)
+  {
+    finaloutput1_skc[y_skc] = p2arr_skc[y_skc];
+  }
+
+  return grid + " " + finaloutput1_skc;
 }
-//all above used functions a defined below
 const char* QgsStatusBarCoordinatesWidget::check_row_2_sides(int r)
 {
   if (r == 0 || r == 1) return "GRID IB";
