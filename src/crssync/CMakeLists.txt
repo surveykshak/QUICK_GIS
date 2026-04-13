@@ -17,7 +17,9 @@ else ()
   if(MSVC AND NOT USING_NMAKE)
     add_custom_target(synccrsdb
       COMMENT "Running crssync"
-      COMMAND ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/crssync.exe
+      COMMAND ${CMAKE_COMMAND} -E env
+        "PATH=C:/OSGeo4W/bin;C:/OSGeo4W/apps/Qt6/bin;$ENV{PATH}"
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/crssync.exe
       DEPENDS crssync
     )
   else()
