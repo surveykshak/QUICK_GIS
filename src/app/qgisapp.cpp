@@ -1663,7 +1663,8 @@ QgisApp::QgisApp( QSplashScreen *splash, AppOptions options, const QString &root
     startProfile( tr( "Plugin installer" ) );
     // initialize the plugin installer to start fetching repositories in background
     QgsPythonRunner::run( u"import pyplugin_installer"_s );
-    QgsPythonRunner::run( u"pyplugin_installer.initPluginInstaller()"_s );
+    // Plugin installer background fetch disabled for QuickGIS (offline mode)
+    // QgsPythonRunner::run( u"pyplugin_installer.initPluginInstaller()"_s );
     // enable Python in the Plugin Manager and pass the PythonUtils to it
     mPluginManager->setPythonUtils( mPythonUtils );
     // add Python Console options
@@ -2074,10 +2075,11 @@ QgisApp::QgisApp( QSplashScreen *splash, AppOptions options, const QString &root
 
   updateRecentProjectPaths();
   mWelcomeScreen->setRecentProjects( mRecentProjects );
-  if ( !mProjOpen )
-  {
-    mWelcomeScreen->showScene();
-  }
+  // Welcome screen disabled for QuickGIS
+  // if ( !mProjOpen )
+  // {
+  //   mWelcomeScreen->showScene();
+  // }
   endProfile();
 }
 
@@ -5883,7 +5885,8 @@ void QgisApp::fileClose()
 {
   if ( fileNewBlank() )
   {
-    mWelcomeScreen->showScene();
+    // Welcome screen disabled for QuickGIS
+    // mWelcomeScreen->showScene();
   }
 }
 
@@ -12546,11 +12549,8 @@ void QgisApp::loadPythonSupport()
 
 void QgisApp::checkQgisVersion()
 {
-  QgsVersionInfo *versionInfo = new QgsVersionInfo();
-  QApplication::setOverrideCursor( Qt::WaitCursor );
-
-  connect( versionInfo, &QgsVersionInfo::versionInfoAvailable, this, &QgisApp::versionReplyFinished );
-  versionInfo->checkVersion();
+  // Version check disabled for QuickGIS (offline mode)
+  QMessageBox::information( this, tr( "Version Check" ), tr( "Version checking is disabled in this build." ) );
 }
 
 void QgisApp::versionReplyFinished()
@@ -16987,6 +16987,10 @@ void QgisApp::namSetup()
 #ifndef QT_NO_SSL
   nam->setSslErrorHandler( std::make_unique<QgsAppSslErrorHandler>() );
 #endif
+
+  // QuickGIS offline mode: force-disable automatic outbound version check
+  QgsSettings().setValue( u"/qgis/allowVersionCheck"_s, false );
+  QgsSettings().setValue( u"qgis/checkVersion"_s, false );
 }
 
 void QgisApp::namProxyAuthenticationRequired( const QNetworkProxy &proxy, QAuthenticator *auth )
