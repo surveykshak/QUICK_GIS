@@ -173,7 +173,7 @@ class APP_EXPORT QgsCustomizationDialog : public QMainWindow, private Ui::QgsCus
      * \brief tree view to edit a customization
      * \since QGIS 4.0
      */
-    class QgsCustomizationModel : public QAbstractItemModel
+    class APP_EXPORT QgsCustomizationModel : public QAbstractItemModel
     {
       public:
         enum class Mode
@@ -183,6 +183,9 @@ class APP_EXPORT QgsCustomizationDialog : public QMainWindow, private Ui::QgsCus
         };
 
         QgsCustomizationModel( QgisApp *qgisApp, Mode mode, QObject *parent = nullptr );
+
+        QgsCustomizationModel( const QgsCustomizationModel & ) = delete;
+        QgsCustomizationModel &operator=( const QgsCustomizationModel & ) = delete;
 
         QVariant data( const QModelIndex &index, int role ) const override;
         bool setData( const QModelIndex &index, const QVariant &value, int role = Qt::EditRole ) override;
