@@ -132,6 +132,9 @@ QgsWelcomeScreen::QgsWelcomeScreen( bool skipVersionCheck, QWidget *parent )
 
   mTemplateProjectsModel = new QgsTemplateProjectsModel( this );
 
+  // Create the news feed parser to populate the model from local cached entries.
+  // We intentionally do NOT call fetch() — this prevents any outbound connection
+  // to feed.qgis.org (QuickGIS offline mode).
   mNewsFeedParser = new QgsNewsFeedParser( QUrl( QStringLiteral( FEED_URL ) ), QString(), this );
   mNewsFeedModel = new QgsNewsFeedProxyModel( mNewsFeedParser, this );
 
@@ -152,11 +155,12 @@ QgsWelcomeScreen::QgsWelcomeScreen( bool skipVersionCheck, QWidget *parent )
 
   QgsSettings settings;
   mVersionInfo = new QgsVersionInfo();
-  if ( !QgsApplication::isRunningFromBuildDir() && settings.value( u"/qgis/allowVersionCheck"_s, true ).toBool() && settings.value( u"qgis/checkVersion"_s, true ).toBool() && !skipVersionCheck )
-  {
-    connect( mVersionInfo, &QgsVersionInfo::versionInfoAvailable, this, &QgsWelcomeScreen::versionInfoReceived );
-    mVersionInfo->checkVersion();
-  }
+  // Version check disabled for QuickGIS (offline mode)
+  // if ( !QgsApplication::isRunningFromBuildDir() && settings.value( u"/qgis/allowVersionCheck"_s, true ).toBool() && settings.value( u"qgis/checkVersion"_s, true ).toBool() && !skipVersionCheck )
+  // {
+  //   connect( mVersionInfo, &QgsVersionInfo::versionInfoAvailable, this, &QgsWelcomeScreen::versionInfoReceived );
+  //   mVersionInfo->checkVersion();
+  // }
 }
 
 bool QgsWelcomeScreen::eventFilter( QObject *object, QEvent *event )
