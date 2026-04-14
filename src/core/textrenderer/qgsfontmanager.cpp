@@ -140,10 +140,12 @@ void QgsFontManager::installUserFonts()
 {
   QgsReadWriteLocker locker( mReplacementLock, QgsReadWriteLocker::Write );
   const QString userProfileFontsDir = QgsApplication::qgisSettingsDirPath() + "fonts";
+  const QString pkgFontsDir = QgsApplication::pkgDataPath() + QStringLiteral( "/resources/fonts" );
   QStringList fontDirs { userProfileFontsDir };
 
   fontDirs.append( mUserFontDirectories );
 
+  // Install from user profile and custom directories (create if needed)
   for ( const QString &dir : std::as_const( fontDirs ) )
   {
     if ( !QFile::exists( dir ) && !QDir().mkpath( dir ) )
@@ -153,6 +155,12 @@ void QgsFontManager::installUserFonts()
     }
 
     installFontsFromDirectory( dir );
+  }
+
+  // Also install from the package resources/fonts directory (read-only, do not try to create)
+  if ( QFile::exists( pkgFontsDir ) )
+  {
+    installFontsFromDirectory( pkgFontsDir );
   }
 }
 
