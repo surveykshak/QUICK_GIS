@@ -46,9 +46,8 @@
 #include "qgsrasterlayer.h"
 #include "qgsrasterlayerelevationproperties.h"
 #include "qgsrenderer.h"
-#include "qgssettingsentryenumflag.h"
+#include "qgssettings.h"
 #include "qgssettingsregistrycore.h"
-#include "qgssettingstree.h"
 #include "qgssymbol.h"
 #include "qgstiles.h"
 #include "qgsunittypes.h"
@@ -70,9 +69,6 @@
 #include "moc_qgsmaptoolidentify.cpp"
 
 using namespace Qt::StringLiterals;
-
-const QgsSettingsEntryEnumFlag<QgsMapToolIdentify::IdentifyMode> *QgsMapToolIdentify::settingIdentifyMode
-  = new QgsSettingsEntryEnumFlag<QgsMapToolIdentify::IdentifyMode>( u"identify-mode"_s, QgsSettingsTree::sTreeMap, QgsMapToolIdentify::ActiveLayer );
 
 QgsMapToolIdentify::QgsMapToolIdentify( QgsMapCanvas *canvas )
   : QgsMapTool( canvas )
@@ -138,7 +134,8 @@ QList<QgsMapToolIdentify::IdentifyResult> QgsMapToolIdentify::identify(
 
   if ( mode == DefaultQgsSetting )
   {
-    mode = settingIdentifyMode->value();
+    QgsSettings settings;
+    mode = settings.enumValue( u"Map/identifyMode"_s, ActiveLayer );
   }
 
   if ( mode == LayerSelection )

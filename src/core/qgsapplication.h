@@ -1,4 +1,3 @@
-
 /***************************************************************************
     qgsapplication.h - Accessors for application-wide data
      --------------------------------------
@@ -85,7 +84,6 @@ class QgsSensorRegistry;
 class QgsProfileSourceRegistry;
 class QgsLabelingEngineRuleRegistry;
 class QgsSymbolConverterRegistry;
-class QgsMaterialRegistry;
 
 // clang-format off
 /**
@@ -1041,16 +1039,6 @@ class CORE_EXPORT QgsApplication : public QApplication
   static Qgs3DSymbolRegistry *symbol3DRegistry() SIP_KEEPREFERENCE;
 
   /**
-   * Returns registry of available 3D materials.
-   *
-   * \warning This is not considered stable API, and may change in future QGIS
-   * releases. It is exposed to the Python bindings as a tech preview only.
-   *
-   * \since QGIS 4.2
-   */
-  static QgsMaterialRegistry *materialRegistry() SIP_KEEPREFERENCE;
-
-  /**
    * Gets the registry of available scalebar renderers.
    *
    * \since QGIS 3.14
@@ -1237,8 +1225,6 @@ class CORE_EXPORT QgsApplication : public QApplication
    * \since QGIS 3.4
    */
   void collectTranslatableObjects(QgsTranslationContext *translationContext);
-
-  static const QgsSettingsEntryString *settingsNullRepresentation SIP_SKIP;
 
 #ifndef SIP_RUN
   //! Settings entry locale user locale

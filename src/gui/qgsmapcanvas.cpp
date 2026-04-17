@@ -65,9 +65,7 @@ email                : sherman at mrcc.com
 #include "qgsscreenhelper.h"
 #include "qgssettings.h"
 #include "qgssettingsentryenumflag.h"
-#include "qgssettingsentryimpl.h"
 #include "qgssettingsregistrygui.h"
-#include "qgssettingstree.h"
 #include "qgsstatusbar.h"
 #include "qgssvgcache.h"
 #include "qgssymbollayerutils.h"
@@ -104,8 +102,6 @@ email                : sherman at mrcc.com
 #include "moc_qgsmapcanvas.cpp"
 
 using namespace Qt::StringLiterals;
-
-const QgsSettingsEntryString *QgsMapCanvas::settingsCustomCoordinateCrs = new QgsSettingsEntryString( u"custom-coordinate-crs"_s, QgsSettingsTree::sTreeMap, QString() );
 
 /**
  * \ingroup gui
@@ -1285,7 +1281,7 @@ void QgsMapCanvas::showContextMenu( QgsMapMouseEvent *event )
     addCoordinateFormat( wgs84.userFriendlyIdentifier( Qgis::CrsIdentifierType::MediumString ), wgs84 );
 
   QgsSettings settings;
-  const QString customCrsString = QgsMapCanvas::settingsCustomCoordinateCrs->value();
+  const QString customCrsString = settings.value( u"qgis/custom_coordinate_crs"_s ).toString();
   if ( !customCrsString.isEmpty() )
   {
     QgsCoordinateReferenceSystem customCrs( customCrsString );
@@ -1301,7 +1297,7 @@ void QgsMapCanvas::showContextMenu( QgsMapMouseEvent *event )
     selector.setCrs( QgsCoordinateReferenceSystem( customCrsString ) );
     if ( selector.exec() )
     {
-      QgsMapCanvas::settingsCustomCoordinateCrs->setValue( selector.crs().authid().isEmpty() ? selector.crs().toWkt( Qgis::CrsWktVariant::Preferred ) : selector.crs().authid() );
+      QgsSettings().setValue( u"qgis/custom_coordinate_crs"_s, selector.crs().authid().isEmpty() ? selector.crs().toWkt( Qgis::CrsWktVariant::Preferred ) : selector.crs().authid() );
     }
   } );
   copyCoordinateMenu->addAction( setCustomCrsAction );

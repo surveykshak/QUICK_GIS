@@ -234,7 +234,7 @@ bool QgsPointCloudStatsCalculator::calculateStats( QgsFeedback *feedback, const 
       nodes.push_back( node.id() );
       mProcessedNodes.insert( node.id() );
     }
-    for ( QgsPointCloudNodeId child : node.children() )
+    for ( const QgsPointCloudNodeId &child : node.children() )
     {
       queue.push_back( child );
     }

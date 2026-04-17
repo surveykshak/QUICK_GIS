@@ -71,9 +71,8 @@ void adsModelNormalMapped(const in vec3 worldPos,
                 // The light direction is in world space, convert to tangent space
                 if (lights[i].type == TYPE_SPOT) {
                     // Check if fragment is inside or outside of the spot light cone
-                    vec3 tsLightDirection = normalize(tangentMatrix * lights[i].direction);
-                    float cutOffCos = cos(radians(lights[i].cutOffAngle));
-                    if (dot(-s, tsLightDirection) < cutOffCos)
+                    vec3 tsLightDirection = tangentMatrix * lights[i].direction;
+                    if (degrees(acos(dot(-s, tsLightDirection))) > lights[i].cutOffAngle)
                         sDotN = 0.0;
                 }
             }
@@ -141,8 +140,7 @@ void adsModel(const in vec3 worldPos,
                 // The light direction is in world space already
                 if (lights[i].type == TYPE_SPOT) {
                     // Check if fragment is inside or outside of the spot light cone
-                    float cutOffCos = cos(radians(lights[i].cutOffAngle));
-                    if (dot(-s, lights[i].direction) < cutOffCos)
+                    if (degrees(acos(dot(-s, lights[i].direction))) > lights[i].cutOffAngle)
                         sDotN = 0.0;
                 }
             }
@@ -206,8 +204,7 @@ void adModel(const in vec3 worldPos,
                 // The light direction is in world space already
                 if (lights[i].type == TYPE_SPOT) {
                     // Check if fragment is inside or outside of the spot light cone
-                    float cutOffCos = cos(radians(lights[i].cutOffAngle));
-                    if (dot(-s, lights[i].direction) < cutOffCos)
+                    if (degrees(acos(dot(-s, lights[i].direction))) > lights[i].cutOffAngle)
                         sDotN = 0.0;
                 }
             }

@@ -421,7 +421,7 @@ QVector<QgsPoint> QgsCircle::northQuadrant() const
   return quad;
 }
 
-std::unique_ptr< QgsCircularString > QgsCircle::toCircularString( bool oriented ) const
+QgsCircularString *QgsCircle::toCircularString( bool oriented ) const
 {
   auto circString = std::make_unique<QgsCircularString>();
   QgsPointSequence points;
@@ -441,7 +441,7 @@ std::unique_ptr< QgsCircularString > QgsCircle::toCircularString( bool oriented 
   }
   circString->setPoints( points );
 
-  return circString;
+  return circString.release();
 }
 
 bool QgsCircle::contains( const QgsPoint &point, double epsilon ) const

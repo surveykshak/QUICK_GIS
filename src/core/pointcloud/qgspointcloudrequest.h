@@ -88,11 +88,6 @@ class CORE_EXPORT QgsPointCloudRequest
 };
 
 //! Hash function for QgsPointCloudRequest
-inline size_t qHash( const QgsPointCloudRequest &request, size_t seed = 0 )
-{
-  const QgsRectangle r( request.filterRect() );
-  return qHashMulti( seed, r.xMinimum(), r.xMaximum(), r.yMinimum(), r.yMaximum(), request.attributes().pointRecordSize(), request.ignoreIndexFilterEnabled() );
-}
-
+uint qHash( const QgsPointCloudRequest &request );
 
 #endif // QGSPOINTCLOUDREQUEST_H

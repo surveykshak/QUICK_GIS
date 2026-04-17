@@ -1458,19 +1458,9 @@ void QgsPluginManager::leFilter_textChanged( QString text )
     mModelProxy->setFilterRole( 0 );
     QgsDebugMsgLevel( "PluginManager filter changed to :" + text, 3 );
   }
+
   const QRegularExpression filterRegExp( text, QRegularExpression::CaseInsensitiveOption );
-
-  if ( filterRegExp.isValid() )
-  {
-    mModelProxy->setFilterRegularExpression( filterRegExp );
-  }
-  else
-  {
-    const QString safeText = QRegularExpression::escape( text );
-
-    const QRegularExpression safeFilterRegExp( safeText, QRegularExpression::CaseInsensitiveOption );
-    mModelProxy->setFilterRegularExpression( safeFilterRegExp );
-  }
+  mModelProxy->setFilterRegularExpression( filterRegExp );
 }
 
 void QgsPluginManager::buttonUpgradeAll_clicked()

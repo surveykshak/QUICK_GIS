@@ -33,8 +33,7 @@ Defines requests passed to :py:class:`QgsService` classes.
       GetMethod,
       PostMethod,
       DeleteMethod,
-      PatchMethod,
-      OptionsMethod,
+      PatchMethod
     };
 
     enum RequestHeader /BaseType=IntEnum/

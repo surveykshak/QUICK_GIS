@@ -6,43 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>739</width>
-    <height>409</height>
+    <width>378</width>
+    <height>107</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true">Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="1">
-    <widget class="QLabel" name="lblRoughness">
-     <property name="text">
-      <string>Roughness</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
+  <layout class="QGridLayout" name="gridLayout" columnstretch="1,2">
+   <item row="0" column="0">
     <widget class="QLabel" name="lblSpecular">
      <property name="text">
       <string>Base color</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QLabel" name="lblMetalness">
-     <property name="text">
-      <string>Metalness</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QgsPercentageWidget" name="mMetalnessWidget" native="true">
-     <property name="focusPolicy">
-      <enum>Qt::FocusPolicy::StrongFocus</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="2">
+   <item row="0" column="1">
     <widget class="QgsColorButton" name="mButtonBaseColor">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -58,33 +37,31 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="2">
-    <widget class="QgsPercentageWidget" name="mRoughnessWidget" native="true">
-     <property name="focusPolicy">
-      <enum>Qt::FocusPolicy::StrongFocus</enum>
+   <item row="1" column="0">
+    <widget class="QLabel" name="lblShininess">
+     <property name="text">
+      <string>Metalness</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Orientation::Vertical</enum>
+   <item row="1" column="1">
+    <widget class="QgsDoubleSpinBox" name="mSpinMetalness">
+     <property name="maximum">
+      <double>1000.000000000000000</double>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
+    </widget>
    </item>
-   <item row="0" column="0" rowspan="4">
-    <widget class="QgsMaterialPreviewWidget" name="mPreviewWidget" native="true">
-     <property name="minimumSize">
-      <size>
-       <width>200</width>
-       <height>200</height>
-      </size>
+   <item row="2" column="0">
+    <widget class="QLabel" name="lblShininess_2">
+     <property name="text">
+      <string>Roughness</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QgsDoubleSpinBox" name="mSpinRoughness">
+     <property name="maximum">
+      <double>1000.000000000000000</double>
      </property>
     </widget>
    </item>
@@ -98,20 +75,14 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>QgsMaterialPreviewWidget</class>
-   <extends>QWidget</extends>
-   <header>qgsmaterialpreviewwidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QgsPercentageWidget</class>
-   <extends>QWidget</extends>
-   <header>qgspercentagewidget.h</header>
-   <container>1</container>
+   <class>QgsDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>qgsdoublespinbox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>mButtonBaseColor</tabstop>
+  <tabstop>mSpinMetalness</tabstop>
  </tabstops>
  <resources/>
  <connections/>

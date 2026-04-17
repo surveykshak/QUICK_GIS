@@ -26,7 +26,6 @@ class QColor;
 class QLineEdit;
 class QToolButton;
 class QgsDoubleSpinBox;
-template<class T> class QgsSettingsEntryEnumFlag;
 
 /**
  * \ingroup gui
@@ -778,8 +777,6 @@ class GUI_EXPORT QgsColorTextWidget : public QgsColorWidget
       Rgba        //!< Rgba( r, g, b, a ) format, with alpha
     };
     Q_ENUM( ColorTextFormat )
-
-    static const QgsSettingsEntryEnumFlag<ColorTextFormat> *settingsTextFormat SIP_SKIP;
 
     /**
      * Construct a new color line edit widget.

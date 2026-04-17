@@ -34,8 +34,7 @@ using namespace Qt::StringLiterals;
 #ifdef HAVE_OPENCL
 #ifdef QGISDEBUG
 #include <chrono>
-#include "qgsmaprendererjob.h"
-#include "qgssettingsentryimpl.h"
+#include "qgssettings.h"
 #endif
 #include "qgsexception.h"
 #include "qgsopenclutils.h"
@@ -514,7 +513,7 @@ QgsRasterBlock *QgsHillshadeRenderer::block( int bandNo, const QgsRectangle &ext
   } // End of switch in case OpenCL is not available or enabled
 
 #ifdef QGISDEBUG
-  if ( QgsMapRendererJob::settingsLogCanvasRefreshEvent->value() )
+  if ( QgsSettings().value( u"Map/logCanvasRefreshEvent"_s, false ).toBool() )
   {
     QgsMessageLog::logMessage(
       u"%1 processing time for hillshade (%2 x %3 ): %4 ms"_s.arg( useOpenCL ? u"OpenCL"_s : u"CPU"_s )

@@ -90,8 +90,6 @@ QgsVectorTileLayerProperties::QgsVectorTileLayerProperties( QgsVectorTileLayer *
 
   mMapLayerServerPropertiesWidget->setHasWfsTitle( false );
 
-  connect( mMetadataViewer, &QTextBrowser::anchorClicked, this, &QgsVectorTileLayerProperties::openUrl );
-
   // update based on lyr's current state
   syncToLayer();
 
@@ -158,11 +156,10 @@ void QgsVectorTileLayerProperties::syncToLayer()
   /*
    * Information Tab
    */
-  QString myStyle = QgsApplication::reportStyleSheet();
-  myStyle.append( u"body { margin: 10px; }\n "_s );
-  mMetadataViewer->clear();
-  mMetadataViewer->document()->setDefaultStyleSheet( myStyle );
-  mMetadataViewer->setHtml( mLayer->htmlMetadata() );
+  const QString myStyle = QgsApplication::reportStyleSheet( QgsApplication::StyleSheetType::WebBrowser );
+  // Inject the stylesheet
+  const QString html { mLayer->htmlMetadata().replace( "<head>"_L1, QStringLiteral( R"raw(<head><style type="text/css">%1</style>)raw" ) ).arg( myStyle ) };
+  mMetadataViewer->setHtml( html );
 
   /*
    * Source

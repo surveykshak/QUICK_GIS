@@ -33,7 +33,6 @@
 #include "qgslayoutmanager.h"
 #include "qgsmeshlayer.h"
 #include "qgsnativealgorithms.h"
-#include "qgsogrproviderutils.h"
 #include "qgspluginlayer.h"
 #include "qgspoint.h"
 #include "qgspointcloudlayer.h"
@@ -856,7 +855,7 @@ void TestQgsProcessing::initTestCase()
    * QgsApplication::initQgis()
    *       as any previously-set value would otherwise disappear.
    */
-  QgsOgrProviderUtils::settingsWalForSqlite3->setValue( false );
+  settings.setValue( "qgis/walForSqlite3", false );
 
   QgsApplication::processingRegistry()->addProvider( new QgsNativeAlgorithms( QgsApplication::processingRegistry() ) );
 }

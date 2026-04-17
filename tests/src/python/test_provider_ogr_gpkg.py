@@ -46,7 +46,6 @@ from qgis.core import (
     QgsRelation,
     QgsRelationContext,
     QgsSettings,
-    QgsSettingsTree,
     QgsVectorDataProvider,
     QgsVectorLayer,
     QgsVectorLayerExporter,
@@ -907,9 +906,7 @@ class TestPyQgsOGRProviderGpkg(QgisTestCase):
 
     def testDisablewalForSqlite3(self):
         """Test disabling walForSqlite3 setting"""
-        QgsSettingsTree.node("database").childNode("sqlite3").childSetting(
-            "wal"
-        ).setValue(False)
+        QgsSettings().setValue("/qgis/walForSqlite3", False)
 
         tmpfile = os.path.join(self.basetestpath, "testDisablewalForSqlite3.gpkg")
         ds = ogr.GetDriverByName("GPKG").CreateDataSource(tmpfile)
@@ -938,9 +935,7 @@ class TestPyQgsOGRProviderGpkg(QgisTestCase):
         self.assertIsNone(cbk.msg)
         vl = None
 
-        QgsSettingsTree.node("database").childNode("sqlite3").childSetting(
-            "wal"
-        ).remove()
+        QgsSettings().setValue("/qgis/walForSqlite3", None)
 
     @unittest.skipIf(
         int(gdal.VersionInfo("VERSION_NUM")) < GDAL_COMPUTE_VERSION(3, 4, 2),

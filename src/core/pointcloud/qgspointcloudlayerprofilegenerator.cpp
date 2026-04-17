@@ -516,7 +516,7 @@ QVector<QgsPointCloudNodeId> QgsPointCloudLayerProfileGeneratorBase::traverseTre
   if ( childrenErrorPixels < maxErrorPixels )
     return nodes;
 
-  for ( QgsPointCloudNodeId nn : node.children() )
+  for ( const QgsPointCloudNodeId &nn : node.children() )
   {
     nodes += traverseTree( pc, nn, maxErrorPixels, childrenErrorPixels, zRange, searchExtent );
   }
@@ -527,7 +527,7 @@ QVector<QgsPointCloudNodeId> QgsPointCloudLayerProfileGeneratorBase::traverseTre
 int QgsPointCloudLayerProfileGeneratorBase::visitNodesSync( const QVector<QgsPointCloudNodeId> &nodes, QgsPointCloudIndex &pc, QgsPointCloudRequest &request, const QgsDoubleRange &zRange )
 {
   int nodesDrawn = 0;
-  for ( QgsPointCloudNodeId n : nodes )
+  for ( const QgsPointCloudNodeId &n : nodes )
   {
     if ( mFeedback->isCanceled() )
       break;
@@ -560,7 +560,7 @@ int QgsPointCloudLayerProfileGeneratorBase::visitNodesAsync( const QVector<QgsPo
 
   for ( int i = 0; i < nodes.size(); ++i )
   {
-    QgsPointCloudNodeId n = nodes[i];
+    const QgsPointCloudNodeId &n = nodes[i];
     const QString nStr = n.toString();
     QgsPointCloudBlockRequest *blockRequest = pc.asyncNodeData( n, request );
     blockRequests.append( blockRequest );

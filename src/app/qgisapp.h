@@ -114,7 +114,6 @@ class QgsMapToolIdentifyAction;
 class Qgs3DMapCanvasWidget;
 class QgsVertexEditor;
 class QgsMapLayerActionContext;
-class QgsSettingsEntryBool;
 
 class QDomDocument;
 class QNetworkReply;
@@ -238,8 +237,6 @@ class APP_EXPORT QgisApp : public QMainWindow, private Ui::MainWindow
     };
     Q_DECLARE_FLAGS( AppOptions, AppOption )
     static const AppOptions DEFAULT_OPTIONS;
-
-    static const QgsSettingsEntryBool *settingsAskToDeleteFeatures;
 
     //! Constructor
     QgisApp(

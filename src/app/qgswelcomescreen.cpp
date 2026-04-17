@@ -26,7 +26,6 @@
 #include <QMessageBox>
 #include <QQmlContext>
 #include <QString>
-#include <QTimer>
 #include <QUrl>
 #include <QVBoxLayout>
 
@@ -44,26 +43,22 @@ QgsWelcomeScreenController::QgsWelcomeScreenController( QgsWelcomeScreen *welcom
 
 void QgsWelcomeScreenController::openProject( const QString &path )
 {
-  // QTimer needed to prevent crashes when the Item bound to the calling function is deleted by the ListView
-  QTimer::singleShot( 1, this, [path]() { QgisApp::instance()->openProject( path ); } );
+  QgisApp::instance()->openProject( path );
 }
 
 void QgsWelcomeScreenController::createBlankProject()
 {
-  // QTimer needed to prevent crashes when the Item bound to the calling function is deleted by the ListView
-  QTimer::singleShot( 1, this, []() { QgisApp::instance()->newProject(); } );
+  QgisApp::instance()->newProject();
 }
 
 void QgsWelcomeScreenController::createProjectFromBasemap()
 {
-  // QTimer needed to prevent crashes when the Item bound to the calling function is deleted by the ListView
-  QTimer::singleShot( 1, this, []() { QgisApp::instance()->fileNewWithBasemap(); } );
+  QgisApp::instance()->fileNewWithBasemap();
 }
 
 void QgsWelcomeScreenController::createProjectFromTemplate( const QString &path )
 {
-  // QTimer needed to prevent crashes when the Item bound to the calling function is deleted by the ListView
-  QTimer::singleShot( 1, this, [path]() { QgisApp::instance()->fileNewFromTemplate( path ); } );
+  QgisApp::instance()->fileNewFromTemplate( path );
 }
 
 void QgsWelcomeScreenController::clearRecentProjects()

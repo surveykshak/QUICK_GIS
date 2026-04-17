@@ -122,8 +122,7 @@ class PostGisDBPlugin(DBPlugin):
             )
 
         uri.setUseEstimatedMetadata(useEstimatedMetadata)
-        if session_role:
-            uri.setParam("session_role", session_role)
+        uri.setParam("session_role", session_role)
 
         try:
             return self.connectToUri(uri)

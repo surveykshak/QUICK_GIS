@@ -36,7 +36,6 @@ identification:
       LayerSelection
     };
 
-
     enum Type /BaseType=IntEnum/
     {
       VectorLayer,

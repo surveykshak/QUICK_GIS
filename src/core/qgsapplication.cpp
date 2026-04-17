@@ -141,8 +141,6 @@ const QgsSettingsEntryBool *QgsApplication::settingsLocaleShowGroupSeparator = n
 
 const QgsSettingsEntryStringList *QgsApplication::settingsSearchPathsForSVG = new QgsSettingsEntryStringList( u"searchPathsForSVG"_s, QgsSettingsTree::sTreeSvg, QStringList() );
 
-const QgsSettingsEntryString *QgsApplication::settingsNullRepresentation = new QgsSettingsEntryString( u"null-value"_s, QgsSettingsTree::sTreeQgis, u"NULL"_s );
-
 const QgsSettingsEntryInteger *QgsApplication::settingsConnectionPoolMaximumConcurrentConnections
   = new QgsSettingsEntryInteger( u"connection-pool-maximum-concurrent-connections"_s, QgsSettingsTree::sTreeCore, 4, QObject::tr( "Maximum number of concurrent connections per connection pool" ), Qgis::SettingsOptions(), 4, 999 );
 
@@ -2206,7 +2204,7 @@ QString QgsApplication::nullRepresentation()
   ApplicationMembers *appMembers = members();
   if ( appMembers->mNullRepresentation.isNull() )
   {
-    appMembers->mNullRepresentation = settingsNullRepresentation->value();
+    appMembers->mNullRepresentation = QgsSettings().value( u"qgis/nullValue"_s, u"NULL"_s ).toString();
   }
   return appMembers->mNullRepresentation;
 }
@@ -2218,7 +2216,7 @@ void QgsApplication::setNullRepresentation( const QString &nullRepresentation )
     return;
 
   appMembers->mNullRepresentation = nullRepresentation;
-  settingsNullRepresentation->setValue( nullRepresentation );
+  QgsSettings().setValue( u"qgis/nullValue"_s, nullRepresentation );
 
   QgsApplication *app = instance();
   if ( app )

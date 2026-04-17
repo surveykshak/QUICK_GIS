@@ -516,19 +516,16 @@ void QgsVectorLayer::deselect( const QgsFeatureIds &featureIds )
   emit selectionChanged( QgsFeatureIds(), featureIds, false );
 }
 
-void QgsVectorLayer::selectByRect( const QgsRectangle &rect, Qgis::SelectBehavior behavior )
+void QgsVectorLayer::selectByRect( QgsRectangle &rect, Qgis::SelectBehavior behavior )
 {
   QGIS_PROTECT_QOBJECT_THREAD_ACCESS
 
   // normalize the rectangle
-  QgsRectangle normalizedRect = rect;
-  normalizedRect.normalize();
+  rect.normalize();
 
   QgsFeatureIds newSelection;
 
-  QgsFeatureIterator features = getFeatures(
-    QgsFeatureRequest().setFilterRect( normalizedRect ).setFlags( Qgis::FeatureRequestFlag::ExactIntersect | Qgis::FeatureRequestFlag::NoGeometry ).setNoAttributes()
-  );
+  QgsFeatureIterator features = getFeatures( QgsFeatureRequest().setFilterRect( rect ).setFlags( Qgis::FeatureRequestFlag::ExactIntersect | Qgis::FeatureRequestFlag::NoGeometry ).setNoAttributes() );
 
   QgsFeature feat;
   while ( features.nextFeature( feat ) )
@@ -684,15 +681,14 @@ void QgsVectorLayer::selectAll()
   selectByIds( allFeatureIds() );
 }
 
-void QgsVectorLayer::invertSelectionInRectangle( const QgsRectangle &rect )
+void QgsVectorLayer::invertSelectionInRectangle( QgsRectangle &rect )
 {
   QGIS_PROTECT_QOBJECT_THREAD_ACCESS
 
   // normalize the rectangle
-  QgsRectangle normalizedRect = rect;
-  normalizedRect.normalize();
+  rect.normalize();
 
-  QgsFeatureIterator fit = getFeatures( QgsFeatureRequest().setFilterRect( normalizedRect ).setFlags( Qgis::FeatureRequestFlag::NoGeometry | Qgis::FeatureRequestFlag::ExactIntersect ).setNoAttributes() );
+  QgsFeatureIterator fit = getFeatures( QgsFeatureRequest().setFilterRect( rect ).setFlags( Qgis::FeatureRequestFlag::NoGeometry | Qgis::FeatureRequestFlag::ExactIntersect ).setNoAttributes() );
 
   QgsFeatureIds selectIds;
   QgsFeatureIds deselectIds;

@@ -55,7 +55,7 @@ class CORE_EXPORT QgsPointCloudLayerEditUtils
       QgsCopcPointCloudIndex *copcIndex,
       const QByteArray &chunkData,
       const QgsPointCloudAttribute &attribute,
-      QgsPointCloudNodeId n,
+      const QgsPointCloudNodeId &n,
       const QHash<int, double> &pointValues,
       std::optional<double> newValue = std::nullopt
     );

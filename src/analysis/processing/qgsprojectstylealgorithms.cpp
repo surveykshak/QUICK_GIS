@@ -190,7 +190,7 @@ bool QgsStyleFromProjectAlgorithm::prepareAlgorithm( const QVariantMap &paramete
   mStyle = std::make_unique<QgsStyle>();
   mStyle->createMemoryDatabase();
 
-  if ( mProjectPath.isEmpty() && context.project() )
+  if ( mProjectPath.isEmpty() )
   {
     // using current project -- not thread safe, so prepare in the main thread
     QgsSaveToStyleVisitor visitor( mStyle.get(), mObjects );

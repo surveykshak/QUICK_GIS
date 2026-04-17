@@ -85,7 +85,6 @@ using namespace Qt::StringLiterals;
 #include "qgssettingsregistrycore.h"
 #include "qgssettingsentryenumflag.h"
 #include "qgssettingsentryimpl.h"
-#include "qgssettingstree.h"
 #include "qgssettingsregistrygui.h"
 #include "qgsnetworkaccessmanager.h"
 #include "qgsapplication.h"
@@ -987,8 +986,6 @@ QgisApp *QgisApp::sInstance = nullptr;
 
 // constructor starts here
 const QgisApp::AppOptions QgisApp::DEFAULT_OPTIONS = QgisApp::AppOptions( QgisApp::AppOption::RestorePlugins ) | QgisApp::AppOption::EnablePython;
-
-const QgsSettingsEntryBool *QgisApp::settingsAskToDeleteFeatures = new QgsSettingsEntryBool( u"ask-to-delete-features"_s, QgsSettingsTree::sTreeApp, true );
 
 QgisApp::QgisApp( QSplashScreen *splash, AppOptions options, const QString &rootProfileLocation, const QString &activeProfile, QWidget *parent, Qt::WindowFlags fl )
   : QMainWindow( parent, fl )
@@ -8819,7 +8816,8 @@ void QgisApp::deleteSelected( QgsMapLayer *layer, QWidget *, bool checkFeaturesV
 
   if ( !confirmationServed )
   {
-    const bool showConfirmation = QgisApp::settingsAskToDeleteFeatures->value();
+    QgsSettings settings;
+    const bool showConfirmation = settings.value( u"askToDeleteFeatures"_s, true, QgsSettings::App ).toBool();
     if ( showConfirmation )
     {
       QMessageBox confirmMessage(
@@ -8838,7 +8836,7 @@ void QgisApp::deleteSelected( QgsMapLayer *layer, QWidget *, bool checkFeaturesV
 
       if ( confirmMessage.checkBox()->isChecked() )
       {
-        settingsAskToDeleteFeatures->setValue( false );
+        settings.setValue( u"askToDeleteFeatures"_s, false, QgsSettings::App );
       }
     }
   }
@@ -15267,7 +15265,7 @@ void QgisApp::activateDeactivateLayerRelatedActions( QgsMapLayer *layer )
     }
   }
 
-  bool identifyModeIsActiveLayer = QgsMapToolIdentify::settingIdentifyMode->value() == QgsMapToolIdentify::ActiveLayer;
+  bool identifyModeIsActiveLayer = QgsSettings().enumValue( u"/Map/identifyMode"_s, QgsMapToolIdentify::ActiveLayer ) == QgsMapToolIdentify::ActiveLayer;
 
   if ( !layer )
   {

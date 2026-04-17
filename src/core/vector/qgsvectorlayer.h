@@ -808,11 +808,11 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer,
      * \param rect search rectangle
      * \param behavior selection type, allows adding to current selection, removing
      * from selection, etc.
-     * \see invertSelectionInRectangle()
+     * \see invertSelectionInRectangle(QgsRectangle & rect)
      * \see selectByExpression()
      * \see selectByIds()
      */
-    Q_INVOKABLE void selectByRect( const QgsRectangle &rect, Qgis::SelectBehavior behavior = Qgis::SelectBehavior::SetSelection );
+    Q_INVOKABLE void selectByRect( QgsRectangle &rect, Qgis::SelectBehavior behavior = Qgis::SelectBehavior::SetSelection );
 
     /**
      * Selects matching features using an expression.
@@ -865,7 +865,7 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer,
      *
      * \see   invertSelection()
      */
-    Q_INVOKABLE void invertSelectionInRectangle( const QgsRectangle &rect );
+    Q_INVOKABLE void invertSelectionInRectangle( QgsRectangle &rect );
 
     /**
      * Returns a copy of the user-selected features.
@@ -1215,7 +1215,7 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer,
      * \see changeGeometry()
      * \see changeAttributeValue()
     */
-    bool updateFeature( QgsFeature &feature, bool skipDefaultValues = false );
+    Q_INVOKABLE bool updateFeature( QgsFeature &feature, bool skipDefaultValues = false );
 
     /**
      * Inserts a new vertex before the given vertex number,
@@ -1708,7 +1708,7 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer,
      * \see changeAttributeValue()
      * \see updateFeature()
      */
-    bool changeGeometry( QgsFeatureId fid, QgsGeometry &geometry, bool skipDefaultValue = false );
+    Q_INVOKABLE bool changeGeometry( QgsFeatureId fid, QgsGeometry &geometry, bool skipDefaultValue = false );
 
     /**
      * Changes an attribute value for a feature (but does not immediately commit the changes).
@@ -2248,7 +2248,7 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer,
      * \see minimumValue()
      * \see maximumValue()
      */
-    Q_INVOKABLE QSet<QVariant> uniqueValues( int fieldIndex, int limit = -1 ) const final;
+    QSet<QVariant> uniqueValues( int fieldIndex, int limit = -1 ) const final;
 
     /**
      * Returns unique string values of an attribute which contain a specified subset string. Subset
@@ -2279,7 +2279,7 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer,
      * \see minimumAndMaximumValue()
      * \see uniqueValues()
      */
-    Q_INVOKABLE QVariant minimumValue( int index ) const final;
+    QVariant minimumValue( int index ) const final;
 
     /**
      * Returns the maximum value for an attribute column or an invalid variant in case of error.
@@ -2295,7 +2295,7 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer,
      * \see minimumAndMaximumValue()
      * \see uniqueValues()
      */
-    Q_INVOKABLE QVariant maximumValue( int index ) const final;
+    QVariant maximumValue( int index ) const final;
 
 
     /**

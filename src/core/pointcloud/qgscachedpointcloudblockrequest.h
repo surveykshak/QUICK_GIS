@@ -45,7 +45,7 @@ class CORE_EXPORT QgsCachedPointCloudBlockRequest : public QgsPointCloudBlockReq
      */
     QgsCachedPointCloudBlockRequest(
       QgsPointCloudBlock *block,
-      QgsPointCloudNodeId node,
+      const QgsPointCloudNodeId &node,
       const QString &uri,
       const QgsPointCloudAttributeCollection &attributes,
       const QgsPointCloudAttributeCollection &requestedAttributes,

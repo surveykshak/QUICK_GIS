@@ -39,8 +39,6 @@ class QgsMapCanvas;
 class QgsMapTool;
 class QgsMapToolAdvancedDigitizing;
 class QgsMapMouseEvent;
-class QgsSettingsEntryBool;
-class QgsSettingsEntryDouble;
 class QgsUserInputWidget;
 class QgsReferencedGeometry;
 
@@ -659,8 +657,6 @@ class GUI_EXPORT QgsAdvancedDigitizingDockWidget : public QgsDockWidget, private
      * \since QGIS 3.32
      */
     QString formatCommonAngleSnapping( double angle );
-
-    static const QgsSettingsEntryDouble *settingsCadCommonAngle SIP_SKIP;
 
   public slots:
 

@@ -26,7 +26,7 @@
 ///@cond PRIVATE
 
 QgsPointCloudBlockRequest::QgsPointCloudBlockRequest(
-  QgsPointCloudNodeId node,
+  const QgsPointCloudNodeId &node,
   const QString &uri,
   const QgsPointCloudAttributeCollection &attributes,
   const QgsPointCloudAttributeCollection &requestedAttributes,

@@ -21,8 +21,7 @@
 #include "qgsdoublespinbox.h"
 #include "qgsguiutils.h"
 #include "qgslogger.h"
-#include "qgssettingsentryenumflag.h"
-#include "qgssettingstree.h"
+#include "qgssettings.h"
 #include "qgssymbollayerutils.h"
 
 #include <QDrag>
@@ -41,9 +40,6 @@
 #include "moc_qgscolorwidgets.cpp"
 
 using namespace Qt::StringLiterals;
-
-const QgsSettingsEntryEnumFlag<QgsColorTextWidget::ColorTextFormat> *QgsColorTextWidget::settingsTextFormat
-  = new QgsSettingsEntryEnumFlag<QgsColorTextWidget::ColorTextFormat>( u"text-format"_s, QgsSettingsTree::sTreeColorWidgets, QgsColorTextWidget::HexRgb );
 
 #define HUE_MAX 360
 
@@ -1578,7 +1574,8 @@ QgsColorTextWidget::QgsColorTextWidget( QWidget *parent )
   connect( mMenuButton, &QAbstractButton::clicked, this, &QgsColorTextWidget::showMenu );
 
   //restore format setting
-  mFormat = settingsTextFormat->value();
+  QgsSettings settings;
+  mFormat = settings.enumValue( u"ColorWidgets/textWidgetFormat"_s, HexRgb );
 
   updateText();
 }
@@ -1683,7 +1680,8 @@ void QgsColorTextWidget::showMenu()
   }
 
   //save format setting
-  settingsTextFormat->setValue( mFormat );
+  QgsSettings settings;
+  settings.setEnumValue( u"ColorWidgets/textWidgetFormat"_s, mFormat );
 
   updateText();
 }
