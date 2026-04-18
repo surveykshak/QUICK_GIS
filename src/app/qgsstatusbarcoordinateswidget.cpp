@@ -784,7 +784,7 @@ QString QgsStatusBarCoordinatesWidget::LatLongTopoSheetConversion(const QgsPoint
 {
   double LAT = mp.y();
   double LONG = mp.x();
-  
+
   QChar matrix2[4][6] = { { 'S','T','U','V','W','X' },{ 'M','N','O','P','Q','R' },{ 'G','H','I','J','K','L' },{ 'A','B','C','D','E','F' } };
   int matrix3[4][4] = { { 4, 8, 12, 16 },{ 3, 7, 11, 15 },{ 2, 6, 10, 14 },{ 1, 5, 9, 13 } };
   QChar matrix1[46] = { 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W' };
@@ -793,7 +793,7 @@ QString QgsStatusBarCoordinatesWidget::LatLongTopoSheetConversion(const QgsPoint
   int zone_num = std::floor((LONG + 180.0) / 6.0) + 1;
   if (zone_num > 60) zone_num = 60;
   if (zone_num < 1) zone_num = 1;
-  
+
   // 2. Determine IMW Band (Latitude)
   double abs_lat = std::abs(LAT);
   int lat_band = std::floor(abs_lat / 4.0);
