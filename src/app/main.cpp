@@ -117,7 +117,7 @@ typedef SInt32 SRefCon;
  */
 void version()
 {
-  const QString msg = QStringLiteral( "QGIS %1 '%2' (%3)\n" ).arg( VERSION ).arg( RELEASE_NAME ).arg( QGSVERSION );
+  const QString msg = QStringLiteral( "QUICKGIS %1 '%2' (%3)\n" ).arg( VERSION ).arg( RELEASE_NAME ).arg( QGSVERSION );
   std::cout << msg.toStdString();
 }
 
@@ -129,7 +129,7 @@ void usage( const QString &appName )
   QStringList msg;
 
   msg
-    << QStringLiteral( "QGIS is a user friendly Open Source Geographic Information System.\n" )
+    << QStringLiteral( "QUICKGIS is a user friendly Open Source Geographic Information System.\n" )
     << QStringLiteral( "Usage: " ) << appName << QStringLiteral( " [OPTION] [FILE]\n" )
     << QStringLiteral( "  OPTION:\n" )
     << QStringLiteral( "\t[-v, --version]\tdisplay version information and exit\n" )
@@ -308,7 +308,7 @@ static void dumpBacktrace( unsigned int depth )
 #ifdef QGIS_CRASH
 void qgisCrash( int signal )
 {
-  fprintf( stderr, "QGIS died on signal %d", signal );
+  fprintf( stderr, "QUICKGIS died on signal %d", signal );
 
   QgsCrashHandler::handle( 0 );
 
@@ -1012,11 +1012,11 @@ int main( int argc, char *argv[] )
   {
     if ( !QgsSettings::setGlobalSettingsPath( globalsettingsfile ) )
     {
-      preApplicationWarningMessages << QObject::tr( "Invalid globalsettingsfile path: %1" ).arg( globalsettingsfile ), QStringLiteral( "QGIS" );
+      preApplicationWarningMessages << QObject::tr( "Invalid globalsettingsfile path: %1" ).arg( globalsettingsfile ), QStringLiteral( "QUICKGIS" );
     }
     else
     {
-      preApplicationLogMessages << QObject::tr( "Successfully loaded globalsettingsfile path: %1" ).arg( globalsettingsfile ), QStringLiteral( "QGIS" );
+      preApplicationLogMessages << QObject::tr( "Successfully loaded globalsettingsfile path: %1" ).arg( globalsettingsfile ), QStringLiteral( "QUICKGIS" );
     }
   }
 
