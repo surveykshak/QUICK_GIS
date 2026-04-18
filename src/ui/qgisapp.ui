@@ -17,7 +17,7 @@
      <x>0</x>
      <y>0</y>
      <width>1368</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
    <property name="toolTip">
@@ -291,21 +291,11 @@
      </property>
     </widget>
     <addaction name="mActionHelpContents"/>
-    <addaction name="mActionHelpAPI"/>
-    <addaction name="mActionHelpPyQgisAPI"/>
     <addaction name="separator"/>
     <addaction name="mMenuPluginHelp"/>
     <addaction name="separator"/>
-    <addaction name="mActionReportaBug"/>
-    <addaction name="mActionDonate"/>
-    <addaction name="mActionGetInvolved"/>
-    <addaction name="mActionNeedSupport"/>
-    <addaction name="mActionSponsors"/>
     <addaction name="separator"/>
-    <addaction name="mActionQgisHomePage"/>
-    <addaction name="mActionCheckQgisVersion"/>
     <addaction name="separator"/>
-    <addaction name="mActionAbout"/>
    </widget>
    <widget class="QMenu" name="mSettingsMenu">
     <property name="title">
@@ -906,13 +896,13 @@
      <normaloff>:/images/themes/default/mActionFileExit.svg</normaloff>:/images/themes/default/mActionFileExit.svg</iconset>
    </property>
    <property name="text">
-    <string>Exit QGIS</string>
+    <string>Exit QUICKGIS</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::QuitRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="mActionUndo">
@@ -1903,7 +1893,7 @@ Shift+O to turn segments into straight or curve lines.</string>
     <string>&amp;Options…</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="mActionCustomProjection">
@@ -1924,7 +1914,7 @@ Shift+O to turn segments into straight or curve lines.</string>
     <string>Keyboard Shortcuts…</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="mActionLocalHistogramStretch">
@@ -1994,7 +1984,7 @@ Shift+O to turn segments into straight or curve lines.</string>
     <string>About</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::AboutRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="mActionSponsors">
@@ -3409,7 +3399,7 @@ Shows placeholders for labels which could not be placed, e.g. due to overlaps wi
     <string>Database Query History</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
  </widget>
