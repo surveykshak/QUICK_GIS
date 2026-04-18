@@ -22,7 +22,7 @@ QgsFirstRunDialog::QgsFirstRunDialog( QWidget *parent )
 {
   setupUi( this );
   mWelcomeDevLabel->hide();
-  mWelcomeLabel->setText( tr( "Welcome to QGIS %1" ).arg( Qgis::version() ) );
+  mWelcomeLabel->setText( tr( "Welcome to QUICKGIS %1" ).arg( Qgis::version() ) );
   if ( Qgis::version().endsWith( QLatin1String( "Master" ) ) )
   {
     mWelcomeDevLabel->show();
