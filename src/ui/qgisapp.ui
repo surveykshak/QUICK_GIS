@@ -1957,7 +1957,7 @@ Shift+O to turn segments into straight or curve lines.</string>
      <normaloff>:/images/themes/default/mActionQgisHomePage.png</normaloff>:/images/themes/default/mActionQgisHomePage.png</iconset>
    </property>
    <property name="text">
-    <string>QGIS Home Page</string>
+    <string>QUICKGIS Home Page</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+H</string>
@@ -1969,7 +1969,7 @@ Shift+O to turn segments into straight or curve lines.</string>
      <normaloff>:/images/themes/default/mIconSuccess.svg</normaloff>:/images/themes/default/mIconSuccess.svg</iconset>
    </property>
    <property name="text">
-    <string>Check QGIS Version</string>
+    <string>Check QUICKGIS Version</string>
    </property>
    <property name="statusTip">
     <string>Check if your QGIS version is up to date (requires internet access)</string>
@@ -1993,7 +1993,7 @@ Shift+O to turn segments into straight or curve lines.</string>
      <normaloff>:/images/themes/default/mActionHelpSponsors.png</normaloff>:/images/themes/default/mActionHelpSponsors.png</iconset>
    </property>
    <property name="text">
-    <string>QGIS Sustaining Members</string>
+    <string>QUICKGIS Sustaining Members</string>
    </property>
   </action>
   <action name="mActionMoveLabel">
@@ -3348,7 +3348,7 @@ Shows placeholders for labels which could not be placed, e.g. due to overlaps wi
   </action>
   <action name="mActionDonate">
    <property name="text">
-    <string>Donate to QGIS</string>
+    <string>Donate to QUICKGIS</string>
    </property>
   </action>
   <action name="mActionGetInvolved">
