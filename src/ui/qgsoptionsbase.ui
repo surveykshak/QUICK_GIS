@@ -263,7 +263,7 @@
                     <item>
                      <widget class="QLabel" name="label_18">
                       <property name="text">
-                       <string>Style &lt;i&gt;(QGIS restart required)&lt;/i&gt;</string>
+                       <string>Style &lt;i&gt;(QUICKGIS restart required)&lt;/i&gt;</string>
                       </property>
                      </widget>
                     </item>
@@ -382,7 +382,7 @@
                     <item>
                      <widget class="QLabel" name="label_43">
                       <property name="text">
-                       <string>Font &lt;i&gt;(QGIS restart required)&lt;/i&gt;</string>
+                       <string>Font &lt;i&gt;(QUICKGIS restart required)&lt;/i&gt;</string>
                       </property>
                      </widget>
                     </item>
@@ -514,7 +514,7 @@
                     <item row="2" column="0">
                      <widget class="QCheckBox" name="cbxCheckVersion">
                       <property name="text">
-                       <string>Check QGIS version at startup</string>
+                       <string>Check QUICKGIS version at startup</string>
                       </property>
                      </widget>
                     </item>
@@ -537,7 +537,7 @@
                        <string>If checked, QGIS project news is shown on the welcome page on startup</string>
                       </property>
                       <property name="text">
-                       <string>Show QGIS news feed on welcome page</string>
+                       <string>Show QUICKGIS news feed on welcome page</string>
                       </property>
                       <property name="checked">
                        <bool>true</bool>
@@ -5350,6 +5350,13 @@ p, li { white-space: pre-wrap; }
       <property name="bottomMargin">
        <number>0</number>
       </property>
+      <item>
+       <widget class="QLabel" name="label_71">
+        <property name="text">
+         <string>Compiled by Sachin Kumar</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="QDialogButtonBox" name="buttonBox">
         <property name="orientation">
