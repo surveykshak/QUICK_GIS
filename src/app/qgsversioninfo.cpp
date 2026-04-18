@@ -27,20 +27,18 @@ QgsVersionInfo::QgsVersionInfo( QObject *parent )
 
 void QgsVersionInfo::checkVersion()
 {
-  QNetworkRequest request( QUrl( QStringLiteral( "https://version.qgis.org/version.txt" ) ) );
-  request.setAttribute( QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork );
-  QNetworkReply *reply = QgsNetworkAccessManager::instance()->get( request );
-  connect( reply, &QNetworkReply::finished, this, &QgsVersionInfo::versionReplyFinished );
+  // Disable online version check
+  return;
 }
 
 bool QgsVersionInfo::newVersionAvailable() const
 {
-  return mLatestVersion > Qgis::versionInt();
+  return false;
 }
 
 bool QgsVersionInfo::isDevelopmentVersion() const
 {
-  return Qgis::versionInt() > mLatestVersion;
+  return false;
 }
 
 void QgsVersionInfo::versionReplyFinished()
