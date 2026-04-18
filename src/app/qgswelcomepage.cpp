@@ -87,7 +87,7 @@ QgsWelcomePage::QgsWelcomePage( bool skipVersionCheck, QWidget *parent )
   QVBoxLayout *rightLayout = new QVBoxLayout;
   rightLayout->setContentsMargins( 0, 0, 0, 0 );
 
-  if ( !QgsSettings().value( QStringLiteral( "%1/disabled" ).arg( QgsNewsFeedParser::keyForFeed( QStringLiteral( FEED_URL ) ) ), false, QgsSettings::Core ).toBool() )
+  if ( !QgsSettings().value( QStringLiteral( "%1/disabled" ).arg( QgsNewsFeedParser::keyForFeed( QStringLiteral( FEED_URL ) ) ), true, QgsSettings::Core ).toBool() )
   {
     mSplitter2 = new QSplitter( Qt::Vertical );
     rightLayout->addWidget( mSplitter2 );
