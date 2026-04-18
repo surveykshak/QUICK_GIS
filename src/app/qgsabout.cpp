@@ -43,8 +43,10 @@ QgsAbout::QgsAbout( QWidget *parent )
   : QgsOptionsDialogBase( QStringLiteral( "about" ), parent, kAboutWindowFlags )
 {
   setupUi( this );
-  connect( btnQgisUser, &QPushButton::clicked, this, &QgsAbout::btnQgisUser_clicked );
-  connect( btnQgisHome, &QPushButton::clicked, this, &QgsAbout::btnQgisHome_clicked );
+  // connect( btnQgisUser, &QPushButton::clicked, this, &QgsAbout::btnQgisUser_clicked );
+  // connect( btnQgisHome, &QPushButton::clicked, this, &QgsAbout::btnQgisHome_clicked );
+  btnQgisUser->setVisible( false );
+  btnQgisHome->setVisible( false );
   connect( btnCopyToClipboard, &QPushButton::clicked, this, &QgsAbout::btnCopyToClipboard_clicked );
   if constexpr ( QSysInfo::WordSize != 64 )
   {
@@ -66,11 +68,13 @@ void QgsAbout::init()
   const int DEVELOPERS_MAP_INDEX = 5;
   QTcpSocket socket;
   socket.connectToHost( QgsApplication::QGIS_ORGANIZATION_DOMAIN, 80 );
+  /*
   if ( socket.waitForConnected( 1000 ) )
   {
     setDevelopersMap();
   }
   else
+  */
   {
     mOptionsListWidget->item( DEVELOPERS_MAP_INDEX )->setHidden( true );
     const QModelIndex firstItem = mOptionsListWidget->model()->index( 0, 0, QModelIndex() );
@@ -150,9 +154,7 @@ void QgsAbout::init()
   if ( donorsFile.open( QIODevice::ReadOnly ) )
   {
     const QString donorsHTML = tr( "<p>For a list of individuals and institutions who have contributed "
-                                   "money to fund QGIS development and other project costs see "
-                                   "<a href=\"https://qgis.org/funding/donate/\">"
-                                   "https://qgis.org/funding/donate/</a></p>" );
+                                   "money to fund QGIS development and other project costs see the official QGIS website.</p>" );
 #if 0
     QString website;
     QTextStream donorsStream( &donorsFile );
@@ -244,9 +246,9 @@ void QgsAbout::setPluginInfo()
 {
   QString myString;
   //provide info about the plugins available
-  myString += "<b>" + tr( "Available QGIS Data Provider Plugins" ) + "</b><br>";
+  myString += "<b>" + tr( "Available QUICKGIS Data Provider Plugins" ) + "</b><br>";
   myString += QgsProviderRegistry::instance()->pluginList( true );
-  myString += "<b>" + tr( "Available QGIS Authentication Method Plugins" ) + "</b><br>";
+  myString += "<b>" + tr( "Available QUICKGIS Authentication Method Plugins" ) + "</b><br>";
   myString += QgsAuthMethodRegistry::instance()->pluginList( true );
   //qt database plugins
   myString += "<b>" + tr( "Available Qt Database Plugins" ) + "</b><br>";
