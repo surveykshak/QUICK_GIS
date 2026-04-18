@@ -237,7 +237,7 @@ void QgsWelcomePage::versionInfoReceived()
   {
     mVersionInformation->setVisible( true );
     mVersionInformation->setText( QStringLiteral( "<style> a, a:visited, a:hover { color:#268300; } </style><b>%1</b>: %2" )
-                                    .arg( tr( "New QGIS version available" ), QgsStringUtils::insertLinks( versionInfo->downloadInfo() ) ) );
+                                    .arg( tr( "New QUICKGIS version available" ), QgsStringUtils::insertLinks( versionInfo->downloadInfo() ) ) );
   }
 }
 
@@ -399,9 +399,9 @@ void QgsWelcomePage::showContextMenuForNews( QPoint point )
   } );
   menu->addAction( dismissAllAction );
   menu->addSeparator();
-  QAction *hideAction = new QAction( tr( "Hide QGIS News…" ), menu );
+  QAction *hideAction = new QAction( tr( "Hide QUICKGIS News…" ), menu );
   connect( hideAction, &QAction::triggered, this, [this] {
-    if ( QMessageBox::question( this, tr( "QGIS News" ), tr( "Are you sure you want to hide QGIS news? (The news feed can be re-enabled from the QGIS settings dialog.)" ) ) == QMessageBox::Yes )
+    if ( QMessageBox::question( this, tr( "QUICKGIS News" ), tr( "Are you sure you want to hide QUICKGIS news? (The news feed can be re-enabled from the QUICKGIS settings dialog.)" ) ) == QMessageBox::Yes )
     {
       //...sad trombone...
       mNewsFeedParser->dismissAll();
