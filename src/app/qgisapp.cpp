@@ -599,7 +599,7 @@ static void setTitleBarText_( QWidget &qgisApp )
   if ( QgsProject::instance()->isDirty() )
     caption.prepend( '*' );
 
-  caption += QgisApp::tr( "QGIS" );
+  caption += QgisApp::tr( "QUICKGIS-LTR" );
 
   if ( Qgis::version().endsWith( QLatin1String( "Master" ) ) )
   {
@@ -973,7 +973,7 @@ QgisApp::QgisApp( QSplashScreen *splash, AppOptions options, const QString &root
     QMessageBox::critical(
       this,
       tr( "Multiple Instances of QgisApp" ),
-      tr( "Multiple instances of QGIS application object detected.\nPlease contact the developers.\n" )
+      tr( "Multiple instances of QUICKGIS application object detected.\nPlease contact the developers.\n" )
     );
     abort();
   }
@@ -1002,6 +1002,16 @@ QgisApp::QgisApp( QSplashScreen *splash, AppOptions options, const QString &root
   // load GUI: actions, menus, toolbars
   startProfile( tr( "Setting up UI" ) );
   setupUi( this );
+
+  // Hide online-related actions for strictly offline mode
+  mActionAddWmsLayer->setVisible( false );
+  mActionAddXyzLayer->setVisible( false );
+  mActionAddWcsLayer->setVisible( false );
+  mActionAddWfsLayer->setVisible( false );
+  mActionAddAfsLayer->setVisible( false );
+  mActionAddVectorTileLayer->setVisible( false );
+  mActionAddStacLayer->setVisible( false );
+
   endProfile();
 
   mScreenHelper = new QgsScreenHelper( this );
@@ -1577,7 +1587,7 @@ QgisApp::QgisApp( QSplashScreen *splash, AppOptions options, const QString &root
   connect( QgsGui::mapLayerActionRegistry(), &QgsMapLayerActionRegistry::changed, this, &QgisApp::refreshActionFeatureAction );
 
   // set application's caption
-  QString caption = tr( "QGIS - %1 ('%2')" ).arg( Qgis::version(), Qgis::releaseName() );
+  QString caption = tr( "QUICKGIS-LTR - %1 ('%2')" ).arg( Qgis::version(), Qgis::releaseName() );
   setWindowTitle( caption );
 
   // QgsMessageLog::logMessage( tr( "QGIS starting…" ), QString(), Qgis::MessageLevel::Info );
@@ -1777,7 +1787,7 @@ QgisApp::QgisApp( QSplashScreen *splash, AppOptions options, const QString &root
   QgsStyle::defaultStyle();
   endProfile();
 
-  mSplash->showMessage( tr( "QGIS Ready!" ), Qt::AlignHCenter | Qt::AlignBottom, splashTextColor );
+  mSplash->showMessage( tr( "QUICKGIS Ready!" ), Qt::AlignHCenter | Qt::AlignBottom, splashTextColor );
 
   QgsMessageLog::logMessage( QgsApplication::showSettings(), QString(), Qgis::MessageLevel::Info );
 
@@ -3168,7 +3178,7 @@ void QgisApp::createActions()
   mActionReportaBug->setShortcut( QString() );
 #endif
 
-  mActionHelpContents->setEnabled( QFileInfo::exists( QgsApplication::pkgDataPath() + "/doc/index.html" ) );
+  mActionHelpContents->setEnabled( QFileInfo::exists( QgsApplication::pkgDataPath() + "/doc/QuickGis_Guide.pdf" ) );
 
   connect( mActionHelpContents, &QAction::triggered, this, &QgisApp::helpContents );
   connect( mActionHelpAPI, &QAction::triggered, this, &QgisApp::apiDocumentation );
@@ -3179,8 +3189,17 @@ void QgisApp::createActions()
   connect( mActionNeedSupport, &QAction::triggered, this, &QgisApp::supportProviders );
   connect( mActionQgisHomePage, &QAction::triggered, this, &QgisApp::helpQgisHomePage );
   connect( mActionCheckQgisVersion, &QAction::triggered, this, &QgisApp::checkQgisVersion );
-  connect( mActionAbout, &QAction::triggered, this, &QgisApp::about );
-  connect( mActionSponsors, &QAction::triggered, this, &QgisApp::sponsors );
+  connect( mActionSponsors, &QAction::triggered, this, &QgisApp::about );
+
+  mActionHelpAPI->setVisible( false );
+  mActionHelpPyQgisAPI->setVisible( false );
+  mActionReportaBug->setVisible( false );
+  mActionDonate->setVisible( false );
+  mActionGetInvolved->setVisible( false );
+  mActionNeedSupport->setVisible( false );
+  mActionQgisHomePage->setVisible( false );
+  mActionCheckQgisVersion->setVisible( false );
+  mActionSponsors->setVisible( false );
 
   connect( mActionShowPinnedLabels, &QAction::toggled, this, &QgisApp::showPinnedLabels );
   connect( mActionShowUnplacedLabels, &QAction::toggled, this, [=]( bool active ) {
@@ -4120,8 +4139,10 @@ void QgisApp::createStatusBar()
   mLocatorWidget->locator()->registerFilter( new QgsGotoLocatorFilter() );
   mLocatorWidget->locator()->registerFilter( new QgsLayerMetadataLocatorFilter() );
 
+/*
   mNominatimGeocoder = std::make_unique<QgsNominatimGeocoder>();
   mLocatorWidget->locator()->registerFilter( new QgsNominatimLocatorFilter( mNominatimGeocoder.get(), mMapCanvas ) );
+*/
 }
 
 void QgisApp::setIconSizes( int size )
@@ -5479,7 +5500,7 @@ QString QgisApp::getVersionString()
   const QString compLabel = tr( "Compiled" );
   const QString runLabel = tr( "Running" );
 
-  versionString += QStringLiteral( "<tr><td>%1</td><td>%2</td>" ).arg( tr( "QGIS version" ), Qgis::version() );
+  versionString += QStringLiteral( "<tr><td>%1</td><td>%2</td>" ).arg( tr( "QUICKGIS version" ), Qgis::version() );
   versionString += QLatin1String( "</tr><tr>" );
   if ( QString( Qgis::devVersion() ) == QLatin1String( "exported" ) )
   {
