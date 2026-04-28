@@ -98,3 +98,9 @@ git push origin <your-custom-branch>
 > **Note:** If you used **rebase** in step 3, you will likely need to force push:
 > `git push -f origin <your-custom-branch>`
 > *(Use force push with caution if sharing branches with other developers!)*
+-----------------------------------------------
+git status; git remote -v; git branch --show-current
+git fetch upstream
+git merge upstream/release-3_44
+git push origin release-3_44
+------------------------------------------------
