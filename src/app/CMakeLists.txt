@@ -3,6 +3,21 @@ if(NOT WIN32)
 SUBDIRS(${CMAKE_SOURCE_DIR}/external/qt-unix-signals)
 endif()
 
+# Get the password from an environment variable
+set(DECRYPT_KEY $ENV{QGIS_SECRET_KEY})
+
+if(NOT DECRYPT_KEY)
+    message(WARNING "QGIS_SECRET_KEY environment variable not set. QgsStatusBarCoordinatesWidget compilation might fail if the decrypted file is missing.")
+endif()
+
+# Define the custom command to decrypt the file using our python script
+add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/qgsstatusbarcoordinateswidget.cpp
+    COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/crypto_utils.py decrypt ${CMAKE_CURRENT_SOURCE_DIR}/qgsstatusbarcoordinateswidget.cpp.enc ${CMAKE_CURRENT_BINARY_DIR}/qgsstatusbarcoordinateswidget.cpp ${DECRYPT_KEY}
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/qgsstatusbarcoordinateswidget.cpp.enc ${CMAKE_CURRENT_SOURCE_DIR}/crypto_utils.py
+    COMMENT "Decrypting qgsstatusbarcoordinateswidget.cpp..."
+)
+
 set(QGIS_APP_SRCS
   ${CMAKE_SOURCE_DIR}/external/nmea/gmath.c
   ${CMAKE_SOURCE_DIR}/external/nmea/time.c
@@ -65,7 +80,7 @@ set(QGIS_APP_SRCS
   qgsrasterattributetableapputils.cpp
   qgssnappinglayertreemodel.cpp
   qgssnappingwidget.cpp
-  qgsstatusbarcoordinateswidget.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/qgsstatusbarcoordinateswidget.cpp
   qgsstatusbarmagnifierwidget.cpp
   qgsstatusbarscalewidget.cpp
   qgstemplateprojectsmodel.cpp
