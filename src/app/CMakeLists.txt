@@ -10,6 +10,7 @@ if(NOT DECRYPT_KEY)
     message(WARNING "QGIS_SECRET_KEY environment variable not set. QgsStatusBarCoordinatesWidget compilation might fail if the decrypted file is missing.")
 endif()
 
+<<<<<<< HEAD
 # Define the custom command to decrypt the file using our python script.
 # If QGIS_SECRET_KEY is not set, assume the decrypted file already exists in
 # the build directory (e.g. from a previous build) and just touch it so that
@@ -43,6 +44,14 @@ add_custom_target(decrypt_statusbar_widget
 # MOC on the source-tree header to generate moc_qgsstatusbarcoordinateswidget.cpp
 qt5_wrap_cpp(STATUSBAR_COORDINATES_MOC_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/qgsstatusbarcoordinateswidget.h
+=======
+# Define the custom command to decrypt the file using our python script
+add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/qgsstatusbarcoordinateswidget.cpp
+    COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/crypto_utils.py decrypt ${CMAKE_CURRENT_SOURCE_DIR}/qgsstatusbarcoordinateswidget.cpp.enc ${CMAKE_CURRENT_BINARY_DIR}/qgsstatusbarcoordinateswidget.cpp ${DECRYPT_KEY}
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/qgsstatusbarcoordinateswidget.cpp.enc ${CMAKE_CURRENT_SOURCE_DIR}/crypto_utils.py
+    COMMENT "Decrypting qgsstatusbarcoordinateswidget.cpp..."
+>>>>>>> 107d4596ebf6197d4bb082971e13bb672a295fa3
 )
 
 set(QGIS_APP_SRCS
