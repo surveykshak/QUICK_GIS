@@ -47,7 +47,6 @@ debian/qgis.sh
 desktop.ini
 doc/INSTALL.tex
 i18n/*.qm
-src/app/qgsstatusbarcoordinateswidget.cpp
 ms-windows/*.exe*
 ms-windows/Installer-Files/postinstall.bat
 ms-windows/Installer-Files/preremove.bat
