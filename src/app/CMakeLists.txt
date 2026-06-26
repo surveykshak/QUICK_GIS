@@ -3,61 +3,9 @@ if(NOT WIN32)
 SUBDIRS(${CMAKE_SOURCE_DIR}/external/qt-unix-signals)
 endif()
 
-# Get the password from an environment variable
-set(DECRYPT_KEY $ENV{QGIS_SECRET_KEY})
-
-if(NOT DECRYPT_KEY)
-    message(WARNING "QGIS_SECRET_KEY environment variable not set. QgsStatusBarCoordinatesWidget compilation might fail if the decrypted file is missing.")
-endif()
-
-<<<<<<< HEAD
-# Define the custom command to decrypt the file using our python script.
-# If QGIS_SECRET_KEY is not set, assume the decrypted file already exists in
-# the build directory (e.g. from a previous build) and just touch it so that
-# the build system considers the output up-to-date.
-if(DECRYPT_KEY)
-    add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/qgsstatusbarcoordinateswidget.cpp
-        COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/crypto_utils.py decrypt
-                ${CMAKE_CURRENT_SOURCE_DIR}/qgsstatusbarcoordinateswidget.cpp.enc
-                ${CMAKE_CURRENT_BINARY_DIR}/qgsstatusbarcoordinateswidget.cpp
-                ${DECRYPT_KEY}
-        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/qgsstatusbarcoordinateswidget.cpp.enc
-                ${CMAKE_CURRENT_SOURCE_DIR}/crypto_utils.py
-        COMMENT "Decrypting qgsstatusbarcoordinateswidget.cpp..."
-    )
-else()
-    add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/qgsstatusbarcoordinateswidget.cpp
-        COMMAND ${CMAKE_COMMAND} -E touch_nocreate
-                ${CMAKE_CURRENT_BINARY_DIR}/qgsstatusbarcoordinateswidget.cpp
-        COMMENT "QGIS_SECRET_KEY not set -- using existing decrypted qgsstatusbarcoordinateswidget.cpp"
-    )
-endif()
-
-# Wrap the custom command in a named target so other targets can depend on it
-add_custom_target(decrypt_statusbar_widget
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/qgsstatusbarcoordinateswidget.cpp
-)
-
-# AUTOMOC cannot find the header for a build-tree .cpp, so we explicitly run
-# MOC on the source-tree header to generate moc_qgsstatusbarcoordinateswidget.cpp
-qt5_wrap_cpp(STATUSBAR_COORDINATES_MOC_SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/qgsstatusbarcoordinateswidget.h
-=======
-# Define the custom command to decrypt the file using our python script
-add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/qgsstatusbarcoordinateswidget.cpp
-    COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/crypto_utils.py decrypt ${CMAKE_CURRENT_SOURCE_DIR}/qgsstatusbarcoordinateswidget.cpp.enc ${CMAKE_CURRENT_BINARY_DIR}/qgsstatusbarcoordinateswidget.cpp ${DECRYPT_KEY}
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/qgsstatusbarcoordinateswidget.cpp.enc ${CMAKE_CURRENT_SOURCE_DIR}/crypto_utils.py
-    COMMENT "Decrypting qgsstatusbarcoordinateswidget.cpp..."
->>>>>>> 107d4596ebf6197d4bb082971e13bb672a295fa3
-)
-
 set(QGIS_APP_SRCS
   ${CMAKE_SOURCE_DIR}/external/nmea/gmath.c
   ${CMAKE_SOURCE_DIR}/external/nmea/time.c
-  ${STATUSBAR_COORDINATES_MOC_SRC}
   qgisapp.cpp
   qgisappinterface.cpp
   qgisappstylesheet.cpp
@@ -116,7 +64,7 @@ set(QGIS_APP_SRCS
   qgsrasterattributetableapputils.cpp
   qgssnappinglayertreemodel.cpp
   qgssnappingwidget.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/qgsstatusbarcoordinateswidget.cpp
+  qgsstatusbarcoordinateswidget.cpp
   qgsstatusbarmagnifierwidget.cpp
   qgsstatusbarscalewidget.cpp
   qgstemplateprojectsmodel.cpp
@@ -591,9 +539,6 @@ endif()
 # Putting IMAGE_RCC_SRCS into qgis_app lib is causing problems when the lib is
 # loaded (by plugin for example) in test unit (qgis_layoutpicturetest).
 add_library(qgis_app ${LIBRARY_TYPE} ${QGIS_APP_SRCS})
-
-# Ensure the encrypted .cpp is decrypted before qgis_app tries to build/moc it
-add_dependencies(qgis_app decrypt_statusbar_widget)
 
 # require c++17
 target_compile_features(qgis_app PRIVATE cxx_std_17)
