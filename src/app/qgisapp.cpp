@@ -67,6 +67,8 @@
 #include <QTimer>
 #include <QToolButton>
 #include <QUuid>
+#include <QSet>
+#include <QMouseEvent>
 #include <QVBoxLayout>
 #include <QWhatsThis>
 #include <QWidgetAction>
@@ -289,6 +291,9 @@
 #include "qgslayertreeregistrybridge.h"
 #include "qgslayertreeutils.h"
 #include "qgslayertreeview.h"
+#include "qgsmaptoolcapture.h"
+#include "qgscompoundcurve.h"
+#include "qgsvectorlayer.h"
 #include "qgslayertreeviewdefaultactions.h"
 #include "qgslayertreeviewembeddedindicator.h"
 #include "qgslayertreeviewfilterindicator.h"
@@ -957,6 +962,182 @@ void QgisApp::validateCrs( QgsCoordinateReferenceSystem &srs )
 }
 
 
+#ifdef Success
+#undef Success
+#endif
+
+class QgsCanvasRightClickFilter : public QObject
+{
+  public:
+    QgsCanvasRightClickFilter( QgsMapCanvas *canvas, QgisApp *app )
+      : QObject( canvas ), mCanvas( canvas ), mApp( app ) {}
+
+  protected:
+    bool eventFilter( QObject *obj, QEvent *event ) override
+    {
+      Q_UNUSED( obj );
+      if ( event->type() == QEvent::MouseButtonRelease )
+      {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>( event );
+        if ( mouseEvent->button() == Qt::RightButton )
+        {
+          QgsMapTool *activeTool = mCanvas->mapTool();
+          if ( activeTool )
+          {
+            QgsMapToolCapture *captureTool = qobject_cast<QgsMapToolCapture *>( activeTool );
+            if ( captureTool && captureTool->captureCurve() && captureTool->captureCurve()->nCoordinates() > 0 )
+            {
+              return false; // let capture tool finish geometry
+            }
+          }
+
+          if ( mouseEvent->modifiers() != Qt::NoModifier )
+            return false;
+
+          showContextMenu( mouseEvent->pos(), mouseEvent->globalPos() );
+          return true; // consume event
+        }
+      }
+      return false;
+    }
+
+  private:
+    void showContextMenu( const QPoint &localPos, const QPoint &globalPos )
+    {
+      QMenu menu;
+      menu.setStyleSheet( QStringLiteral(
+        "QMenu { background-color: #2b2b2b; color: #ffffff; border: 1px solid #3c3f41; font-family: Arial; font-size: 11pt; }"
+        "QMenu::section { background-color: #1a1a1a; color: #888888; padding: 4px; font-weight: bold; }"
+        "QMenu::item:selected { background-color: #007acc; }"
+      ) );
+
+      QSet<QString> addedLayers;
+
+      // 1. Identify vector layers under the cursor
+      QgsPointXY mapPoint = mCanvas->mapSettings().mapToPixel().toMapCoordinates( localPos.x(), localPos.y() );
+      double searchRadius = mCanvas->mapSettings().mapUnitsPerPixel() * 5.0; // 5 pixels tolerance
+      QgsRectangle searchRect( mapPoint.x() - searchRadius, mapPoint.y() - searchRadius,
+                               mapPoint.x() + searchRadius, mapPoint.y() + searchRadius );
+
+      QList<QgsMapLayer *> layers = QgsProject::instance()->mapLayers().values();
+      bool hasClickedLayers = false;
+
+      for ( QgsMapLayer *layer : layers )
+      {
+        QgsVectorLayer *vlayer = qobject_cast<QgsVectorLayer *>( layer );
+        if ( !vlayer || !vlayer->isSpatial() )
+          continue;
+
+        QgsFeatureRequest req;
+        req.setFilterRect( searchRect );
+        req.setLimit( 1 );
+        QgsFeatureIterator it = vlayer->getFeatures( req );
+        QgsFeature f;
+        if ( it.nextFeature( f ) )
+        {
+          if ( !hasClickedLayers )
+          {
+            menu.addSection( tr( "Layers Under Cursor" ) );
+            hasClickedLayers = true;
+          }
+          addedLayers.insert( vlayer->id() );
+          addLayerActions( &menu, vlayer );
+        }
+      }
+
+      // 2. Add all currently editing layers
+      bool hasEditingLayers = false;
+      for ( QgsMapLayer *layer : layers )
+      {
+        QgsVectorLayer *vlayer = qobject_cast<QgsVectorLayer *>( layer );
+        if ( !vlayer || addedLayers.contains( vlayer->id() ) )
+          continue;
+
+        if ( vlayer->isEditable() )
+        {
+          if ( !hasEditingLayers )
+          {
+            menu.addSection( tr( "Active Edits" ) );
+            hasEditingLayers = true;
+          }
+          addedLayers.insert( vlayer->id() );
+          addLayerActions( &menu, vlayer );
+        }
+      }
+
+      if ( menu.isEmpty() )
+      {
+        menu.addAction( tr( "No vector layers found/editing" ) );
+      }
+
+      menu.exec( globalPos );
+    }
+
+    void addLayerActions( QMenu *menu, QgsVectorLayer *layer )
+    {
+      QString layerName = layer->name();
+      if ( layer->isEditable() )
+      {
+        QString status = layer->isModified() ? tr( " (Modified)" ) : tr( " (Editing)" );
+        
+        QAction *saveAction = menu->addAction( tr( "Save & Stop Editing: %1%2" ).arg( layerName, status ) );
+        connect( saveAction, &QAction::triggered, this, [this, layer]() {
+          if ( layer->commitChanges() )
+          {
+            mCanvas->refresh();
+            mApp->messageBar()->pushMessage( tr( "Success" ), tr( "Changes saved and editing stopped for: %1" ).arg( layer->name() ), Qgis::MessageLevel::Info, 3 );
+          }
+          else
+          {
+            QMessageBox::warning( nullptr, tr( "Error" ), tr( "Could not commit changes on: %1. Error: %2" ).arg( layer->name(), layer->commitErrors().join( QLatin1String( "\n" ) ) ) );
+          }
+        } );
+
+        QAction *discardAction = menu->addAction( tr( "Discard Changes & Stop: %1" ).arg( layerName ) );
+        connect( discardAction, &QAction::triggered, this, [this, layer]() {
+          QMessageBox::StandardButton reply = QMessageBox::question(
+            nullptr,
+            tr( "Confirm Discard" ),
+            tr( "Are you sure you want to discard all unsaved changes for layer '%1'?" ).arg( layer->name() ),
+            QMessageBox::Yes | QMessageBox::No
+          );
+          if ( reply == QMessageBox::Yes )
+          {
+            if ( layer->rollBack() )
+            {
+              mCanvas->refresh();
+              mApp->messageBar()->pushMessage( tr( "Info" ), tr( "Changes discarded and editing stopped for: %1" ).arg( layer->name() ), Qgis::MessageLevel::Info, 3 );
+            }
+            else
+            {
+              QMessageBox::warning( nullptr, tr( "Error" ), tr( "Could not roll back changes on: %1." ).arg( layer->name() ) );
+            }
+          }
+        } );
+      }
+      else
+      {
+        QAction *editAction = menu->addAction( tr( "Toggle Editing (ON): %1" ).arg( layerName ) );
+        connect( editAction, &QAction::triggered, this, [this, layer]() {
+          mApp->layerTreeView()->setCurrentLayer( layer );
+          if ( layer->startEditing() )
+          {
+            mCanvas->refresh();
+            mApp->messageBar()->pushMessage( tr( "Success" ), tr( "Editing started for: %1" ).arg( layer->name() ), Qgis::MessageLevel::Info, 3 );
+          }
+          else
+          {
+            QMessageBox::warning( nullptr, tr( "Error" ), tr( "Could not start editing on: %1." ).arg( layer->name() ) );
+          }
+        } );
+      }
+    }
+
+    QgsMapCanvas *mCanvas = nullptr;
+    QgisApp *mApp = nullptr;
+};
+
+
 static bool cmpByText_( QAction *a, QAction *b )
 {
   return QString::localeAwareCompare( a->text(), b->text() ) < 0;
@@ -1085,6 +1266,7 @@ QgisApp::QgisApp( QSplashScreen *splash, AppOptions options, const QString &root
   QgsCanvasRefreshBlocker refreshBlocker;
 
   connect( mMapCanvas, &QgsMapCanvas::messageEmitted, this, &QgisApp::displayMessage );
+  mMapCanvas->viewport()->installEventFilter( new QgsCanvasRightClickFilter( mMapCanvas, this ) );
 
   if ( !settings.value( QStringLiteral( "qgis/main_canvas_preview_jobs" ) ).isValid() )
   {
