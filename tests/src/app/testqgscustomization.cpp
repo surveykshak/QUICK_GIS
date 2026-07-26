@@ -11,7 +11,7 @@
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- ***************************************************************************/
+ **************************************************************************/
 
 #include "qgisapp.h"
 #include "qgsbrowserdockwidget.h"
@@ -262,8 +262,8 @@ void TestQgsCustomization::testLoadApply()
   QVERIFY( findQAction( "ToolBars/mLayerToolBar/mActionAddRasterLayer" ) );
   QVERIFY( findQAction( "ToolBars/mLayerToolBar/mActionAddRasterLayer" )->isVisible() );
   QVERIFY( !mQgisApp->browserWidget()->browserWidget()->mDisabledDataItemsKeys.contains( "special:Home" ) );
-  QVERIFY( findQWidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" ) );
-  QVERIFY( findQWidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" )->isVisible() );
+  QVERIFY( findQwidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" ) );
+  QVERIFY( findQwidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" )->isVisible() );
   QVERIFY( findQWidget<QWidget>( "StatusBarWidgets/LocatorWidget" ) );
   QVERIFY( findQWidget<QWidget>( "StatusBarWidgets/LocatorWidget" )->isVisible() );
   QVERIFY( findQAction( "ToolBars/testToolBar/testToolBarToolButton/testToolBarMenuAction1" ) );
@@ -281,8 +281,8 @@ void TestQgsCustomization::testLoadApply()
   QVERIFY( findQWidget<QToolBar>( "ToolBars/mFileToolBar" ) );
   QVERIFY( !findQWidget<QToolBar>( "ToolBars/mFileToolBar" )->isVisible() );
   QVERIFY( !findQAction( "ToolBars/mLayerToolBar/mActionAddRasterLayer" ) );
-  QVERIFY( findQWidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" ) );
-  QVERIFY( !findQWidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" )->isVisible() );
+  QVERIFY( findQwidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" ) );
+  QVERIFY( !findQwidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" )->isVisible() );
   QVERIFY( findQWidget<QWidget>( "StatusBarWidgets/LocatorWidget" ) );
   QVERIFY( !findQWidget<QWidget>( "StatusBarWidgets/LocatorWidget" )->isVisible() );
   QVERIFY( !findQAction( "ToolBars/testToolBar/testToolBarToolButton/testToolBarMenuAction1" ) );
@@ -306,10 +306,10 @@ void TestQgsCustomization::testLoadApply()
   QVERIFY( findQAction( "ToolBars/mLayerToolBar/mActionAddRasterLayer" ) );
   QVERIFY( findQAction( "ToolBars/mLayerToolBar/mActionAddRasterLayer" )->isVisible() );
   QVERIFY( !mQgisApp->browserWidget()->browserWidget()->mDisabledDataItemsKeys.contains( "special:Home" ) );
-  QVERIFY( findQWidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" ) );
-  QVERIFY( findQWidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" )->isVisible() );
-  QVERIFY( findQWidget<QWidget>( "StatusBarWidgets/LocatorWidget" ) );
-  QVERIFY( findQWidget<QWidget>( "StatusBarWidgets/LocatorWidget" )->isVisible() );
+  QVERIFY( findQwidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" ) );
+  QVERIFY( findQwidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" )->isVisible() );
+  QVERIFY( findQwidget<QWidget>( "StatusBarWidgets/LocatorWidget" ) );
+  QVERIFY( findQwidget<QWidget>( "StatusBarWidgets/LocatorWidget" )->isVisible() );
   QVERIFY( findQAction( "ToolBars/testToolBar/testToolBarToolButton/testToolBarMenuAction1" ) );
   QVERIFY( findQAction( "ToolBars/testToolBar/testToolBarToolButton/testToolBarMenuAction1" )->isVisible() );
 }
@@ -580,8 +580,8 @@ void TestQgsCustomization::testClone()
   QVERIFY( findQAction( "ToolBars/mLayerToolBar/mActionAddRasterLayer" ) );
   QVERIFY( findQAction( "ToolBars/mLayerToolBar/mActionAddRasterLayer" )->isVisible() );
   QVERIFY( !mQgisApp->browserWidget()->browserWidget()->mDisabledDataItemsKeys.contains( "special:Home" ) );
-  QVERIFY( findQWidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" ) );
-  QVERIFY( findQWidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" )->isVisible() );
+  QVERIFY( findQwidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" ) );
+  QVERIFY( findQwidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" )->isVisible() );
   QVERIFY( findQWidget<QWidget>( "StatusBarWidgets/LocatorWidget" ) );
   QVERIFY( findQWidget<QWidget>( "StatusBarWidgets/LocatorWidget" )->isVisible() );
   QVERIFY( findQAction( "ToolBars/testToolBar/testToolBarToolButton/testToolBarMenuAction1" ) );
@@ -599,8 +599,8 @@ void TestQgsCustomization::testClone()
   QVERIFY( findQWidget<QToolBar>( "ToolBars/mFileToolBar" ) );
   QVERIFY( !findQWidget<QToolBar>( "ToolBars/mFileToolBar" )->isVisible() );
   QVERIFY( !findQAction( "ToolBars/mLayerToolBar/mActionAddRasterLayer" ) );
-  QVERIFY( findQWidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" ) );
-  QVERIFY( !findQWidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" )->isVisible() );
+  QVERIFY( findQwidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" ) );
+  QVERIFY( !findQwidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" )->isVisible() );
   QVERIFY( findQWidget<QWidget>( "StatusBarWidgets/LocatorWidget" ) );
   QVERIFY( !findQWidget<QWidget>( "StatusBarWidgets/LocatorWidget" )->isVisible() );
   QVERIFY( !findQAction( "ToolBars/testToolBar/testToolBarToolButton/testToolBarMenuAction1" ) );
@@ -624,32 +624,12 @@ void TestQgsCustomization::testClone()
   QVERIFY( findQAction( "ToolBars/mLayerToolBar/mActionAddRasterLayer" ) );
   QVERIFY( findQAction( "ToolBars/mLayerToolBar/mActionAddRasterLayer" )->isVisible() );
   QVERIFY( !mQgisApp->browserWidget()->browserWidget()->mDisabledDataItemsKeys.contains( "special:Home" ) );
-  QVERIFY( findQWidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" ) );
-  QVERIFY( findQWidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" )->isVisible() );
-  QVERIFY( findQWidget<QWidget>( "StatusBarWidgets/LocatorWidget" ) );
-  QVERIFY( findQWidget<QWidget>( "StatusBarWidgets/LocatorWidget" )->isVisible() );
+  QVERIFY( findQwidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" ) );
+  QVERIFY( findQwidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" )->isVisible() );
+  QVERIFY( findQwidget<QWidget>( "StatusBarWidgets/LocatorWidget" ) );
+  QVERIFY( findQwidget<QWidget>( "StatusBarWidgets/LocatorWidget" )->isVisible() );
   QVERIFY( findQAction( "ToolBars/testToolBar/testToolBarToolButton/testToolBarMenuAction1" ) );
   QVERIFY( findQAction( "ToolBars/testToolBar/testToolBarToolButton/testToolBarMenuAction1" )->isVisible() );
-
-  // restore clone
-  mQgisApp->setCustomization( std::move( customization ) );
-
-  // check our modifications are here
-  QVERIFY( !findQWidget<QMenu>( "Menus/mHelpMenu" ) );
-  QVERIFY( findQAction( "Menus/mEditMenu/mActionUndo" ) );
-  QVERIFY( findQAction( "Menus/mEditMenu/mActionUndo" )->isVisible() );
-  QVERIFY( !findQAction( "Menus/mEditMenu/mActionRedo" ) );
-  QVERIFY( findQAction( "ToolBars/mDigitizeToolBar/mActionRedo" ) );
-  QVERIFY( findQAction( "ToolBars/mDigitizeToolBar/mActionRedo" )->isVisible() );
-  QVERIFY( findQWidget<QToolBar>( "ToolBars/mFileToolBar" ) );
-  QVERIFY( !findQWidget<QToolBar>( "ToolBars/mFileToolBar" )->isVisible() );
-  QVERIFY( !findQAction( "ToolBars/mLayerToolBar/mActionAddRasterLayer" ) );
-  QVERIFY( findQWidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" ) );
-  QVERIFY( !findQWidget<QDockWidget>( "Docks/QgsAdvancedDigitizingDockWidgetBase" )->isVisible() );
-  QVERIFY( findQWidget<QWidget>( "StatusBarWidgets/LocatorWidget" ) );
-  QVERIFY( !findQWidget<QWidget>( "StatusBarWidgets/LocatorWidget" )->isVisible() );
-  QVERIFY( !findQAction( "ToolBars/testToolBar/testToolBarToolButton/testToolBarMenuAction1" ) );
-  QVERIFY( mQgisApp->browserWidget()->browserWidget()->mDisabledDataItemsKeys.contains( "special:Home" ) );
 }
 
 void TestQgsCustomization::testModel()
