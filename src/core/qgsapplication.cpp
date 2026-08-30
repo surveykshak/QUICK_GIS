@@ -170,7 +170,7 @@ const QgsSettingsEntryInteger *QgsApplication::settingsConnectionPoolMaximumConc
 QObject *ABISYM( QgsApplication::mFileOpenEventReceiver ) = nullptr;
 bool ABISYM( QgsApplication::mInitialized ) = false;
 bool ABISYM( QgsApplication::mRunningFromBuildDir ) = false;
-const char *QgsApplication::QGIS_ORGANIZATION_NAME = "QUICKGIS3_44";
+const char *QgsApplication::QGIS_ORGANIZATION_NAME = "QUICKGIS";
 const char *QgsApplication::QGIS_ORGANIZATION_DOMAIN = "quickgis.org";
 const char *QgsApplication::QGIS_APPLICATION_NAME = "QUICKGIS3_44";
 QgsApplication::ApplicationMembers *QgsApplication::sApplicationMembers = nullptr;
