@@ -86,7 +86,7 @@ class QgsRectangle;
 class QgsRuntimeProfiler;
 class QgsSnappingUtils;
 class QgsSnappingWidget;
-class QgsStatusBarCoordinatesWidget;
+class QuickGisStatusBarCoordinatesWidget;
 class QgsStatusBarMagnifierWidget;
 class QgsStatusBarScaleWidget;
 class QgsTaskManagerStatusBarWidget;
@@ -2530,7 +2530,7 @@ class APP_EXPORT QgisApp : public QMainWindow, private Ui::MainWindow
     QgsStatusBarMagnifierWidget *mMagnifierWidget = nullptr;
 
     //! Widget that will live in the statusbar to display and edit coords
-    QgsStatusBarCoordinatesWidget *mCoordsEdit = nullptr;
+    QuickGisStatusBarCoordinatesWidget *mCoordsEdit = nullptr;
 
     //! Widget that will live on the statusbar to display "Rotation"
     QLabel *mRotationLabel = nullptr;
