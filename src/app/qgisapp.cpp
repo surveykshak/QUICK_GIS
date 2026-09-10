@@ -404,7 +404,7 @@
 #include "qgsstackeddiagramproperties.h"
 #include "qgsstatisticalsummarydockwidget.h"
 #include "qgsstatusbar.h"
-#include "qgsstatusbarcoordinateswidget.h"
+#include "quickgisstatusbarcoordinateswidget.h"
 #include "qgsstatusbarmagnifierwidget.h"
 #include "qgsstatusbarscalewidget.h"
 #include "qgsstyle.h"
@@ -2140,7 +2140,7 @@ QgisApp::QgisApp( QSplashScreen *splash, AppOptions options, const QString &root
   // the most important part of the initialization: make sure that people can play puzzle if they need
   QgsPuzzleWidget *puzzleWidget = new QgsPuzzleWidget( mMapCanvas );
   mCentralContainer->insertWidget( 2, puzzleWidget );
-  connect( mCoordsEdit, &QgsStatusBarCoordinatesWidget::weAreBored, this, [this, puzzleWidget] {
+  connect( mCoordsEdit, &QuickGisStatusBarCoordinatesWidget::weAreBored, this, [this, puzzleWidget] {
     if ( puzzleWidget->letsGetThePartyStarted() )
       mCentralContainer->setCurrentIndex( 2 );
   } );
@@ -4206,7 +4206,7 @@ void QgisApp::createStatusBar()
   mStatusBar->addPermanentWidget( mTaskManagerWidget, 0 );
 
   //coords status bar widget
-  mCoordsEdit = new QgsStatusBarCoordinatesWidget( mStatusBar );
+  mCoordsEdit = new QuickGisStatusBarCoordinatesWidget( mStatusBar );
   mCoordsEdit->setObjectName( QStringLiteral( "mCoordsEdit" ) );
   mCoordsEdit->setMapCanvas( mMapCanvas );
   mCoordsEdit->setFont( statusBarFont );
