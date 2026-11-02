@@ -65,6 +65,7 @@ set(QGIS_APP_SRCS
   qgssnappinglayertreemodel.cpp
   qgssnappingwidget.cpp
   qgsstatusbarcoordinateswidget.cpp
+  quickgisstatusbarcoordinateswidget.cpp
   qgsstatusbarmagnifierwidget.cpp
   qgsstatusbarscalewidget.cpp
   qgstemplateprojectsmodel.cpp
